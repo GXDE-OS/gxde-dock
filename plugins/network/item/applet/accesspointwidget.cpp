@@ -170,6 +170,6 @@ void AccessPointWidget::ssidClicked()
 
 void AccessPointWidget::disconnectBtnClicked()
 {
-    setActiveState(NetworkDevice::Unknow);
+    //setActiveState(NetworkDevice::Unknow);
     emit requestDeactiveAP(m_ap);
 }

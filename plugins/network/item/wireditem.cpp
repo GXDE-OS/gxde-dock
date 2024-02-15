@@ -112,7 +112,7 @@ void WiredItem::reloadIcon()
 
     if (m_device->enabled()) {
         switch (devState) {
-        case NetworkDevice::DeviceStatus::Unknow:
+        //case NetworkDevice::DeviceStatus::Unknow:
         case NetworkDevice::DeviceStatus::Unmanaged:
         case NetworkDevice::DeviceStatus::Unavailable: {
             iconName.append("error");
