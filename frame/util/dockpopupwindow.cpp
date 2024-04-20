@@ -21,6 +21,7 @@
 
 #include "dockpopupwindow.h"
 
+#include <QTimer>
 #include <QScreen>
 #include <QApplication>
 #include <QDesktopWidget>
