@@ -1,9 +1,10 @@
-dde-dock (4.10.10) UNRELEASED; urgency=medium
+dde-dock (4.10.11gxde1) UNRELEASED; urgency=medium
 
   * Repair some dock problem
   * 
+  * 
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 20 Apr 2024 13:30:14 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 20 Apr 2024 17:13:42 +0800
 
 dde-dock (4.10.9gxde0) unstable; urgency=low
 
