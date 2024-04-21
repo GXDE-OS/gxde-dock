@@ -23,6 +23,7 @@
 
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <DHiDPIHelper>
 
 DWIDGET_USE_NAMESPACE

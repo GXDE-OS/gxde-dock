@@ -26,6 +26,7 @@
 #include "util/imagefactory.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include <QDrag>
