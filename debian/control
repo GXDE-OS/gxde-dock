@@ -24,6 +24,7 @@ Build-Depends: debhelper (>= 8.0.0),
  cmake,
  libdde-network-utils-dev (>= 15.11~0.1.4),
  libdbusmenu-qt5-dev,
+ libdtkcore5-bin,
  clang [mips64el]
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org/
