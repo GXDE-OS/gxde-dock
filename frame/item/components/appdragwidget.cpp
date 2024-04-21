@@ -80,6 +80,8 @@ AppDragWidget::AppDragWidget(QWidget *parent) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setMouseTracking(true);
 
+    setStyleSheet("background-color: rgba(255, 255, 255, 0);");  // 任务栏启动程序时不会出现阴影
+
     setAcceptDrops(true);
 
     initAnimations();

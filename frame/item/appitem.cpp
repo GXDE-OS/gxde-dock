@@ -77,7 +77,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     QHBoxLayout *centralLayout = new QHBoxLayout;
     centralLayout->setMargin(0);
     centralLayout->setSpacing(0);
-    setStyleSheet("background-color: rgba(255, 255, 255, 7.65);");  // 任务栏启动程序时不会出现阴影
+    setStyleSheet("background-color: rgba(255, 255, 255, 0);");  // 任务栏启动程序时不会出现阴影
 
     setAccessibleName(m_itemEntryInter->name());
     setAcceptDrops(true);
