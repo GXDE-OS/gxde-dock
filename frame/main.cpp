@@ -104,8 +104,10 @@ int main(int argc, char *argv[])
     DBusDockAdaptors adaptor(&mw);
     QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
     QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
+    if (!QFile::exists(QDir::homePath() + "/.config/gxde/gxde-dock/dock-hide")) {
+        QTimer::singleShot(1, &mw, &MainWindow::launch);
+    }
 
-    QTimer::singleShot(1, &mw, &MainWindow::launch);
 
     if (!parser.isSet(disablePlugOption)) {
         DockItemController::instance()->startLoadPlugins();

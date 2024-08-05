@@ -1,9 +1,8 @@
-dde-dock (4.10.11gxde2) UNRELEASED; urgency=medium
+dde-dock (4.10.11gxde3) UNRELEASED; urgency=medium
 
-  * Repair UOS AI building problem
-  * 
+  * Support hide dde dock 
 
- -- gfdgd_xi <3025613752@qq.com>  Tue, 28 May 2024 22:51:43 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 05 Aug 2024 12:10:49 +0800
 
 dde-dock (4.10.9gxde0) unstable; urgency=low
 
