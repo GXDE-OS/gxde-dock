@@ -99,19 +99,17 @@ int main(int argc, char *argv[])
 #ifndef QT_DEBUG
     QDir::setCurrent(QApplication::applicationDirPath());
 #endif
-
     MainWindow mw;
-    DBusDockAdaptors adaptor(&mw);
-    QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
-    QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
     if (!QFile::exists(QDir::homePath() + "/.config/gxde/gxde-dock/dock-hide")) {
+        DBusDockAdaptors adaptor(&mw);
+        QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
+        QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
+
         QTimer::singleShot(1, &mw, &MainWindow::launch);
+	    if (!parser.isSet(disablePlugOption)) {
+        	DockItemController::instance()->startLoadPlugins();
+	    }
+
     }
-
-
-    if (!parser.isSet(disablePlugOption)) {
-        DockItemController::instance()->startLoadPlugins();
-    }
-
     return app.exec();
 }
