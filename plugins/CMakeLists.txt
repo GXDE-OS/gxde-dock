@@ -1,5 +1,6 @@
 
 add_subdirectory("datetime")
+add_subdirectory("dde-sys-monitor-plugin")
 #add_subdirectory("disk-mount")
 add_subdirectory("network")
 add_subdirectory("shutdown")
