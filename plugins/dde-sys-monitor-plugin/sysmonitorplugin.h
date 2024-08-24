@@ -1,19 +1,14 @@
 #ifndef HOMEMONITORPLUGIN_H
 #define HOMEMONITORPLUGIN_H
 
+#include "informationwidget.h"
 #include <QObject>
 #include <QTimer>
 #include <QFile>
 #include <cstdio>
-#include <QLabel>
-#include <QDebug>
-#include "pluginsiteminterface.h"
-#include "mainwidget.h"
+#include <dde-dock/pluginsiteminterface.h>
 #include "pluginsettingdialog.h"
-#include "aboutdialog.h"
-#include "type.h"
-
-extern struct SettingItem settingItems[];
+#include <QDebug>
 
 class SysMonitorPlugin : public QObject, PluginsItemInterface
 {
@@ -28,8 +23,6 @@ public:
     const QString pluginName() const override;
     void init(PluginProxyInterface *proxyInter) override;
 
-    //PluginSizePolicy pluginSizePolicy() const override;
-
     QWidget *itemWidget(const QString &itemKey) override;
     QWidget *itemTipsWidget(const QString &itemKey) override;
     QWidget *itemPopupApplet(const QString &itemKey) override;
@@ -41,11 +34,8 @@ public:
     const QString itemContextMenu(const QString &itemKey) override;
     void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked) override;
 	void displayModeChanged(const Dock::DisplayMode displayMode) override;
-    void positionChanged(const Dock::Position position)override;
 
 	const QString toHumanRead(unsigned long l,const char *unit,int digit);
-public:
-    static struct SettingItem settingItems[];//公共的保存默认设置的数组
 
     //自定义读写配置函数
     void readConfig(Settings *settings);
@@ -54,7 +44,7 @@ private slots:
     // 用于更新数据的槽函数
     void refreshInfo();
     //更新tipsWidget气泡数据的函数
-    void m_Widget_update(QLabel *);
+    void m_tipsWidget_update();
 private:
     //CPU工作时间除以总时间,内存百分比,交换区百分比
     int cpuPercent,memPercent,swapPercent;
@@ -75,16 +65,12 @@ private:
 	//接收字节数，发送字节数
 	unsigned long rbytes,sbytes,oldrbytes,oldsbytes,tmpr,tmps;
     char devname[1024];
-    //电池功率瓦特
-    double battery_watts;
-    //电池统计计数，每隔这么多次才读取一次
-    int bat_count;
+    //电池功率瓦特，根据电池充放电状态设置正负
+    float battery_watts;
 	// 字体
 	QFont font;
-    //dock显示模式:时尚模式 高效模式
+	//显示模式
 	Dock::DisplayMode dismode;
-    //dock的位置：上下左右
-    Dock::Position pos;
     //设置结构体
     Settings settings;
     //传递给widget的信息结构体
@@ -93,7 +79,7 @@ private:
 private:
     // 处理时间间隔的计时器
     QTimer *m_refreshTimer;
-    MainWidget *m_mainWidget;
+    InformationWidget *m_pluginWidget;
     QLabel *m_tipsWidget;
     QLabel *m_appletWidget;
 };

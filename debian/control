@@ -36,10 +36,17 @@ Recommends: dde-disk-mount-plugin, dde-dock-onboard-plugin
 Conflicts:
  dde-workspace (<< 2.90.5),
  dde-dock-applets,
- dde-trash-plugin
+ dde-trash-plugin,
+ gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin
 Replaces:
  dde-dock-applets,
- dde-trash-plugin
+ dde-trash-plugin,
+ gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin
+Provides:
+ gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin
 Description: deepin desktop-environment - dock module
  Deepin desktop environment - dock module.
 

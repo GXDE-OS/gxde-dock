@@ -6,5 +6,7 @@ usr/lib/dde-dock/plugins/libshutdown.so
 usr/lib/dde-dock/plugins/libtrash.so
 usr/lib/dde-dock/plugins/libtray.so
 usr/lib/dde-dock/plugins/liboverlay-warning.so
+usr/lib/dde-dock/plugins/libsys_monitor.so
 usr/lib/dde-dock/plugins/system-trays
+usr/lib/gxde-dock/plugins/libsys_monitor.so
 etc/dde-dock
