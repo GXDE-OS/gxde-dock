@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <QObject>
-#include <dde-dock/pluginsiteminterface.h>
+#include "pluginsiteminterface.h"
 #include "pluginsettingdialog.h"
 
 struct Info{

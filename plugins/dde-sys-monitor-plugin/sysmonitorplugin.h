@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QFile>
 #include <cstdio>
-#include <dde-dock/pluginsiteminterface.h>
+#include "pluginproxyinterface.h"
 #include "pluginsettingdialog.h"
 #include <QDebug>
 
