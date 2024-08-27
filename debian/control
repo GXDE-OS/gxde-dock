@@ -51,7 +51,7 @@ Description: deepin desktop-environment - dock module
  Deepin desktop environment - dock module.
 
 Package: dde-dock-dev
-Architecture: all
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - dock module development files
  Deepin desktop environment - dock module development files.
