@@ -44,7 +44,7 @@
 #define WINE_WINDOW_PROP_NAME "__wine_prefix"
 #define IS_WINE_WINDOW_BY_WM_CLASS "explorer.exe"
 
-static const qreal iconSize = 16;
+//static const qreal iconSize = 16;
 static const qreal iconDefaultSize = 16;
 
 // this static var hold all suffix of tray widget keys.
@@ -250,19 +250,18 @@ void XEmbedTrayWidget::wrapWindow()
     // xembed_message_send(m_windowId, XEMBED_EMBEDDED_NOTIFY, m_containerWid, 0, 0);
 
     //move window we're embedding
-    /*
+
     const uint32_t windowMoveConfigVals[2] = { 0, 0 };
     xcb_configure_window(c, m_windowId,
-                         XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y,
-                         windowMoveCentially quitting the application. Returns onfigVals);
-    */
+                         XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, windowMoveConfigVals);
+
 
     //if the window is a clearly stupid size resize to be something sensible
     //this is needed as chormium and such when resized just fill the icon with transparent space and only draw in the middle
     //however spotify does need this as by default the window size is 900px wide.
     //use an artbitrary heuristic to make sure icons are always sensible
-//    if (clientGeom->width > iconSize || clientGeom->height > iconSize )
-    /*{
+    /*if (clientGeom->width > iconSize || clientGeom->height > iconSize )
+    {
         const uint32_t windowMoveConfigVals[2] = { uint32_t(iconSize * ratio), uint32_t(iconSize * ratio) };
         xcb_configure_window(c, m_windowId,
                              XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, //XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
