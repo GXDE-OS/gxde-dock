@@ -66,6 +66,13 @@ private slots:
     bool isBadWindow();
 
 private:
+    // Direct client关注xevent，使用xevent来处理button事件等
+    // XTest client不关注xevent，使用xtest extension处理
+    enum InjectMode {
+        Direct,
+        XTest,
+    };
+
     bool m_active = false;
     WId m_windowId;
     WId m_containerWid;
@@ -74,6 +81,7 @@ private:
 
     QTimer *m_updateTimer;
     QTimer *m_sendHoverEvent;
+    InjectMode m_injectMode;
 };
 
 #endif // XEMBEDTRAYWIDGET_H

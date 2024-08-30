@@ -26,6 +26,7 @@
 #include <QX11Info>
 #include <QDebug>
 #include <QMouseEvent>
+#include <QScopedPointer>
 #include <QProcess>
 #include <QThread>
 #include <QApplication>
@@ -44,6 +45,7 @@
 #define IS_WINE_WINDOW_BY_WM_CLASS "explorer.exe"
 
 static const qreal iconSize = 16;
+static const qreal iconDefaultSize = 16;
 
 // this static var hold all suffix of tray widget keys.
 // that is in order to fix can not show multiple trays provide by one application,
@@ -182,12 +184,13 @@ void XEmbedTrayWidget::wrapWindow()
     auto c = QX11Info::connection();
 
     auto cookie = xcb_get_geometry(c, m_windowId);
-    QScopedPointer<xcb_get_geometry_reply_t> clientGeom(xcb_get_geometry_reply(c, cookie, Q_NULLPTR));
+    QScopedPointer<xcb_get_geometry_reply_t, QScopedPointerPodDeleter> clientGeom(xcb_get_geometry_reply(c, cookie, Q_NULLPTR));
     if (clientGeom.isNull())
         return;
 
     //create a container window
     const auto ratio = devicePixelRatioF();
+    uint16_t iconSize = iconDefaultSize * ratio;
     auto screen = xcb_setup_roots_iterator (xcb_get_setup (c)).data;
     m_containerWid = xcb_generate_id(c);
     uint32_t values[2];
@@ -199,7 +202,8 @@ void XEmbedTrayWidget::wrapWindow()
                        m_containerWid,               /* window Id     */
                        screen->root,                 /* parent window */
                        0, 0,                         /* x, y          */
-                       iconSize * ratio, iconSize * ratio,     /* width, height */
+                       //iconSize * ratio, iconSize * ratio,     /* width, height */
+                       iconSize, iconSize,     /* width, height */
                        0,                            /* border_width  */
                        XCB_WINDOW_CLASS_INPUT_OUTPUT,/* class         */
                        screen->root_visual,          /* visual        */
@@ -258,19 +262,47 @@ void XEmbedTrayWidget::wrapWindow()
     //however spotify does need this as by default the window size is 900px wide.
     //use an artbitrary heuristic to make sure icons are always sensible
 //    if (clientGeom->width > iconSize || clientGeom->height > iconSize )
-    {
+    /*{
         const uint32_t windowMoveConfigVals[2] = { uint32_t(iconSize * ratio), uint32_t(iconSize * ratio) };
         xcb_configure_window(c, m_windowId,
-                             XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
+                             XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, //XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
                              windowMoveConfigVals);
+    }*/
+    // 判断托盘的大小是否超出iconSize
+    QSize clientWindowSize;
+    if (clientGeom) {
+        clientWindowSize = QSize(clientGeom->width, clientGeom->height);
+    }
+
+   if (clientWindowSize.isEmpty() || clientWindowSize.width() > iconSize || clientWindowSize.height() > iconSize ) {
+
+        uint16_t widthNormalized = std::min(clientGeom->width, iconSize);
+        uint16_t heighNormalized = std::min(clientGeom->height, iconSize);
+
+        const uint32_t windowSizeConfigVals[2] = {widthNormalized, heighNormalized};
+        xcb_configure_window(c, m_windowId, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, windowSizeConfigVals);
+
+        xcb_flush(c);
+        clientWindowSize = QSize(iconSize, iconSize);
     }
 
     //show the embedded window otherwise nothing happens
     xcb_map_window(c, m_windowId);
 
+    xcb_clear_area(c, 0, m_windowId, 0, 0, clientWindowSize.width(), clientWindowSize.height());
+
 //    xcb_clear_area(c, 0, m_windowId, 0, 0, qMin(clientGeom->width, iconSize), qMin(clientGeom->height, iconSize));
 
     xcb_flush(c);
+
+    // 通过xcb获取window属性，判断该window是否处理button press事件
+    // 当window不关注button press等事件时，使用xtest extension
+    auto windowAttributesCookie = xcb_get_window_attributes(c, m_windowId);
+    QScopedPointer<xcb_get_window_attributes_reply_t, QScopedPointerPodDeleter> windowAttributes(xcb_get_window_attributes_reply(c, windowAttributesCookie, nullptr));
+    if (windowAttributes && !(windowAttributes->all_event_masks & XCB_EVENT_MASK_BUTTON_PRESS)) {
+        m_injectMode = XTest;
+    }
+
 //    setWindowOnTop(false);
     setWindowOnTop(true);
     setX11PassMouseEvent(true);
@@ -289,6 +321,30 @@ void XEmbedTrayWidget::sendHoverEvent()
     setWindowOnTop(true);
     XTestFakeMotionEvent(QX11Info::display(), 0, p.x(), p.y(), CurrentTime);
     XFlush(QX11Info::display());
+    Display *display = QX11Info::display();
+    if (display) {
+        if (m_injectMode == XTest) {
+            // fake enter event
+            XTestFakeMotionEvent(display, 0, p.x(), p.y(), CurrentTime);
+            XFlush(display);
+        } else {
+            // 发送 montion notify event到client，实现hover事件
+            auto c = QX11Info::connection();
+            xcb_motion_notify_event_t* event = new xcb_motion_notify_event_t;
+            memset(event, 0x00, sizeof(xcb_button_press_event_t));
+            event->response_type = XCB_MOTION_NOTIFY;
+            event->event = m_windowId;
+            event->same_screen = 1;
+            event->root = QX11Info::appRootWindow();
+            event->time = 0;
+            event->root_x = p.x();
+            event->root_y = p.y();
+            event->child = 0;
+            event->state = 0;
+            xcb_send_event(c, false, m_windowId, XCB_EVENT_MASK_POINTER_MOTION, (char*)event);
+            delete event;
+        }
+    }
     QTimer::singleShot(100, this, [=] { setX11PassMouseEvent(true); });
 }
 
@@ -322,10 +378,60 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
 
     m_sendHoverEvent->stop();
 
+    auto c = QX11Info::connection();
+    if (!c) {
+        qWarning() << "QX11Info::connection() is " << c;
+        return;
+    }
+
     const QPoint p(rawXPosition(QPoint(x, y)));
     configContainerPosition();
     setX11PassMouseEvent(false);
     setWindowOnTop(true);
+
+    Display *display = QX11Info::display();
+
+    if (m_injectMode == XTest) {
+        XTestFakeMotionEvent(display, 0, p.x(), p.y(), CurrentTime);
+        XFlush(display);
+        XTestFakeButtonEvent(display, mouseButton, true, CurrentTime);
+        XFlush(display);
+        XTestFakeButtonEvent(display, mouseButton, false, CurrentTime);
+        XFlush(display);
+    } else {
+        // press event
+        xcb_button_press_event_t *pressEvent = new xcb_button_press_event_t;
+        memset(pressEvent, 0x00, sizeof(xcb_button_press_event_t));
+        pressEvent->response_type = XCB_BUTTON_PRESS;
+        pressEvent->event = m_windowId;
+        pressEvent->same_screen = 1;
+        pressEvent->root = QX11Info::appRootWindow();
+        pressEvent->time = 0;
+        pressEvent->root_x = x;
+        pressEvent->root_y = y;
+        pressEvent->child = 0;
+        pressEvent->state = 0;
+        pressEvent->detail = mouseButton;
+        xcb_send_event(c, false, m_windowId, XCB_EVENT_MASK_BUTTON_PRESS, (char*)pressEvent);
+        delete pressEvent;
+
+        // release event
+        xcb_button_release_event_t *releaseEvent = new xcb_button_release_event_t;
+        memset(releaseEvent, 0x00, sizeof(xcb_button_release_event_t));
+        releaseEvent->response_type = XCB_BUTTON_RELEASE;
+        releaseEvent->event = m_windowId;
+        releaseEvent->same_screen = 1;
+        releaseEvent->root = QX11Info::appRootWindow();
+        releaseEvent->time = QX11Info::getTimestamp();
+        releaseEvent->root_x = x;
+        releaseEvent->root_y = y;
+        releaseEvent->child = 0;
+        releaseEvent->state = 0;
+        releaseEvent->detail = mouseButton;
+        xcb_send_event(c, false, m_windowId, XCB_EVENT_MASK_BUTTON_RELEASE, (char*)releaseEvent);
+        delete releaseEvent;
+    }
+
     XTestFakeMotionEvent(QX11Info::display(), 0, p.x(), p.y(), CurrentTime);
     XFlush(QX11Info::display());
     XTestFakeButtonEvent(QX11Info::display(), mouseButton, true, CurrentTime);
@@ -398,8 +504,8 @@ void XEmbedTrayWidget::refershIconImage()
     expose.window = m_containerWid;
     expose.x = 0;
     expose.y = 0;
-    expose.width = iconSize * ratio;
-    expose.height = iconSize * ratio;
+    expose.width = iconDefaultSize * ratio;
+    expose.height = iconDefaultSize * ratio;
     xcb_send_event_checked(c, false, m_containerWid, XCB_EVENT_MASK_VISIBILITY_CHANGE, reinterpret_cast<char *>(&expose));
     xcb_flush(c);
 
@@ -411,7 +517,8 @@ void XEmbedTrayWidget::refershIconImage()
     if (qimage.isNull())
         return;
 
-    m_image = qimage.scaled(16 * ratio, 16 * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    //m_image = qimage.scaled(16 * ratio, 16 * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_image = qimage.scaled(iconDefaultSize * ratio, iconDefaultSize * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_image.setDevicePixelRatio(ratio);
 
     update();
