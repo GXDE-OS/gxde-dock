@@ -1,10 +1,8 @@
-dde-dock (4.10.14) UNRELEASED; urgency=medium
+dde-dock (4.10.14gxde1) UNRELEASED; urgency=medium
 
-  * Support hide dde dock 
-  * 
-  * 
+  * Repair Wine Problem
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 24 Aug 2024 09:04:53 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 31 Aug 2024 08:29:57 +0800
 
 dde-dock (4.10.9gxde0) unstable; urgency=low
 
