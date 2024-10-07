@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     QDir::setCurrent(QApplication::applicationDirPath());
 #endif
     MainWindow mw;
-    if (!QFile::exists(QDir::homePath() + "/.config/gxde/gxde-dock/dock-hide")) {
+    if (!QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/dock-hide")) {
         DBusDockAdaptors adaptor(&mw);
         QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
         QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
