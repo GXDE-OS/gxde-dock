@@ -1,9 +1,11 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="id" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="id">
 <context>
     <name>AbstractPluginsController</name>
     <message>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58,7 +60,7 @@
     <name>DialogManager</name>
     <message>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -169,6 +171,10 @@
         <source>Plugins</source>
         <translation>Plugin</translation>
     </message>
+    <message>
+        <source>System Monitor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LauncherItem</name>
@@ -211,19 +217,19 @@
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -366,6 +372,41 @@
     <message>
         <source>Wireless Network %1</source>
         <translation>Jaringan Nirkabel %1</translation>
+    </message>
+</context>
+<context>
+    <name>pluginSettingDialog</name>
+    <message>
+        <source>系统监控插件设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>高效模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示CPU、内存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示CP&amp;U、内存和网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>时尚模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>行高：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

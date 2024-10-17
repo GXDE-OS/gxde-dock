@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="fr">
 <context>
     <name>AbstractPluginsController</name>
     <message>
@@ -168,6 +170,10 @@
     <message>
         <source>Plugins</source>
         <translation>Extensions</translation>
+    </message>
+    <message>
+        <source>System Monitor</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -343,7 +349,7 @@
     </message>
     <message>
         <source>Wired connection: %1</source>
-        <translation>Connexion filaire : %1</translation>
+        <translation>Connexion filaire&#xa0;: %1</translation>
     </message>
 </context>
 <context>
@@ -354,7 +360,7 @@
     </message>
     <message>
         <source>Wireless Connection: %1</source>
-        <translation>Connexion sans fil : %1</translation>
+        <translation>Connexion sans fil&#xa0;: %1</translation>
     </message>
 </context>
 <context>
@@ -366,6 +372,41 @@
     <message>
         <source>Wireless Network %1</source>
         <translation>Réseau sans fil %1</translation>
+    </message>
+</context>
+<context>
+    <name>pluginSettingDialog</name>
+    <message>
+        <source>系统监控插件设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>高效模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示CPU、内存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示CP&amp;U、内存和网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>时尚模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>行高：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

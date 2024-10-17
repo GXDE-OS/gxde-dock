@@ -1,9 +1,11 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sw" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="sw">
 <context>
     <name>AbstractPluginsController</name>
     <message>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -28,11 +30,11 @@
     </message>
     <message>
         <source>12 Hour Time</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>24 Hour Time</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Time Settings</source>
@@ -70,7 +72,7 @@
     </message>
     <message>
         <source>This action cannot be restored</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -169,6 +171,10 @@
         <source>Plugins</source>
         <translation>Kijenzi ya maziada</translation>
     </message>
+    <message>
+        <source>System Monitor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LauncherItem</name>
@@ -207,23 +213,23 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -366,6 +372,41 @@
     <message>
         <source>Wireless Network %1</source>
         <translation>Mtandao wa muunganisho bila kabo %1</translation>
+    </message>
+</context>
+<context>
+    <name>pluginSettingDialog</name>
+    <message>
+        <source>系统监控插件设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>高效模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示CPU、内存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示CP&amp;U、内存和网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>时尚模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>行高：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
