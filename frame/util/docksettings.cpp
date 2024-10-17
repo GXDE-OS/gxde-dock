@@ -57,6 +57,7 @@ DockSettings::DockSettings(QWidget *parent)
     , m_keepShownAct(tr("Keep Shown"), this)
     , m_keepHiddenAct(tr("Keep Hidden"), this)
     , m_smartHideAct(tr("Smart Hide"), this)
+    , m_systemMonitor(tr("System Monitor"), this)
     , m_displayInter(new DBusDisplay(this))
     , m_dockInter(new DBusDock("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
     , m_itemController(DockItemController::instance(this))
@@ -125,6 +126,10 @@ DockSettings::DockSettings(QWidget *parent)
     m_settingsMenu.addAction(sizeSubMenuAct);
     m_settingsMenu.addAction(statusSubMenuAct);
     m_settingsMenu.addAction(hideSubMenuAct);
+    // 需要确保安装了系统监视器才可显示
+    if (QFile::exists("/usr/bin/deepin-system-monitor") || QFile::exists("/usr/bin/gxde-system-monitor")) {
+        m_settingsMenu.addAction(&m_systemMonitor);
+    }
     m_settingsMenu.setTitle("Settings Menu");
 
     connect(&m_settingsMenu, &WhiteMenu::triggered, this, &DockSettings::menuActionClicked);
@@ -144,6 +149,8 @@ DockSettings::DockSettings(QWidget *parent)
     connect(m_displayInter, &DBusDisplay::ScreenHeightChanged, this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
     connect(m_displayInter, &DBusDisplay::ScreenWidthChanged, this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
 
+    connect(&m_systemMonitor, &QAction::triggered, this, &DockSettings::openSystemMonitor);
+
     DApplication *app = qobject_cast<DApplication*>(qApp);
     if (app) {
         connect(app, &DApplication::iconThemeChanged, this, &DockSettings::gtkIconThemeChanged);
@@ -160,6 +167,17 @@ DockSettings &DockSettings::Instance()
 {
     static DockSettings settings;
     return settings;
+}
+
+void DockSettings::openSystemMonitor()
+{
+    //QProcess *process = new QProcess();
+    if (QFile::exists("/usr/bin/gxde-system-monitor")) {
+        QProcess::startDetached("gxde-system-monitor");
+    }
+    else {
+        QProcess::startDetached("deepin -system-monitor");
+    }
 }
 
 const QRect DockSettings::primaryRect() const

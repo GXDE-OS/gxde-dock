@@ -121,6 +121,8 @@ private:
     void calculateWindowConfig();
     void gtkIconThemeChanged();
 
+    void openSystemMonitor();
+
 private:
     int m_iconSize;
     bool m_autoHide;
@@ -152,6 +154,7 @@ private:
     QAction m_keepShownAct;
     QAction m_keepHiddenAct;
     QAction m_smartHideAct;
+    QAction m_systemMonitor;
 
     DBusDisplay *m_displayInter;
     DBusDock *m_dockInter;
