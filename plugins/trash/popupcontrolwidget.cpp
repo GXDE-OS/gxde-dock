@@ -123,12 +123,13 @@ void PopupControlWidget::clearTrashFloder()
         return;
     }
 
-    /*if (DTrashManager::instance()->cleanTrash()) {
-        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
+    if (DTrashManager::instance()->cleanTrash()) {
+        //DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
     } else {
         qWarning() << "Clear trash failed";
-    }*/
-//    DFMGlobal::instance()->clearTrash();
+    }
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
+    //DFMGlobal::instance()->clearTrash();
 }
 
 int PopupControlWidget::trashItemCount() const
