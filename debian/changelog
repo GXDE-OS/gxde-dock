@@ -1,7 +1,8 @@
-dde-dock (4.10.14gxde2) UNRELEASED; urgency=medium
+dde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
   * Repair Wine Problem
   * config file to GXDE
+  * add system monitor entry
 
  -- gfdgd_xi <3025613752@qq.com>  Sat, 31 Aug 2024 08:29:57 +0800
 

@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="de">
 <context>
     <name>AbstractPluginsController</name>
     <message>
@@ -168,6 +170,10 @@
     <message>
         <source>Plugins</source>
         <translation>Plugins</translation>
+    </message>
+    <message>
+        <source>System Monitor</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -366,6 +372,41 @@
     <message>
         <source>Wireless Network %1</source>
         <translation>Drahtlosnetzwerk %1</translation>
+    </message>
+</context>
+<context>
+    <name>pluginSettingDialog</name>
+    <message>
+        <source>系统监控插件设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>高效模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>只显示CPU、内存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示CP&amp;U、内存和网速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>时尚模式显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>行高：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

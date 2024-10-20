@@ -176,7 +176,7 @@ void DockSettings::openSystemMonitor()
         QProcess::startDetached("gxde-system-monitor");
     }
     else {
-        QProcess::startDetached("deepin -system-monitor");
+        QProcess::startDetached("deepin-system-monitor");
     }
 }
 

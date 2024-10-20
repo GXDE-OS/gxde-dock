@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 set(BIN_NAME dde-dock)
-
+set(TRANS_DIR "${CMAKE_CURRENT_DIR}/translate")
 configure_file(environments.h.in environments.h @ONLY)
 
 # Sources files
