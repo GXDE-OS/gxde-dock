@@ -54,6 +54,8 @@ public:
         Disabled
     };
 
+    virtual PluginSizePolicy pluginSizePolicy() const { return System; }
+
     ///
     /// \brief ~PluginsItemInterface
     /// DON'T try to delete m_proxyInter.
