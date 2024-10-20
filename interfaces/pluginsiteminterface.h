@@ -35,6 +35,25 @@
 class PluginsItemInterface
 {
 public:
+    enum PluginType {
+        Normal,
+        Fixed
+    };
+
+    /**
+    * @brief Plugin size policy
+    */
+    enum PluginSizePolicy {
+        System = 1 << 0, // Follow the system
+        Custom = 1 << 1  // The custom
+    };
+
+    enum PluginMode {
+        Deactive = 0,
+        Active,
+        Disabled
+    };
+
     ///
     /// \brief ~PluginsItemInterface
     /// DON'T try to delete m_proxyInter.
