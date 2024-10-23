@@ -85,17 +85,17 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     {
         QString format;
         if (m_24HourFormat)
-            format = "hh:mm";
+            format = "hh:mm\nyyyy-MM-dd";
         else
         {
             if (position == Dock::Top || position == Dock::Bottom)
-                format = "hh:mm AP";
+                format = "hh:mm AP\nyyyy-MM-dd";
             else
-                format = "hh:mm\nAP";
+                format = "hh:mm\nAP\nyyyy-MM-dd";
         }
 
         painter.setPen(Qt::white);
-        painter.drawText(rect(), Qt::AlignCenter, current.time().toString(format));
+        painter.drawText(rect(), Qt::AlignCenter, current.currentDateTime().toString(format));
         return;
     }
 
