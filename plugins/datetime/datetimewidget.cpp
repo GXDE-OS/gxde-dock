@@ -57,9 +57,10 @@ QSize DatetimeWidget::sizeHint() const
     QFontMetrics fm(qApp->font());
 
     if (m_24HourFormat)
-        return fm.boundingRect("88:88").size() + QSize(20, 10);
+        return fm.boundingRect("2024/10/24").size() + QSize(20, 10);
+        //return fm.boundingRect("10:24\n2024/10/24").size() + QSize(20, 10);
     else
-        return fm.boundingRect("88:88 A.A.").size() + QSize(20, 20);
+        return fm.boundingRect("10:24 A.A.").size() + QSize(20, 20);
 }
 
 void DatetimeWidget::resizeEvent(QResizeEvent *e)
@@ -85,13 +86,16 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     {
         QString format;
         if (m_24HourFormat)
-            format = "hh:mm\nyyyy-MM-dd";
+            if (position == Dock::Top || position == Dock::Bottom)
+                format = "hh:mm\nyyyy/MM/dd";
+            else
+                format = "hh:mm\nyyyy\n/MM/dd";
         else
         {
             if (position == Dock::Top || position == Dock::Bottom)
-                format = "hh:mm AP\nyyyy-MM-dd";
+                format = "hh:mm AP\nyyyy/MM/dd";
             else
-                format = "hh:mm\nAP\nyyyy-MM-dd";
+                format = "hh:mm\nAP\nyyyy/MM/dd";
         }
 
         painter.setPen(Qt::white);
