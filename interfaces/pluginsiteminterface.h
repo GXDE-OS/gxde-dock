@@ -35,15 +35,15 @@
 class PluginsItemInterface
 {
 public:
-    enum PluginType {
+    /*enum PluginType {
         Normal,
         Fixed
-    };
+    };*/
 
     /**
     * @brief Plugin size policy
     */
-    enum PluginSizePolicy {
+    /*enum PluginSizePolicy {
         System = 1 << 0, // Follow the system
         Custom = 1 << 1  // The custom
     };
@@ -54,7 +54,7 @@ public:
         Disabled
     };
 
-    virtual PluginSizePolicy pluginSizePolicy() const { return System; }
+    virtual PluginSizePolicy pluginSizePolicy() const { return System; }*/
 
     ///
     /// \brief ~PluginsItemInterface
