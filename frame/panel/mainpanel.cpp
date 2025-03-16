@@ -371,6 +371,23 @@ DockItem *MainPanel::itemAt(const QPoint &point)
     return nullptr;
 }
 
+QSize MainPanel::resizeDockPlugins(QSize oldSize, Dock::Position dockPlace, QSize suggestSize)
+{
+    // 计算缩放比
+    double widthProportion = suggestSize.width() * 1.0 / oldSize.width();
+    double heightProportion = suggestSize.height() * 1.0 / oldSize.height();
+    if (m_position == Dock::Top || m_position == Dock::Bottom) {
+        // 需要保证 height 统一
+        return QSize(oldSize.width() * heightProportion,
+                     oldSize.height() * heightProportion);
+    }
+    else {
+        // 需要保证 width 统一
+        return QSize(oldSize.width() * widthProportion,
+                     oldSize.height() * widthProportion);
+    }
+}
+
 ///
 /// \brief MainPanel::adjustItemSize adjust all dock item size to fit panel size,
 /// for optimize cpu usage, DO NOT call this func immediately, you should use m_itemAdjustTimer
@@ -439,6 +456,7 @@ void MainPanel::adjustItemSize()
         case DockItem::Plugins:
         case DockItem::TrayPlugin:
             if (m_displayMode == Fashion) {
+                auto pluginItem = static_cast<PluginsItem *>(item.data());
                 // 特殊处理时尚模式下的托盘插件
                 if (item->itemType() == DockItem::TrayPlugin) {
                     FSTrayItem = static_cast<TrayPluginItem *>(item.data());
@@ -453,7 +471,19 @@ void MainPanel::adjustItemSize()
                         totalWidth += itemSize.width();
                         totalHeight += FSTrayTotalSize.height();
                     }
-                } else {
+                } else if (pluginItem->pluginSizePolicy() ==
+                           PluginsItemInterface::PluginSizePolicy::Custom) {
+                    const QSize size = item->sizeHint();
+                    item->setFixedSize(size);
+                    if (m_position == Dock::Top || m_position == Dock::Bottom)
+                        item->setFixedHeight(itemSize.height());
+                    else
+                        item->setFixedWidth(itemSize.width());
+                    totalWidth += size.width();
+                    totalHeight += size.height();
+                    ++totalAppItemCount;
+                }
+                else {
                     item->setFixedSize(itemSize);
                     totalWidth += itemSize.width();
                     totalHeight += itemSize.height();

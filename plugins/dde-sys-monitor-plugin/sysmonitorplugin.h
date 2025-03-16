@@ -40,6 +40,8 @@ public:
     //自定义读写配置函数
     void readConfig(Settings *settings);
     void writeConfig(Settings *settings);
+
+    PluginSizePolicy pluginSizePolicy() const override { return Custom; }
 private slots:
     // 用于更新数据的槽函数
     void refreshInfo();

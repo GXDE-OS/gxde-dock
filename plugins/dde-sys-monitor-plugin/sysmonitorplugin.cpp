@@ -129,15 +129,12 @@ void SysMonitorPlugin::readConfig(Settings *settings)
 {
     settings->efficient=DisplayContentSetting(m_proxyInter->
                          getValue(this,"efficient",DisplayContentSetting::ALL).toInt());
-    settings->fashion=DisplayContentSetting(m_proxyInter->
-                       getValue(this,"fashion",DisplayContentSetting::NETSPEED).toInt());
     settings->lineHeight=m_proxyInter->getValue(this,"lineHeight",100).toInt();
 }
 //写配置信息
 void SysMonitorPlugin::writeConfig(Settings *settings)
 {
     m_proxyInter->saveValue(this,"efficient",settings->efficient);
-    m_proxyInter->saveValue(this,"fashion",settings->fashion);
     m_proxyInter->saveValue(this,"lineHeight",settings->lineHeight);
 }
 

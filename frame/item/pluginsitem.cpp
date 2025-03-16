@@ -102,6 +102,11 @@ void PluginsItem::setInContainer(const bool container)
     m_pluginInter->setItemIsInContainer(m_itemKey, container);
 }
 
+PluginsItemInterface::PluginSizePolicy PluginsItem::pluginSizePolicy() const
+{
+    return m_pluginInter->pluginSizePolicy();
+}
+
 QString PluginsItem::pluginName() const
 {
     return m_pluginInter->pluginName();

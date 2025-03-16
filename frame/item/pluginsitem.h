@@ -40,6 +40,7 @@ public:
     bool allowContainer() const;
     bool isInContainer() const;
     void setInContainer(const bool container);
+    PluginsItemInterface::PluginSizePolicy pluginSizePolicy() const;
 
     QString pluginName() const;
 

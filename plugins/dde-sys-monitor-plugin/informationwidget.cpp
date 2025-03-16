@@ -21,64 +21,38 @@ InformationWidget::InformationWidget(QWidget *parent)
 
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addWidget(m_infoLabel);
-    centralLayout->setSpacing(0);
-    centralLayout->setMargin(0);
+    centralLayout->setSpacing(5);
+    centralLayout->setMargin(5);
 
     setLayout(centralLayout);
 }
 
 void InformationWidget::UpdateData(const Info& info,Dock::DisplayMode dismode,const Settings& settings)
 {
-    if(dismode==Dock::Efficient)//高效模式
-    {
-        switch (settings.efficient) {
-        case DisplayContentSetting::CPUMEM:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2<br/>MEM:%3</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.cpu)
-                                 .arg(info.mem));
-            break;
-        case DisplayContentSetting::NETSPEED:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>↑%2/S<br/>↓%3/S</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.netup)
-                                 .arg(info.netdwon));
-            break;
-        case DisplayContentSetting::ALL:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S<br/>MEM:%4↓%5/S</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.cpu).arg(info.netup)
-                                 .arg(info.mem).arg(info.netdwon));
-            break;
-        default:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S<br/>MEM:%4↓%5/S</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.cpu).arg(info.netup)
-                                 .arg(info.mem).arg(info.netdwon));
-            break;
-        }
-    }
-    else//时尚模式
-    {
-        switch (settings.fashion) {
-        case DisplayContentSetting::CPUMEM:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2<br/>MEM:%3</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.cpu)
-                                 .arg(info.mem));
-            break;
-        case DisplayContentSetting::NETSPEED:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>↑%2/S<br/>↓%3/S</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.netup)
-                                 .arg(info.netdwon));
-            break;
-        default:
-            m_infoLabel->setText(QString("<p style='line-height:%1%'>↑%2/S<br/>↓%3/S</p>")
-                                 .arg(settings.lineHeight)
-                                 .arg(info.netup)
-                                 .arg(info.netdwon));
-            break;
-        }
+    switch (settings.efficient) {
+    case DisplayContentSetting::CPUMEM:
+        m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2<br/>MEM:%3</p>")
+                             .arg(settings.lineHeight)
+                             .arg(info.cpu)
+                             .arg(info.mem));
+        break;
+    case DisplayContentSetting::NETSPEED:
+        m_infoLabel->setText(QString("<p style='line-height:%1%'>↑%2/S<br/>↓%3/S</p>")
+                             .arg(settings.lineHeight)
+                             .arg(info.netup)
+                             .arg(info.netdwon));
+        break;
+    case DisplayContentSetting::ALL:
+        m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S<br/>MEM:%4↓%5/S</p>")
+                             .arg(settings.lineHeight)
+                             .arg(info.cpu).arg(info.netup)
+                             .arg(info.mem).arg(info.netdwon));
+        break;
+    default:
+        m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S<br/>MEM:%4↓%5/S</p>")
+                             .arg(settings.lineHeight)
+                             .arg(info.cpu).arg(info.netup)
+                             .arg(info.mem).arg(info.netdwon));
+        break;
     }
 }

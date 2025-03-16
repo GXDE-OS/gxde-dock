@@ -23,6 +23,7 @@
 #ifndef MAINPANEL_H
 #define MAINPANEL_H
 
+#include "constants.h"
 #include "controller/dockitemcontroller.h"
 #include "util/docksettings.h"
 #include "item/showdesktopitem.h"
@@ -91,6 +92,8 @@ private slots:
     void checkMouseReallyLeave();
 
 private:
+    QSize resizeDockPlugins(QSize oldSize, Dock::Position dockPlace, QSize suggestSize);
+
     Position m_position;
     DisplayMode m_displayMode;
 

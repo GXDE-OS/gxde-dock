@@ -10,9 +10,6 @@ pluginSettingDialog::pluginSettingDialog(Settings *settings,QWidget *parent) :
     else if(settings->efficient==DisplayContentSetting::NETSPEED)ui->onlyNetSpeedRadioButton->setChecked(true);
     else ui->showAllRadioButton->setChecked(true);
 
-    if(settings->fashion==DisplayContentSetting::CPUMEM)ui->fashionOnlyCPUMEMRadioButton->setChecked(true);
-    else ui->fashionOnlyNetSpeedRadioButton->setChecked(true);
-
     ui->lineHeightSpinBox->setValue(settings->lineHeight);
 }
 
@@ -26,9 +23,6 @@ void pluginSettingDialog::getDisplayContentSetting(Settings *settings)
     if(ui->onlyCPUMEMRadioButton->isChecked())settings->efficient=DisplayContentSetting::CPUMEM;
     else if(ui->onlyNetSpeedRadioButton->isChecked())settings->efficient=DisplayContentSetting::NETSPEED;
     else settings->efficient=DisplayContentSetting::ALL;
-
-    if(ui->fashionOnlyCPUMEMRadioButton->isChecked())settings->fashion=DisplayContentSetting::CPUMEM;
-    else settings->fashion=DisplayContentSetting::NETSPEED;
 
     settings->lineHeight=ui->lineHeightSpinBox->value();
 }

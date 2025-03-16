@@ -43,18 +43,18 @@ public:
     /**
     * @brief Plugin size policy
     */
-    /*enum PluginSizePolicy {
+    enum PluginSizePolicy {
         System = 1 << 0, // Follow the system
         Custom = 1 << 1  // The custom
     };
 
-    enum PluginMode {
+    /*enum PluginMode {
         Deactive = 0,
         Active,
         Disabled
-    };
+    };*/
 
-    virtual PluginSizePolicy pluginSizePolicy() const { return System; }*/
+    virtual PluginSizePolicy pluginSizePolicy() const { return System; }
 
     ///
     /// \brief ~PluginsItemInterface

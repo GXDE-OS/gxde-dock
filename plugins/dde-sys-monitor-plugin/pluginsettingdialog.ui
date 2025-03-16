@@ -19,11 +19,11 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="5,5,1,1">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="5,1,1">
    <item>
     <widget class="QGroupBox" name="displayContentSettingGroupBox">
      <property name="title">
-      <string>高效模式显示内容设置</string>
+      <string>显示内容设置</string>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
@@ -53,39 +53,6 @@
         <widget class="QRadioButton" name="showAllRadioButton">
          <property name="text">
           <string>显示CP&amp;U、内存和网速</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="fashionDisplayContentSettingGroupBox">
-     <property name="title">
-      <string>时尚模式显示内容设置</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>32</x>
-        <y>57</y>
-        <width>123</width>
-        <height>56</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QRadioButton" name="fashionOnlyCPUMEMRadioButton">
-         <property name="text">
-          <string>只显示CPU、内存</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="fashionOnlyNetSpeedRadioButton">
-         <property name="text">
-          <string>只显示网速</string>
          </property>
         </widget>
        </item>
@@ -153,12 +120,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>fashionDisplayContentSettingGroupBox</zorder>
-  <zorder>displayContentSettingGroupBox</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>lineHeightSpinBox</zorder>
-  <zorder>label</zorder>
-  <zorder>horizontalSpacer</zorder>
  </widget>
  <resources/>
  <connections>
