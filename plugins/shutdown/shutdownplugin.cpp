@@ -45,7 +45,7 @@ ShutdownPlugin::ShutdownPlugin(QObject *parent)
                      CHROOTCHECKINTERFACE,
                      "IsInChroot");
     QDBusMessage res = QDBusConnection::sessionBus().call(checkChrootDBus);
-    m_isInChroot = !res.arguments().at(0).toBool();
+    m_isInChroot = res.arguments().at(0).toBool();
 }
 
 const QString ShutdownPlugin::pluginName() const
