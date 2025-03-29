@@ -413,6 +413,14 @@ void TrayPlugin::traySNIAdded(const QString &itemKey, const QString &sniServiceP
         return;
     }
 
+    if (sniServicePath.contains("/org/ayatana/NotificationItem/")) {
+        // 参考：https://github.com/linuxdeepin/dde-dock/commit/00d0f13c1abc2f49bda745d0cc1025a43cd1043c
+        // fix: duplicate tray for some app
+        // some gtk apps use libayatana-appindicator create tray will create xembed and sni duplicate tray
+        // not show sni tray which path contains /org/ayatana/NotificationItem/ created by ayatana-appindicator
+        return;
+    }
+
     SNITrayWidget *trayWidget = new SNITrayWidget(sniServicePath);
     if (trayWidget->status() == SNITrayWidget::ItemStatus::Passive) {
         m_passiveSNITrayMap.insert(itemKey, trayWidget);
