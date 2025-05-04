@@ -94,6 +94,7 @@ DockSettings::DockSettings(QWidget *parent)
     modeSubMenu->addAction(&m_efficientModeAct);
     QAction *modeSubMenuAct = new QAction(tr("Mode"), this);
     modeSubMenuAct->setMenu(modeSubMenu);
+    modeSubMenuAct->setDisabled(QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode"));
 
     WhiteMenu *locationSubMenu = new WhiteMenu(&m_settingsMenu);
     locationSubMenu->addAction(&m_topPosAct);

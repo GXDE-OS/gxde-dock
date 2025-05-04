@@ -109,8 +109,20 @@ int main(int argc, char *argv[])
     QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
 
     QTimer::singleShot(1, &mw, &MainWindow::launch);
-    if (!parser.isSet(disablePlugOption)) {
+
+    if (QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode")) {
+        // Mac 模式下强制开启时尚模式
+        QProcess process;
+        process.start("gsettings set com.deepin.dde.dock display-mode 'fashion'");
+        process.waitForStarted();
+        process.waitForFinished();
+        process.close();
+    }
+
+    if (!parser.isSet(disablePlugOption) &&
+        !QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode")) {
         DockItemController::instance()->startLoadPlugins();
+
     }
     return app.exec();
 }
