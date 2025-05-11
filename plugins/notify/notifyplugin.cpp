@@ -106,7 +106,13 @@ const QString NotifyPlugin::itemCommand(const QString &itemKey)
 const QString NotifyPlugin::itemContextMenu(const QString &itemKey)
 {
     QList<QVariant> items;
-    items.reserve(6);
+    items.reserve(1);
+
+    QMap<QString, QVariant> controlCenter;
+    controlCenter["itemId"] = "controlCenter";
+    controlCenter["itemText"] = tr("Open Control Center");
+    controlCenter["isActive"] = true;
+    items.push_back(controlCenter);
 
     QMap<QString, QVariant> menu;
     menu["items"] = items;
@@ -121,18 +127,9 @@ void NotifyPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId
     Q_UNUSED(itemKey)
     Q_UNUSED(checked)
 
-    if (menuId == "power")
-        QProcess::startDetached("dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.ShowModule \"string:power\"");
-    else if (menuId == "Lock")
-        QProcess::startDetached("dbus-send", QStringList() << "--print-reply"
-                                                           << "--dest=com.deepin.dde.lockFront"
-                                                           << "/com/deepin/dde/lockFront"
-                                                           << QString("com.deepin.dde.lockFront.Show"));
-    else
-        QProcess::startDetached("dbus-send", QStringList() << "--print-reply"
-                                                           << "--dest=com.deepin.dde.notifyFront"
-                                                           << "/com/deepin/dde/notifyFront"
-                                                           << QString("com.deepin.dde.notifyFront.%1").arg(menuId));
+    if (menuId == "controlCenter") {
+        QProcess::startDetached("dbus-send --session --print-reply=literal --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.Show");
+    }
 }
 
 void NotifyPlugin::displayModeChanged(const Dock::DisplayMode displayMode)
