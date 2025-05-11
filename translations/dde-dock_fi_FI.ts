@@ -197,22 +197,22 @@
         <translation>Tila</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="103"/>
+        <location filename="../frame/util/docksettings.cpp" line="104"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="110"/>
+        <location filename="../frame/util/docksettings.cpp" line="111"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="117"/>
+        <location filename="../frame/util/docksettings.cpp" line="118"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="121"/>
+        <location filename="../frame/util/docksettings.cpp" line="122"/>
         <source>Plugins</source>
         <translation>Liitännäiset</translation>
     </message>
@@ -231,6 +231,24 @@
         <location filename="../plugins/network/networkplugin.cpp" line="49"/>
         <source>Network</source>
         <translation>Lähiverkko</translation>
+    </message>
+</context>
+<context>
+    <name>NotifyPlugin</name>
+    <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
+        <source>Power</source>
+        <translation type="unfinished">Virta</translation>
+    </message>
+    <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <source>Notify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <source>Open Control Center</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -296,48 +314,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="108"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
         <source>Shut down</source>
         <translation>Sammuta</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="114"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
         <source>Restart</source>
         <translation>Uudelleenkäynnistys</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="128"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
         <source>Hibernate</source>
         <translation>Lepotila</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
         <source>Lock</source>
         <translation>Lukitse</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="142"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
         <source>Log out</source>
         <translation>Kirjaudu ulos</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="121"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
         <source>Suspend</source>
         <translation>Valmiustila</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="46"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="62"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
         <source>Power</source>
         <translation type="unfinished">Virta</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="150"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
         <source>Switch account</source>
         <translation>Vaihda tiliä</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
         <source>Power settings</source>
         <translation>Virran asetukset</translation>
     </message>
@@ -477,18 +495,16 @@
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
-        <source>高效模式显示内容设置</source>
+        <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="88"/>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="81"/>
         <source>只显示CPU、内存</source>
         <translation type="unfinished"></translation>
     </message>
@@ -498,17 +514,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="66"/>
-        <source>时尚模式显示内容设置</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="104"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="71"/>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="114"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="81"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>

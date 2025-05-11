@@ -191,6 +191,21 @@
     </message>
 </context>
 <context>
+    <name>NotifyPlugin</name>
+    <message>
+        <source>Power</source>
+        <translation>電源</translation>
+    </message>
+    <message>
+        <source>Notify</source>
+        <translation>消息通知</translation>
+    </message>
+    <message>
+        <source>Open Control Center</source>
+        <translation>打開控制中心</translation>
+    </message>
+</context>
+<context>
     <name>OnboardPlugin</name>
     <message>
         <source>Onboard</source>
@@ -268,7 +283,7 @@
     </message>
     <message>
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation>電源設置</translation>
     </message>
 </context>
 <context>
@@ -378,35 +393,31 @@
     <name>pluginSettingDialog</name>
     <message>
         <source>系统监控插件设置</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>高效模式显示内容设置</source>
-        <translation type="unfinished"></translation>
+        <translation>系統監控插件設置</translation>
     </message>
     <message>
         <source>只显示网速</source>
-        <translation type="unfinished"></translation>
+        <translation>只顯示網速</translation>
     </message>
     <message>
         <source>只显示CPU、内存</source>
-        <translation type="unfinished"></translation>
+        <translation>只顯示CPU、內存</translation>
     </message>
     <message>
         <source>显示CP&amp;U、内存和网速</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>时尚模式显示内容设置</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示CP&amp;U、內存和網速</translation>
     </message>
     <message>
         <source>行高：</source>
-        <translation type="unfinished"></translation>
+        <translation>行高：</translation>
     </message>
     <message>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
+    </message>
+    <message>
+        <source>显示内容设置</source>
+        <translation>顯示內容設置</translation>
     </message>
 </context>
 </TS>

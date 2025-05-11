@@ -191,6 +191,21 @@
     </message>
 </context>
 <context>
+    <name>NotifyPlugin</name>
+    <message>
+        <source>Power</source>
+        <translation type="unfinished">Energie</translation>
+    </message>
+    <message>
+        <source>Notify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Control Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OnboardPlugin</name>
     <message>
         <source>Onboard</source>
@@ -381,10 +396,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>高效模式显示内容设置</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
@@ -397,15 +408,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>时尚模式显示内容设置</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

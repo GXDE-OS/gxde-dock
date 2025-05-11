@@ -1,9 +1,10 @@
-dde-dock (4.14.0) UNRELEASED; urgency=medium
+dde-dock (4.15.0) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
+  * 新增消息通知插件
 
- -- gfdgd_xi <3025613752@qq.com>  Sun, 04 May 2025 20:12:09 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sun, 11 May 2025 15:06:01 +0800
 
 dde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
