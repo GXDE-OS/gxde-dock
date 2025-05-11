@@ -100,7 +100,7 @@ const QString NotifyPlugin::itemCommand(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
 
-    return QString("dbus-send --session --print-reply=literal --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.ShowNotify");
+    return QString("dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.ShowNotify");
 }
 
 const QString NotifyPlugin::itemContextMenu(const QString &itemKey)
