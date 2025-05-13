@@ -45,7 +45,7 @@ const QString NotifyPlugin::pluginName() const
 
 const QString NotifyPlugin::pluginDisplayName() const
 {
-    return tr("Power");
+    return tr("Notify");
 }
 
 QWidget *NotifyPlugin::itemWidget(const QString &itemKey)
