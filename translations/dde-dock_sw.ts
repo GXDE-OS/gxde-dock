@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">Kiwashio</translation>
+        <translation type="obsolete">Kiwashio</translation>
     </message>
     <message>
         <source>Notify</source>

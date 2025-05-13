@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation>電源</translation>
+        <translation type="vanished">電源</translation>
     </message>
     <message>
         <source>Notify</source>
@@ -224,7 +224,7 @@
     </message>
     <message>
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">電源設置</translation>
     </message>
     <message>
         <source>Charged %1</source>

@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">Kikapcsolás</translation>
+        <translation type="obsolete">Kikapcsolás</translation>
     </message>
     <message>
         <source>Notify</source>

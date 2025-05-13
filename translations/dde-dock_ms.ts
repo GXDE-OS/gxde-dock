@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">Kuasa</translation>
+        <translation type="obsolete">Kuasa</translation>
     </message>
     <message>
         <source>Notify</source>

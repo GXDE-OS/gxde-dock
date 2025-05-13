@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">மின்திறன்</translation>
+        <translation type="obsolete">மின்திறன்</translation>
     </message>
     <message>
         <source>Notify</source>

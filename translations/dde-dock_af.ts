@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">Krag</translation>
+        <translation type="obsolete">Krag</translation>
     </message>
     <message>
         <source>Notify</source>

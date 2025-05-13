@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">전원</translation>
+        <translation type="obsolete">전원</translation>
     </message>
     <message>
         <source>Notify</source>

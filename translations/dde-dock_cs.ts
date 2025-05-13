@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">Napájení</translation>
+        <translation type="obsolete">Napájení</translation>
     </message>
     <message>
         <source>Notify</source>

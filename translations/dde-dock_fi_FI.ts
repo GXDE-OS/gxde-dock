@@ -236,11 +236,11 @@
 <context>
     <name>NotifyPlugin</name>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
         <source>Power</source>
-        <translation type="unfinished">Virta</translation>
+        <translation type="obsolete">Virta</translation>
     </message>
     <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
         <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
         <source>Notify</source>
         <translation type="unfinished"></translation>

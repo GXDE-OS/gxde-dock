@@ -193,10 +193,6 @@
 <context>
     <name>NotifyPlugin</name>
     <message>
-        <source>Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Notify</source>
         <translation type="unfinished"></translation>
     </message>

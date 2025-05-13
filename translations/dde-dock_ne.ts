@@ -194,7 +194,7 @@
     <name>NotifyPlugin</name>
     <message>
         <source>Power</source>
-        <translation type="unfinished">पावर</translation>
+        <translation type="obsolete">पावर</translation>
     </message>
     <message>
         <source>Notify</source>
