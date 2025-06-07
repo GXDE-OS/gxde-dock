@@ -54,7 +54,7 @@ enum DisplayMode {
     Fashion     = 0,
     Efficient   = 1,
     // deprecreated
-//    Classic     = 2,
+    Classic     = 2,
 };
 
 #define PROP_HIDE_MODE      "HideMode"

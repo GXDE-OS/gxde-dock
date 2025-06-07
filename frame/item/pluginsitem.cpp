@@ -83,7 +83,7 @@ void PluginsItem::detachPluginWidget()
 
 bool PluginsItem::allowContainer() const
 {
-    if (DockDisplayMode == Dock::Fashion)
+    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
         return false;
 
     return m_pluginInter->itemAllowContainer(m_itemKey);
@@ -91,7 +91,7 @@ bool PluginsItem::allowContainer() const
 
 bool PluginsItem::isInContainer() const
 {
-    if (DockDisplayMode == Dock::Fashion)
+    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
         return false;
 
     return m_pluginInter->itemIsInContainer(m_itemKey);
@@ -123,7 +123,7 @@ void PluginsItem::paintEvent(QPaintEvent *event)
 
     DisplayMode displayMode = m_pluginInter->displayMode();
 
-    if (displayMode == Dock::DisplayMode::Fashion) {
+    if (displayMode == Dock::DisplayMode::Fashion || displayMode == Dock::Classic) {
         return;
     }
     if (!m_hover || m_dragging) {

@@ -554,7 +554,7 @@ void DockSettings::calculateWindowConfig()
     const int defaultHeight = std::round(AppItem::itemBaseHeight() / ratio);
     const int defaultWidth = std::round(AppItem::itemBaseWidth() / ratio);
 
-    if (m_displayMode == Dock::Efficient)
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic)
     {
         switch (m_position)
         {

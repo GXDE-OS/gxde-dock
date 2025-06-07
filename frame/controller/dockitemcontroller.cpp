@@ -199,7 +199,8 @@ void DockItemController::placeholderItemRemoved(PlaceholderItem *item)
 // refresh right spliter visible of fashion tray plugin item
 void DockItemController::refreshFSTItemSpliterVisible()
 {
-    if (DockSettings::Instance().displayMode() != Dock::DisplayMode::Fashion) {
+    if (DockSettings::Instance().displayMode() != Dock::DisplayMode::Fashion &&
+        DockSettings::Instance().displayMode() != Dock::DisplayMode::Classic) {
         return;
     }
 

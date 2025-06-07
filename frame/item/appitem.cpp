@@ -151,7 +151,7 @@ int AppItem::iconBaseSize()
 
 int AppItem::itemBaseWidth()
 {
-    if (DockDisplayMode == Dock::Fashion)
+    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
         return itemBaseHeight() * 1.1;
     else
         return itemBaseHeight() * 1.4;
@@ -191,7 +191,7 @@ void AppItem::moveEvent(QMoveEvent *e)
 
 int AppItem::itemBaseHeight()
 {
-    if (DockDisplayMode == Efficient)
+    if (DockDisplayMode == Efficient || DockDisplayMode == Classic)
         return IconBaseSize * 1.2;
     else
         return IconBaseSize * 1.5;
@@ -531,7 +531,7 @@ void AppItem::updateWindowInfos(const WindowInfoMap &info)
     // process attention effect
     if (hasAttention())
     {
-        if (DockDisplayMode == DisplayMode::Fashion)
+        if (DockDisplayMode == DisplayMode::Fashion || DockDisplayMode == DisplayMode::Classic)
             playSwingEffect();
     } else {
         stopSwingEffect();
@@ -639,7 +639,7 @@ void AppItem::stopSwingEffect()
 void AppItem::checkAttentionEffect()
 {
     QTimer::singleShot(1000, this, [=] {
-        if (DockDisplayMode == DisplayMode::Fashion && hasAttention())
+        if ((DockDisplayMode == DisplayMode::Fashion || DockDisplayMode == DisplayMode::Classic) && hasAttention())
             playSwingEffect();
     });
 }

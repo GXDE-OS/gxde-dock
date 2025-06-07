@@ -82,7 +82,7 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if (displayMode == Dock::Efficient)
+    if (displayMode == Dock::Efficient || displayMode == Dock::Classic)
     {
         QString format;
         if (m_24HourFormat)

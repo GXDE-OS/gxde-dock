@@ -96,15 +96,19 @@ MainPanel::MainPanel(QWidget *parent)
     m_checkMouseLeaveTimer->setInterval(300);
 
     const auto &itemList = m_itemController->itemList();
+
+    bool isApp = false;
     for (auto item : itemList)
     {
         manageItem(item);
+        qDebug() << item->itemType() << isApp;
         m_itemLayout->addWidget(item);
     }
 
     m_showDesktopItem->setFixedSize(10, height());
     m_itemLayout->addSpacing(1);
     m_itemLayout->addWidget(m_showDesktopItem);
+
 
     setLayout(m_itemLayout);
 }
@@ -124,10 +128,12 @@ void MainPanel::updateDockPosition(const Position dockPosition)
     case Position::Top:
     case Position::Bottom:
         m_itemLayout->setDirection(QBoxLayout::LeftToRight);
+        m_itemLayout->setDirection(QBoxLayout::LeftToRight);
         m_showDesktopItem->setFixedSize(10, height());
         break;
     case Position::Left:
     case Position::Right:
+        m_itemLayout->setDirection(QBoxLayout::TopToBottom);
         m_itemLayout->setDirection(QBoxLayout::TopToBottom);
         m_showDesktopItem->setFixedSize(width(), 10);
         break;
@@ -142,7 +148,7 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
 {
     m_displayMode = displayMode;
 
-    m_showDesktopItem->setVisible(displayMode == Dock::Efficient);
+    m_showDesktopItem->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic);
 
     const auto &itemList = m_itemController->itemList();
     for (auto item : itemList)
@@ -151,7 +157,7 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
         switch (item->itemType())
         {
         case DockItem::Container:
-            item->setVisible(displayMode == Dock::Efficient);
+            item->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic);
             break;
         default:;
         }
@@ -565,7 +571,7 @@ void MainPanel::adjustItemSize()
     // FIXME:
     // 时尚模式下使用整形否则会出现图标大小计算不正确的问题
     // 高校模式下使用浮点数否则会出现图标背景色连到一起的问题
-    const double decrease = m_displayMode == Dock::Fashion ?
+    const double decrease = (m_displayMode == Dock::Fashion || m_displayMode == Dock::Classic) ?
                 int(overflow - base) / totalAppItemCount :
                 double(overflow - base) / totalAppItemCount;
 
@@ -578,13 +584,13 @@ void MainPanel::adjustItemSize()
             continue;
         if (itemType == DockItem::Plugins)
         {
-            if (m_displayMode != Dock::Fashion)
+            if (m_displayMode != Dock::Fashion && m_displayMode != Dock::Classic)
                 continue;
             if (m_itemController->itemIsInContainer(item))
                 continue;
         }
         if (itemType == DockItem::TrayPlugin) {
-            if (m_displayMode == Dock::Fashion) {
+            if (m_displayMode == Dock::Fashion || m_displayMode == Dock::Classic) {
                 switch (m_position) {
                 case Dock::Top:
                 case Dock::Bottom:
@@ -713,7 +719,7 @@ void MainPanel::itemDropped(QObject *destnation, const QPoint &dropPoint)
 
     DockItem *src = qobject_cast<DockItem *>(sender());
 
-    if (m_displayMode == Dock::Fashion)
+    if (m_displayMode == Dock::Fashion || m_displayMode == Dock::Classic)
         return;
 
     if (!src)
