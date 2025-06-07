@@ -53,7 +53,7 @@ const QString TrayPlugin::pluginName() const
 void TrayPlugin::init(PluginProxyInterface *proxyInter)
 {
     // transfex config
-    QSettings settings("deepin", "dde-dock-shutdown");
+    QSettings settings("deepin", "gxde-dock-shutdown");
     if (QFile::exists(settings.fileName())) {
         proxyInter->saveValue(this, "enable", settings.value("enable", true));
 
@@ -101,7 +101,7 @@ void TrayPlugin::init(PluginProxyInterface *proxyInter)
 bool TrayPlugin::pluginIsDisable()
 {
     // NOTE(justforlxz): local config
-    QSettings enableSetting("deepin", "dde-dock");
+    QSettings enableSetting("deepin", "gxde-dock");
     enableSetting.beginGroup("tray");
     if (!enableSetting.value("enable", true).toBool()) {
         return true;
@@ -414,7 +414,7 @@ void TrayPlugin::traySNIAdded(const QString &itemKey, const QString &sniServiceP
     }
 
     if (sniServicePath.contains("/org/ayatana/NotificationItem/")) {
-        // 参考：https://github.com/linuxdeepin/dde-dock/commit/00d0f13c1abc2f49bda745d0cc1025a43cd1043c
+        // 参考：https://github.com/linuxdeepin/gxde-dock/commit/00d0f13c1abc2f49bda745d0cc1025a43cd1043c
         // fix: duplicate tray for some app
         // some gtk apps use libayatana-appindicator create tray will create xembed and sni duplicate tray
         // not show sni tray which path contains /org/ayatana/NotificationItem/ created by ayatana-appindicator
@@ -573,7 +573,7 @@ void TrayPlugin::onSNIItemStatusChanged(SNITrayWidget::ItemStatus status)
 
 void TrayPlugin::loadIndicator()
 {
-    QDir indicatorConfDir("/etc/dde-dock/indicator");
+    QDir indicatorConfDir("/etc/gxde-dock/indicator");
 
     for (const QFileInfo &fileInfo : indicatorConfDir.entryInfoList({"*.json"}, QDir::Files | QDir::NoDotAndDotDot)) {
         const QString &indicatorName = fileInfo.baseName();

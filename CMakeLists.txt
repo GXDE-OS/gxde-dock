@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 
 set(VERSION 4.0)
 
-project(dde-dock)
+project(gxde-dock)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 14)
@@ -51,13 +51,13 @@ endif ()
 ## qm files
 file(GLOB QM_FILES "translations/*.qm")
 install(FILES ${QM_FILES}
-        DESTINATION share/dde-dock/translations)
+        DESTINATION share/gxde-dock/translations)
 
 ## dev files
 install(FILES ${INTERFACES}
-        DESTINATION include/dde-dock)
+        DESTINATION include/gxde-dock)
 
-install(FILES "dde-dock.pc"
+install(FILES "gxde-dock.pc"
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 install(FILES "cmake/DdeDock/DdeDockConfig.cmake"

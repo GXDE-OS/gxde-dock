@@ -1,24 +1,24 @@
 # 插件的工作原理
 
 插件是一种在不需要改动并重新编译主程序本身的情况下去扩展主程序功能的一种机制。\
-dde-dock 插件是根据 Qt 插件标准所开发的共享库文件(`so`)，通过实现 Qt 的插件标准和 dde-dock 提供的接口，共同完成 dde-dock 的功能扩展。\
+gxde-dock 插件是根据 Qt 插件标准所开发的共享库文件(`so`)，通过实现 Qt 的插件标准和 gxde-dock 提供的接口，共同完成 gxde-dock 的功能扩展。\
 可以通过以下链接查看关于 Qt 插件更详细的介绍：
 
 [https://wiki.qt.io/Plugins](https://wiki.qt.io/Plugins)\
 [https://doc.qt.io/qt-5/plugins-howto.html](https://doc.qt.io/qt-5/plugins-howto.html)
 
-## dde-dock 插件加载流程
+## gxde-dock 插件加载流程
 
-在 dde-dock 启动时会跑一个线程去检测目录`/usr/lib/dde-dock/plugins`下的所有文件，并检测是否是一个正常的动态库文件，如果是则尝试加载。尝试加载即检测库文件的元数据，插件的元数据定义在一个 JSON 文件中，这个后文会介绍，如果元数据检测通过就开始检查插件是否实现了 dde-dock 指定的接口，这一步也通过之后就会开始初始化插件，获取插件提供的控件，进而将控件显示在任务栏上。
+在 gxde-dock 启动时会跑一个线程去检测目录`/usr/lib/gxde-dock/plugins`下的所有文件，并检测是否是一个正常的动态库文件，如果是则尝试加载。尝试加载即检测库文件的元数据，插件的元数据定义在一个 JSON 文件中，这个后文会介绍，如果元数据检测通过就开始检查插件是否实现了 gxde-dock 指定的接口，这一步也通过之后就会开始初始化插件，获取插件提供的控件，进而将控件显示在任务栏上。
 
 ## 接口列表
 
-这里先列出 dde-dock 都提供了哪些接口，可作为一个手册查看，注意，为 dde-dock 编写插件并不是要实现所有接口，这些接口提供了 dde-dock 允许各种可能的功能，插件开发者可以根据自己的需求去实现自己需要的接口。后续的插件示例也将会用到这里列出的部分接口。
+这里先列出 gxde-dock 都提供了哪些接口，可作为一个手册查看，注意，为 gxde-dock 编写插件并不是要实现所有接口，这些接口提供了 gxde-dock 允许各种可能的功能，插件开发者可以根据自己的需求去实现自己需要的接口。后续的插件示例也将会用到这里列出的部分接口。
 
 接口定义的文件一般在系统的如下位置：
 ```
-/usr/include/dde-dock/pluginproxyinterface.h
-/usr/include/dde-dock/pluginsiteminterface.h
+/usr/include/gxde-dock/pluginproxyinterface.h
+/usr/include/gxde-dock/pluginsiteminterface.h
 ```
 
 ### PluginItemInterface
@@ -29,10 +29,10 @@ PluginsItemInterface 中定义的接口除了displayMode 和 position（历史�
 
 |名称|简介|
 |-|-|
-|pluginName | 返回插件名称，用于在 dde-dock 内部管理插件时使用 `必须实现`|
+|pluginName | 返回插件名称，用于在 gxde-dock 内部管理插件时使用 `必须实现`|
 |pluginDisplayName | 返回插件名称，用于在界面上显示|
 |init | 插件初始化入口函数，参数 proxyInter 可认为是主程序的进程 `必须实现`|
-|itemWidget | 返回插件主控件，用于显示在 dde-dock 面板上 `必须实现`|
+|itemWidget | 返回插件主控件，用于显示在 gxde-dock 面板上 `必须实现`|
 |itemTipsWidget | 返回鼠标悬浮在插件主控件上时显示的提示框控件|
 |itemPopupApplet | 返回鼠标左键点击插件主控件后弹出的控件|
 |itemCommand | 返回鼠标左键点击插件主控件后要执行的命令数据|
@@ -46,30 +46,30 @@ PluginsItemInterface 中定义的接口除了displayMode 和 position（历史�
 |pluginIsAllowDisable | 返回插件是否允许被禁用（默认不允许被禁用）|
 |pluginIsDisable | 返回插件当前是否处于被禁用状态|
 |pluginStateSwitched | 当插件的禁用状态被用户改变时此接口被调用|
-|displayModeChanged | dde-dock 显示模式发生改变时此接口被调用|
-|positionChanged | dde-dock 位置变化时时此接口被调用|
+|displayModeChanged | gxde-dock 显示模式发生改变时此接口被调用|
+|positionChanged | gxde-dock 位置变化时时此接口被调用|
 |refreshIcon | 当插件控件的图标需要更新时此接口被调用|
-|displayMode | 用于插件主动获取 dde-dock 当前的显示模式|
-|position | 用于插件主动获取 dde-dock 当前的位置|
+|displayMode | 用于插件主动获取 gxde-dock 当前的显示模式|
+|position | 用于插件主动获取 gxde-dock 当前的位置|
 
 ### PluginProxyInterface
 
-由于上面的接口对于插件来说都是被动的，即插件本身无法确定这些接口什么时刻会被调用，很明显这对于插件机制来说是不完整的，因此便有了 PluginProxyInterface，它定义了一些让插件主动调用以控制 dde-dock 的一些行为的接口。PluginProxyInterface 的具体实例可以认为是抽象了的 dde-dock 主程序，或者是 dde-dock 中所有插件的管理员，这个实例将会通过 PluginItemInterface 中的 `init` 接口传递给插件，因此在上述 `init` 接口中总是会先把这个传入的对象保存起来以供后续使用。
+由于上面的接口对于插件来说都是被动的，即插件本身无法确定这些接口什么时刻会被调用，很明显这对于插件机制来说是不完整的，因此便有了 PluginProxyInterface，它定义了一些让插件主动调用以控制 gxde-dock 的一些行为的接口。PluginProxyInterface 的具体实例可以认为是抽象了的 gxde-dock 主程序，或者是 gxde-dock 中所有插件的管理员，这个实例将会通过 PluginItemInterface 中的 `init` 接口传递给插件，因此在上述 `init` 接口中总是会先把这个传入的对象保存起来以供后续使用。
 
 |名称|简介|
 |-|-|
-|itemAdded | 向 dde-dock 添加新的主控件（一个插件可以添加多个主控件它们之间使用`ItemKey`区分）|
-|itemUpdate | 通知 dde-dock 有主控件需要更新|
-|itemRemoved | 从 dde-dock 移除主控件|
-|requestWindowAutoHide | 设置 dde-dock 是否允许隐藏，通常被用在任务栏被设置为智能隐藏或始终隐藏而插件又需要让 dde-dock 保持显示状态来显示一些重要信息的场景下|
-|requestRefreshWindowVisible |  通知 dde-dock 更新隐藏状态|
-|requestSetAppletVisible |  通知 dde-dock 显示或隐藏插件的弹出面板（鼠标左键点击后弹出的控件）|
+|itemAdded | 向 gxde-dock 添加新的主控件（一个插件可以添加多个主控件它们之间使用`ItemKey`区分）|
+|itemUpdate | 通知 gxde-dock 有主控件需要更新|
+|itemRemoved | 从 gxde-dock 移除主控件|
+|requestWindowAutoHide | 设置 gxde-dock 是否允许隐藏，通常被用在任务栏被设置为智能隐藏或始终隐藏而插件又需要让 gxde-dock 保持显示状态来显示一些重要信息的场景下|
+|requestRefreshWindowVisible |  通知 gxde-dock 更新隐藏状态|
+|requestSetAppletVisible |  通知 gxde-dock 显示或隐藏插件的弹出面板（鼠标左键点击后弹出的控件）|
 |saveValue | 统一的配置保存函数|
 |getValue | 统一的配置读取函数|
 
-# 构建一个 dde-dock 插件
+# 构建一个 gxde-dock 插件
 
-接下来将介绍一个简单的 dde-dock 插件的开发过程，插件开发者可跟随此步骤熟悉为 dde-dock 开发插件的步骤，以便创造出更多具有丰富功能的插件。
+接下来将介绍一个简单的 gxde-dock 插件的开发过程，插件开发者可跟随此步骤熟悉为 gxde-dock 开发插件的步骤，以便创造出更多具有丰富功能的插件。
 
 ## 预期功能
 
@@ -85,7 +85,7 @@ PluginsItemInterface 中定义的接口除了displayMode 和 position（历史�
 
 下面以 Qt + cmake 为例进行说明，以 Deepin 15.9 环境为基础，安装如下的包：
 
-- dde-dock-dev
+- gxde-dock-dev
 - cmake
 - qtbase5-dev-tools
 - pkg-config
@@ -164,7 +164,7 @@ find_package(PkgConfig REQUIRED)
 # DdeDockInterface_INCLUDE_DIRS
 # DdeDockInterface_LIBRARIES
 # 还有有另外的一些变量以及更灵活的用法，比如一次性查找多个库，这些请自行查找 cmake 文档学习。
-pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
+pkg_check_modules(DdeDockInterface REQUIRED gxde-dock)
 
 # add_definitions 命令用于声明/定义一些编译/预处理参数
 # 根据 cmake 文档描述此命令已经有另外几个功能划分的更为细致的命令所取代，具体请查阅文档
@@ -208,14 +208,14 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 set(CMAKE_INSTALL_PREFIX "/usr")
 
 # 设置执行 make install 时哪个目标应该被 install 到哪个位置
-install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins)
 ```
 
 ### 元数据文件
 
-`home_monitor.json`文件是插件的元数据文件，指明了当前插件所使用的 dde-dock 的接口版本，dde-dock 在加载此插件时，会检测自己的接口版本是否与插件的接口版本一致，当双方的接口版本不一致或者不兼容时，dde-dock 为了安全将阻止加载对应的插件。另外，元数据文件是在源代码中使用特定的宏加载到插件中的。
+`home_monitor.json`文件是插件的元数据文件，指明了当前插件所使用的 gxde-dock 的接口版本，gxde-dock 在加载此插件时，会检测自己的接口版本是否与插件的接口版本一致，当双方的接口版本不一致或者不兼容时，gxde-dock 为了安全将阻止加载对应的插件。另外，元数据文件是在源代码中使用特定的宏加载到插件中的。
 
-在 dde-dock 内建的插件代码中，可以找到当前具体的接口版本，目前最新的版本是 `1.2` 。
+在 gxde-dock 内建的插件代码中，可以找到当前具体的接口版本，目前最新的版本是 `1.2` 。
 
 ``` json
 {
@@ -234,7 +234,7 @@ install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
 
 ### 插件核心类
 
-`homemonitorplugin.h` 声明了类 `HomeMonitorPlugin`，它继承（实现）了前面提到的 `PluginItemInterface`，这代表了它是一个实现了 dde-dock 接口的插件。
+`homemonitorplugin.h` 声明了类 `HomeMonitorPlugin`，它继承（实现）了前面提到的 `PluginItemInterface`，这代表了它是一个实现了 gxde-dock 接口的插件。
 
 下面是最小化实现了一个 dock 插件的源码，只实现了必须实现的接口，请注意，下文的代码只是为了简述开发一个插件的主要过程，详细的示例代码应该查看 `home-monitor` 目录下的内容。
 
@@ -242,7 +242,7 @@ install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
 #ifndef HOMEMONITORPLUGIN_H
 #define HOMEMONITORPLUGIN_H
 
-#include <dde-dock/pluginsiteminterface.h>
+#include <gxde-dock/pluginsiteminterface.h>
 
 #include <QObject>
 
@@ -295,15 +295,15 @@ QWidget *HomeMonitorPlugin::itemWidget(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
 
-    // 这里暂时返回空指针，这意味着插件会被 dde-dock 加载
-    // 但是不会有任何东西被添加到 dde-dock 上
+    // 这里暂时返回空指针，这意味着插件会被 gxde-dock 加载
+    // 但是不会有任何东西被添加到 gxde-dock 上
     return nullptr;
 }
 ```
 
 ## 测试插件加载
 
-当插件的基本结构搭建好之后应该测试下这个插件能否被 dde-dock 正确的加载，这时候测试如果有问题也可以及时处理。
+当插件的基本结构搭建好之后应该测试下这个插件能否被 gxde-dock 正确的加载，这时候测试如果有问题也可以及时处理。
 
 ### 从源码构建
 
@@ -329,21 +329,21 @@ make -j4
 sudo make install
 ```
 
-可以看到有`home_monitor.so`文件被安装在了 dde-dock 的插件目录。
+可以看到有`home_monitor.so`文件被安装在了 gxde-dock 的插件目录。
 
 ``` sh
-install -m 755 -p ./home_monitor/libhome_monitor.so /usr/lib/dde-dock/plugins/libhome_monitor.so
+install -m 755 -p ./home_monitor/libhome_monitor.so /usr/lib/gxde-dock/plugins/libhome_monitor.so
 ```
 
-或者将so文件放在~/.local/lib/dde-dock/plugins/目录下，dock会加载用户本地的插件。
+或者将so文件放在~/.local/lib/gxde-dock/plugins/目录下，dock会加载用户本地的插件。
 
 ``` sh
-install -m 755 -p ./home_monitor/libhome_monitor.so ~/.local/lib/dde-dock/plugins/libhome_monitor.so
+install -m 755 -p ./home_monitor/libhome_monitor.so ~/.local/lib/gxde-dock/plugins/libhome_monitor.so
 ```
 
 ### 测试加载
 
-执行 `pkill dde-dock; dde-dock` 来重新运行 dde-dock，在终端输出中如果出现以下的输出，说明插件的加载已经正常：
+执行 `pkill gxde-dock; gxde-dock` 来重新运行 gxde-dock，在终端输出中如果出现以下的输出，说明插件的加载已经正常：
 
 ``` sh
 init plugin:  "home_monitor"
@@ -353,7 +353,7 @@ init plugin finished:  "home_monitor"
 
 ## 创建插件主控件
 
-创建新文件 informationwidget.h 和 informationwidget.cpp，用于创建控件类：InformationWidget，这个控件用于显示在 dde-dock 上。
+创建新文件 informationwidget.h 和 informationwidget.cpp，用于创建控件类：InformationWidget，这个控件用于显示在 gxde-dock 上。
 
 此时的目录结构为：
 
@@ -482,9 +482,9 @@ void HomeMonitorPlugin::init(PluginProxyInterface *proxyInter)
 }
 ```
 
-## 添加主控件到 dde-dock 面板上
+## 添加主控件到 gxde-dock 面板上
 
-在插件核心类的 `init` 方法中获取到了 `PluginProxyInterface` 对象，调用此对象的 `itemAdded` 接口即可实现向 dde-dock 面板上添加项目。
+在插件核心类的 `init` 方法中获取到了 `PluginProxyInterface` 对象，调用此对象的 `itemAdded` 接口即可实现向 gxde-dock 面板上添加项目。
 
 第二个 `QString` 类型的参数代表了本插件所提供的主控件的 id，当一个插件提供多个主控件时，不同主控件之间的 id 要保证唯一。
 
@@ -499,7 +499,7 @@ void HomeMonitorPlugin::init(PluginProxyInterface *proxyInter)
 }
 ```
 
-在调用 `itemAdded` 之后，dde-dock 会在合适的时机调用插件的`itemWidget`接口以获取需要显示的控件。如果插件提供了多个主控件到 dde-dock 上，那么插件核心类应该在 itemWidget 接口中分析参数 itemKey，并返回与之对应的控件对象，当插件只有一个可显示项目时，itemKey 可以忽略 (但不建议忽略)。
+在调用 `itemAdded` 之后，gxde-dock 会在合适的时机调用插件的`itemWidget`接口以获取需要显示的控件。如果插件提供了多个主控件到 gxde-dock 上，那么插件核心类应该在 itemWidget 接口中分析参数 itemKey，并返回与之对应的控件对象，当插件只有一个可显示项目时，itemKey 可以忽略 (但不建议忽略)。
 
 ``` c++
 QWidget *HomeMonitorPlugin::itemWidget(const QString &itemKey)
@@ -510,7 +510,7 @@ QWidget *HomeMonitorPlugin::itemWidget(const QString &itemKey)
 }
 ```
 
-现在再根据“测试插件加载”一节中的步骤，编译、安装、重启 dde-dock，就可以看到主控件在 dde-dock 面板上出现了，如下图所示：
+现在再根据“测试插件加载”一节中的步骤，编译、安装、重启 gxde-dock，就可以看到主控件在 gxde-dock 面板上出现了，如下图所示：
 
 ![central-widget](images/central-widget.png)
 
@@ -535,7 +535,7 @@ void pluginStateSwitched() override;
 ``` c++
 bool HomeMonitorPlugin::pluginIsAllowDisable()
 {
-    // 告诉 dde-dock 本插件允许禁用
+    // 告诉 gxde-dock 本插件允许禁用
     return true;
 }
 
@@ -562,7 +562,7 @@ void HomeMonitorPlugin::pluginStateSwitched()
 }
 ```
 
-此时就会引入一个新的问题，插件允许被禁用，那么在 dde-dock 启动时，插件有可能处于禁用状态，那么在初始化插件时就不能直接将主控件添加到 dde-dock 中，而是应该判断当前是否是禁用状态，修改接口 init 的实现：
+此时就会引入一个新的问题，插件允许被禁用，那么在 gxde-dock 启动时，插件有可能处于禁用状态，那么在初始化插件时就不能直接将主控件添加到 gxde-dock 中，而是应该判断当前是否是禁用状态，修改接口 init 的实现：
 
 ``` c++
 void HomeMonitorPlugin::init(PluginProxyInterface *proxyInter)
@@ -578,7 +578,7 @@ void HomeMonitorPlugin::init(PluginProxyInterface *proxyInter)
 }
 ```
 
-重新编译、安装、重启 dde-dock，然后 dde-dock 面板上点击鼠标右键查看“插件”子菜单就会看到空白项，点击它将禁用插件，再次点击则启用插件。
+重新编译、安装、重启 gxde-dock，然后 gxde-dock 面板上点击鼠标右键查看“插件”子菜单就会看到空白项，点击它将禁用插件，再次点击则启用插件。
 
 不过为什么是空白项呢？是因为有一个接口还没有实现：pluginDisplayName
 
@@ -659,7 +659,7 @@ QWidget *HomeMonitorPlugin::itemTipsWidget(const QString &itemKey)
 }
 ```
 
-dde-dock 在发现鼠标悬停在插件的控件上时就会调用这个接口拿到相应的控件并显示出来。
+gxde-dock 在发现鼠标悬停在插件的控件上时就会调用这个接口拿到相应的控件并显示出来。
 
 ![tips-widget](images/tips-widget.png)
 
@@ -727,7 +727,7 @@ QWidget *HomeMonitorPlugin::itemPopupApplet(const QString &itemKey)
 }
 ```
 
-编译，安装，重启 dde-dock 之后点击主控件即可看到弹出的 applet 控件。
+编译，安装，重启 gxde-dock 之后点击主控件即可看到弹出的 applet 控件。
 
 ![applet-widget](images/applet-widget.png)
 
@@ -788,7 +788,7 @@ void HomeMonitorPlugin::invokedMenuItem(const QString &itemKey, const QString &m
 }
 ```
 
-编译，安装，重启 dde-dock 之后右键点击主控件即可看到弹出右键菜单。
+编译，安装，重启 gxde-dock 之后右键点击主控件即可看到弹出右键菜单。
 
 ![context-menu](images/context-menu.png)
 

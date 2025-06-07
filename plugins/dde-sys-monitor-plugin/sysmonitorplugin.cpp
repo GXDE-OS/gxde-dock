@@ -210,7 +210,7 @@ QWidget *SysMonitorPlugin::itemPopupApplet(const QString &itemKey)
 
 bool SysMonitorPlugin::pluginIsAllowDisable()
 {
-    // 告诉 dde-dock 本插件允许禁用
+    // 告诉 gxde-dock 本插件允许禁用
     return true;
 }
 

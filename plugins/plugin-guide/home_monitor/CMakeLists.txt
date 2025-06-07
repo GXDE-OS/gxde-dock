@@ -54,7 +54,7 @@ find_package(PkgConfig REQUIRED)
 # DdeDockInterface_INCLUDE_DIRS
 # DdeDockInterface_LIBRARIES
 # 还有有另外的一些变量以及更灵活的用法，比如一次性查找多个库，这些请自行查找 cmake 文档学习。
-pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
+pkg_check_modules(DdeDockInterface REQUIRED gxde-dock)
 
 # add_definitions 命令用于声明/定义一些编译/预处理参数
 # 根据 cmake 文档描述此命令已经由另外几个功能划分的更为细致的命令所取代，具体请查阅文档
@@ -98,4 +98,4 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 set(CMAKE_INSTALL_PREFIX "/usr")
 
 # 设置执行 make install 时哪个目标应该被 install 到哪个位置
-install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins)

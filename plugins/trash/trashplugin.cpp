@@ -55,7 +55,7 @@ const QString TrashPlugin::pluginDisplayName() const
 void TrashPlugin::init(PluginProxyInterface *proxyInter)
 {
     // transfex config
-    QSettings settings("deepin", "dde-dock-trash");
+    QSettings settings("deepin", "gxde-dock-trash");
     if (QFile::exists(settings.fileName())) {
         const QString &key = QString("pos_%1_%2").arg(pluginName()).arg(displayMode());
         proxyInter->saveValue(this, key, settings.value(key));

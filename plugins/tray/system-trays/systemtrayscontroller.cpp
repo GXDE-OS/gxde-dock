@@ -159,7 +159,7 @@ void SystemTraysController::startLoader()
 {
     QString pluginsDir("../plugins/system-trays");
     if (!QDir(pluginsDir).exists()) {
-        pluginsDir = "/usr/lib/dde-dock/plugins/system-trays";
+        pluginsDir = "/usr/lib/gxde-dock/plugins/system-trays";
     }
     qDebug() << "using system tray plugins dir:" << pluginsDir;
 

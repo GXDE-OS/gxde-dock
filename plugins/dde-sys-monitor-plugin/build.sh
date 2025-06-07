@@ -5,5 +5,5 @@ rm -rf * || exit
 cmake .. || exit
 make || exit
 sudo make install || exit
-pkill dde-dock
-dde-dock
+pkill gxde-dock
+gxde-dock

@@ -81,7 +81,7 @@ void ShutdownPlugin::init(PluginProxyInterface *proxyInter)
     m_proxyInter = proxyInter;
 
     // transfer config
-    QSettings settings("deepin", "dde-dock-shutdown");
+    QSettings settings("deepin", "gxde-dock-shutdown");
     if (QFile::exists(settings.fileName())) {
         QFile::remove(settings.fileName());
     }

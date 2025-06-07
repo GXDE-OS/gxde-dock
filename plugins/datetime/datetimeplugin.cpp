@@ -48,7 +48,7 @@ void DatetimePlugin::init(PluginProxyInterface *proxyInter)
     m_proxyInter = proxyInter;
 
     // transfer config
-    QSettings settings("deepin", "dde-dock-datetime");
+    QSettings settings("deepin", "gxde-dock-datetime");
     if (QFile::exists(settings.fileName())) {
         Dock::DisplayMode mode = displayMode();
         const QString     key  = QString("pos_%1").arg(mode);

@@ -129,7 +129,7 @@ void IndicatorTrayPrivate::initDBus(const QString &indicatorName)
 {
     Q_Q(IndicatorTray);
 
-    QString filepath = QString("/etc/dde-dock/indicator/%1.json").arg(indicatorName);
+    QString filepath = QString("/etc/gxde-dock/indicator/%1.json").arg(indicatorName);
     QFile confFile(filepath);
     if (!confFile.open(QIODevice::ReadOnly)) {
         qCritical() << "read indicator config Error";

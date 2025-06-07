@@ -1,13 +1,14 @@
-dde-dock (4.15.2) UNRELEASED; urgency=medium
+gxde-dock (5.0.0) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
   * 新增消息通知插件
   * 修复通知中心插件名称为“电源”的问题（https://gitee.com/GXDE-OS/GXDE/issues/IC7EUU ）
+  * 程序名称由 dde-dock 修改为 gxde-dock
 
- -- gfdgd_xi <3025613752@qq.com>  Tue, 13 May 2025 22:45:34 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 07 Jun 2025 15:29:29 +0800
 
-dde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
+gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
   * Repair Wine Problem
   * config file to GXDE
@@ -15,7 +16,7 @@ dde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
  -- gfdgd_xi <3025613752@qq.com>  Sat, 31 Aug 2024 08:29:57 +0800
 
-dde-dock (4.10.9gxde0) unstable; urgency=low
+gxde-dock (4.10.9gxde0) unstable; urgency=low
 
   * ['Autobuild release-candidate: f3c94c85ac99e187644f5dcc14f610cd4f159745']
 

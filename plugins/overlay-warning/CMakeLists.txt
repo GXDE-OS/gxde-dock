@@ -24,7 +24,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
     ${Qt5Svg_LIBRARIES}
 )
 
-install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins)
 
 # policy kit
 install(FILES com.deepin.dde.dock.overlay.policy

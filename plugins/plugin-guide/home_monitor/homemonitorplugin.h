@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-#include <dde-dock/pluginsiteminterface.h>
+#include <gxde-dock/pluginsiteminterface.h>
 
 class HomeMonitorPlugin : public QObject, PluginsItemInterface
 {

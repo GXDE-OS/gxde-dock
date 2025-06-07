@@ -48,4 +48,4 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
     ${QGSettings_LIBRARIES}
 )
 
-install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins)

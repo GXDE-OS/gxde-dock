@@ -1,0 +1,13 @@
+usr/share
+usr/bin
+usr/lib/gxde-dock/plugins/libdatetime.so
+usr/lib/gxde-dock/plugins/libkeyboard-layout.so
+usr/lib/gxde-dock/plugins/libshutdown.so
+usr/lib/gxde-dock/plugins/libtrash.so
+usr/lib/gxde-dock/plugins/libtray.so
+usr/lib/gxde-dock/plugins/liboverlay-warning.so
+usr/lib/gxde-dock/plugins/libsys_monitor.so
+usr/lib/gxde-dock/plugins/libnotify.so
+usr/lib/gxde-dock/plugins/system-trays
+usr/lib/gxde-dock/plugins/libsys_monitor.so
+etc/gxde-dock

@@ -1,7 +1,7 @@
 
 # 框架设计
 
-`dde-dock` 主要分为两部分，即主界面 `frame` 部分与插件 `plugins` 部分。
+`gxde-dock` 主要分为两部分，即主界面 `frame` 部分与插件 `plugins` 部分。
 
 ## 主界面
 
@@ -100,7 +100,7 @@ PluginsItem 的 mousePressEvent 中只直接调用了 QWidget::mousePressEvent �
 
 ## 插件
 
-插件是符合标准的 Qt Plugins。插件的开发不必熟悉 dock 的所有代码，只需要熟悉一般的 Qt 插件开发过程，并了解 dock 所提供的接口。dock 的接口安装 `dde-dock-dev` 包即可。这也是方便插件开发者在无需配置完整的 dock 开发环境的情况下，更方便的进行 dock 插件的开发。
+插件是符合标准的 Qt Plugins。插件的开发不必熟悉 dock 的所有代码，只需要熟悉一般的 Qt 插件开发过程，并了解 dock 所提供的接口。dock 的接口安装 `gxde-dock-dev` 包即可。这也是方便插件开发者在无需配置完整的 dock 开发环境的情况下，更方便的进行 dock 插件的开发。
 
 ### 插件的一般组织形式
 
@@ -125,7 +125,7 @@ PluginsItem 的 mousePressEvent 中只直接调用了 QWidget::mousePressEvent �
 - 电池
 - 挂载
 
-dock 要加载的插件所在的目录是 `/usr/lib/dde-dock/plugins`，而托盘插件要加载的插件所在的目录是 `/usr/lib/dde-dock/plugins/system-trays`。
+dock 要加载的插件所在的目录是 `/usr/lib/gxde-dock/plugins`，而托盘插件要加载的插件所在的目录是 `/usr/lib/gxde-dock/plugins/system-trays`。
 为 dock 编写的插件几乎不用做任何改动就可以放到 `system-trays` 目录下让托盘插件去加载，在代码上唯一要改动的地方是不必再为时尚模式改变控件的样式，因为时尚模式和高效模式下托盘插件内的控件样式是一样的，不需要发生改变。
 
 除了这些“插件内插件”，托盘插件还会提供以下两种类型应用托盘和一种托盘插件自定义的托盘类型，即指示器：
@@ -159,8 +159,8 @@ Indicator 的实现主要有以下三个部分组成，可以将其理解为 MVC
 - 一个 DBus 服务 (具体地说应该是 DBus 服务上的一个 Property)
 - 一个描述上述服务的 JSON 文件
 
-JSON 文件应该被安装到 `/etc/dde-dock/indicator/` 目录下，托盘插件在加载 Indicator 组件时回去检测这个目录下的所有 JSON 文件，一个 JSON 文件对应一个托盘上的 Indicator。
-文件的内容可以参考 `/etc/dde-dock/indicator/keyboard_layout.json` 文件。
+JSON 文件应该被安装到 `/etc/gxde-dock/indicator/` 目录下，托盘插件在加载 Indicator 组件时回去检测这个目录下的所有 JSON 文件，一个 JSON 文件对应一个托盘上的 Indicator。
+文件的内容可以参考 `/etc/gxde-dock/indicator/keyboard_layout.json` 文件。
 
 **IndicatorTrayWidget：** 这个类是 View 层，是用于显示数据的实体即一个托盘控件，除了显示数据，这个类也会接收用户动作。
 

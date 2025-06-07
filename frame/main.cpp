@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
     app.setOrganizationName("deepin");
-    app.setApplicationName("dde-dock");
+    app.setApplicationName("gxde-dock");
     app.setApplicationDisplayName("DDE Dock");
     app.setApplicationVersion("2.0");
     app.setTheme("dark");
@@ -88,12 +88,12 @@ int main(int argc, char *argv[])
     parser.addOption(disablePlugOption);
     parser.process(app);
 
-    if (!app.setSingleInstance(QString("dde-dock_%1").arg(getuid()))) {
+    if (!app.setSingleInstance(QString("gxde-dock_%1").arg(getuid()))) {
         qDebug() << "set single instance failed!!!!";
         return -1;
     }
 
-    qDebug() << "\n\ndde-dock startup";
+    qDebug() << "\n\ngxde-dock startup";
     RegisterDdeSession();
 
 #ifndef QT_DEBUG

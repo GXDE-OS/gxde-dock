@@ -71,7 +71,7 @@ void NotifyPlugin::init(PluginProxyInterface *proxyInter)
     m_proxyInter = proxyInter;
 
     // transfer config
-    QSettings settings("deepin", "dde-dock-notify");
+    QSettings settings("deepin", "gxde-dock-notify");
     if (QFile::exists(settings.fileName())) {
         QFile::remove(settings.fileName());
     }

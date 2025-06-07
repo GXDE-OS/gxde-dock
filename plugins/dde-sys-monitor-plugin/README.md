@@ -26,20 +26,20 @@ deepin15.11测试可用
 
 # 直接下载安装：
 ```
-sudo cp libsys_monitor.so /usr/lib/dde-dock/plugins/
-pkill dde-dock
-dde-dock
+sudo cp libsys_monitor.so /usr/lib/gxde-dock/plugins/
+pkill gxde-dock
+gxde-dock
 ```
 
 # 编译加安装：
 `./build.sh`
 
-编译教程见[官方开发文档](https://github.com/linuxdeepin/dde-dock/blob/master/plugins/plugin-guide/plugins-developer-guide.md
+编译教程见[官方开发文档](https://github.com/linuxdeepin/gxde-dock/blob/master/plugins/plugin-guide/plugins-developer-guide.md
 )
 
 编译另外还需要安装如下依赖（吐槽一下官方的开发文档讲的环境配置不全）：
 ```
-sudo apt install dde-dock-dev qtchooser libdtkwidget2-dev cmake
+sudo apt install gxde-dock-dev qtchooser libdtkwidget2-dev cmake
 ```
 
 有问题欢迎回帖反馈！开发的心得体会参见我的博客

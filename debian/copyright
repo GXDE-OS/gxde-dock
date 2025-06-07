@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: dde-dock
+Upstream-Name: gxde-dock
 
 Files: *
 Copyright: 2015 Deepin Technology Co., Ltd.

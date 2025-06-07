@@ -1,7 +1,7 @@
-Source: dde-dock
+Source: gxde-dock
 Section: x11
 Priority: optional
-Maintainer: Deepin Packages Builder <packages@deepin.com>
+Maintainer: gfdgd xi <3025613752@qq.com>
 Build-Depends: debhelper (>= 8.0.0),
  pkg-config,
  qt5-qmake,
@@ -29,35 +29,41 @@ Build-Depends: debhelper (>= 8.0.0),
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org/
 
-Package: dde-dock
+Package: gxde-dock
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu
-Recommends: dde-disk-mount-plugin, dde-dock-onboard-plugin
+Recommends: dde-disk-mount-plugin, gxde-dock-onboard-plugin
 Conflicts:
  dde-workspace (<< 2.90.5),
- dde-dock-applets,
+ gxde-dock-applets,
  dde-trash-plugin,
  gxde-dock-monitor-plugin,
- dde-dock-monitor-plugin
+ dde-dock,
 Replaces:
- dde-dock-applets,
+ gxde-dock-applets,
  dde-trash-plugin,
  gxde-dock-monitor-plugin,
- dde-dock-monitor-plugin
+ dde-dock,
 Provides:
  gxde-dock-monitor-plugin,
- dde-dock-monitor-plugin
+ dde-dock,
 Description: deepin desktop-environment - dock module
  Deepin desktop environment - dock module.
 
-Package: dde-dock-dev
+Package: gxde-dock-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: dde-dock-dev
+Conflicts: dde-dock-dev
+Replaces: dde-dock-dev
 Description: deepin desktop-environment - dock module development files
  Deepin desktop environment - dock module development files.
 
-Package: dde-dock-onboard-plugin
+Package: gxde-dock-onboard-plugin
 Architecture: any
+Provides: gxde-dock-onboard-plugin
+Conflicts: gxde-dock-onboard-plugin
+Replaces: gxde-dock-onboard-plugin
 Depends: ${shlibs:Depends}, ${misc:Depends}, onboard
 Description: deepin desktop-environment - dock plugin
  Deepin desktop environment - dock plugin for onboard

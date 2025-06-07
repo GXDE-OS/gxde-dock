@@ -129,7 +129,7 @@ void DockPluginsController::startLoader()
 }
 
 void DockPluginsController::loadLocalPlugins() {
-    QString pluginsDir(QString("%1/.local/lib/dde-dock/plugins/").arg(QDir::homePath()));
+    QString pluginsDir(QString("%1/.local/lib/gxde-dock/plugins/").arg(QDir::homePath()));
 
     if (!QDir(pluginsDir).exists()) {
         return;
@@ -143,7 +143,7 @@ void DockPluginsController::loadLocalPlugins() {
 void DockPluginsController::loadSystemPlugins() {
     QString pluginsDir(qApp->applicationDirPath() + "/../plugins");
     if (!QDir(pluginsDir).exists()) {
-        pluginsDir = "/usr/lib/dde-dock/plugins";
+        pluginsDir = "/usr/lib/gxde-dock/plugins";
     }
     qDebug() << "using dock plugins dir:" << pluginsDir;
 

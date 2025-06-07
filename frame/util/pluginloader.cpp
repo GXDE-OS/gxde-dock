@@ -42,7 +42,7 @@ void PluginLoader::run()
             continue;
 
         // TODO: old dock plugins is uncompatible
-        if (file.startsWith("libdde-dock-"))
+        if (file.startsWith("libgxde-dock-"))
             continue;
 
         emit pluginFounded(pluginsDir.absoluteFilePath(file));
