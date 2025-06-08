@@ -21,7 +21,7 @@ find_package(Qt5X11Extras REQUIRED)
 find_package(DtkWidget REQUIRED)
 
 pkg_check_modules(XCB_LIBS REQUIRED xcb-ewmh xcb xcb-image xcb-composite xtst xcb-icccm dbusmenu-qt5)
-pkg_check_modules(DDE-Network-Utils REQUIRED dde-network-utils)
+pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 pkg_check_modules(QGSettings REQUIRED gsettings-qt)
 

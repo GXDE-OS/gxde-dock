@@ -22,12 +22,12 @@ Build-Depends: debhelper (>= 8.0.0),
  libdframeworkdbus-dev,
  libgsettings-qt-dev,
  cmake,
- libdde-network-utils-dev (>= 15.11~0.1.4),
+ libgxde-network-utils-dev (>= 15.11~0.1.4),
  libdbusmenu-qt5-dev,
  libdtkcore-bin,
  clang [mips64el]
 Standards-Version: 3.9.8
-Homepage: http://www.deepin.org/
+Homepage: https://www.gxde.top/
 
 Package: gxde-dock
 Architecture: any

@@ -813,7 +813,7 @@
 *   active connection info invalid ([e55d595d](https://github.com/linuxdeepin/gxde-dock/commit/e55d595d1a4ee793c209fc57fbc929aad6ddf88c))
 *   wireless crush ([af5b7bfa](https://github.com/linuxdeepin/gxde-dock/commit/af5b7bfa98076f43b63f51877f03647d8cbaab41))
 *   align of secret and open ap ([d09db529](https://github.com/linuxdeepin/gxde-dock/commit/d09db5293c069b22820df9afcf49a1e1bffc7a3d))
-*   load dde-network-utils translator ([3a10ce67](https://github.com/linuxdeepin/gxde-dock/commit/3a10ce6773d35b5e4815825bb7122c0e8ba68245))
+*   load gxde-network-utils translator ([3a10ce67](https://github.com/linuxdeepin/gxde-dock/commit/3a10ce6773d35b5e4815825bb7122c0e8ba68245))
 *   can not hide network plugin ([eb79f17b](https://github.com/linuxdeepin/gxde-dock/commit/eb79f17b0b37a476817f2cba1ecf8d77cffa441f))
 * **Icon:**  error intercepting the icon name ([6ec510ac](https://github.com/linuxdeepin/gxde-dock/commit/6ec510ac12c321584605b2d305e49f043e45a6cd))
 * **Network:**  Control bar layout disorder ([f73a4214](https://github.com/linuxdeepin/gxde-dock/commit/f73a4214b99ce7eaeb8bc49616beb3d7009ad559))

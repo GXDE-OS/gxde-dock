@@ -12,7 +12,7 @@ find_package(Qt5Svg REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
 
-pkg_check_modules(DDE-Network-Utils REQUIRED dde-network-utils)
+pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 
 add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
