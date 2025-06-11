@@ -32,20 +32,20 @@ Homepage: https://www.gxde.top/
 Package: gxde-dock
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu
-Recommends: dde-disk-mount-plugin, gxde-dock-onboard-plugin
+Recommends: gxde-dock-onboard-plugin
 Conflicts:
  dde-workspace (<< 2.90.5),
- gxde-dock-applets,
+ ddee-dock-applets,
  dde-trash-plugin,
- gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin,
  dde-dock,
 Replaces:
- gxde-dock-applets,
+ dde-dock-applets,
  dde-trash-plugin,
- gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin,
  dde-dock,
 Provides:
- gxde-dock-monitor-plugin,
+ dde-dock-monitor-plugin,
  dde-dock,
 Description: deepin desktop-environment - dock module
  Deepin desktop environment - dock module.
@@ -61,9 +61,9 @@ Description: deepin desktop-environment - dock module development files
 
 Package: gxde-dock-onboard-plugin
 Architecture: any
-Provides: gxde-dock-onboard-plugin
-Conflicts: gxde-dock-onboard-plugin
-Replaces: gxde-dock-onboard-plugin
+Provides: dde-dock-onboard-plugin
+Conflicts: dde-dock-onboard-plugin
+Replaces: ddde-dock-onboard-plugin
 Depends: ${shlibs:Depends}, ${misc:Depends}, onboard
 Description: deepin desktop-environment - dock plugin
  Deepin desktop environment - dock plugin for onboard
