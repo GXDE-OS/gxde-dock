@@ -1,4 +1,4 @@
-gxde-dock (5.0.1-2) UNRELEASED; urgency=medium
+gxde-dock (5.0.1-3) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
