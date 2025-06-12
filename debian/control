@@ -38,7 +38,7 @@ Conflicts:
  ddee-dock-applets,
  dde-trash-plugin,
  dde-dock-monitor-plugin,
- dde-dock,
+ dde-dock (>> 5.0.1-3),
 Replaces:
  dde-dock-applets,
  dde-trash-plugin,
@@ -54,7 +54,7 @@ Package: gxde-dock-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Provides: dde-dock-dev
-Conflicts: dde-dock-dev
+Conflicts: dde-dock-dev (>> 5.0.1-3)
 Replaces: dde-dock-dev
 Description: deepin desktop-environment - dock module development files
  Deepin desktop environment - dock module development files.
@@ -62,7 +62,7 @@ Description: deepin desktop-environment - dock module development files
 Package: gxde-dock-onboard-plugin
 Architecture: any
 Provides: dde-dock-onboard-plugin
-Conflicts: dde-dock-onboard-plugin
+Conflicts: dde-dock-onboard-plugin (>> 5.0.1-3)
 Replaces: ddde-dock-onboard-plugin
 Depends: ${shlibs:Depends}, ${misc:Depends}, onboard
 Description: deepin desktop-environment - dock plugin
