@@ -1,4 +1,4 @@
-gxde-dock (5.0.2) UNRELEASED; urgency=medium
+gxde-dock (5.0.3) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -9,8 +9,9 @@ gxde-dock (5.0.2) UNRELEASED; urgency=medium
   * 依赖修改为 libgxframeworkdbus2
   * 修复 Provides 错误的问题
   * 调整 Conflicts 版本号
+  * 修复部分机器任务栏资源监视板块显示不全的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Thu, 12 Jun 2025 22:53:46 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Thu, 03 Jul 2025 03:34:58 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 

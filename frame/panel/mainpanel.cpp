@@ -479,15 +479,19 @@ void MainPanel::adjustItemSize()
                     }
                 } else if (pluginItem->pluginSizePolicy() ==
                            PluginsItemInterface::PluginSizePolicy::Custom) {
-                    const QSize size = item->sizeHint();
-                    item->setFixedSize(size);
-                    if (m_position == Dock::Top || m_position == Dock::Bottom)
+                    QSize size = item->sizeHint();
+
+                    if (m_position == Dock::Top || m_position == Dock::Bottom) {
+                        size.setWidth(size.width() + 5);  // 避免显示不全
                         item->setFixedHeight(itemSize.height());
-                    else
+                    }
+                    else {
+                        size.setHeight(size.height() + 5);  // 避免显示不全
                         item->setFixedWidth(itemSize.width());
+                    }
+                    item->setFixedSize(size);
                     totalWidth += size.width();
                     totalHeight += size.height();
-                    ++totalAppItemCount;
                 }
                 else {
                     item->setFixedSize(itemSize);
