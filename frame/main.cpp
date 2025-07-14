@@ -61,6 +61,13 @@ void RegisterDdeSession()
 
 int main(int argc, char *argv[])
 {
+    // XWayland
+    if (DApplication::isWayland()) {
+        qDebug() << "Use xwayland, not wayland";
+        qputenv("QT_QPA_PLATFORM", "dxcb");
+        qputenv("XDG_SESSION_TYPE", "x11");
+    }
+
     DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
     app.setOrganizationName("deepin");

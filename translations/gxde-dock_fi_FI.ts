@@ -490,36 +490,43 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="123"/>
         <source>系统监控插件设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="124"/>
         <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="125"/>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="126"/>
         <source>只显示CPU、内存</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="127"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="71"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="128"/>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="81"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>

@@ -14,6 +14,11 @@ SysMonitorPlugin::SysMonitorPlugin(QObject *parent)
 
 void SysMonitorPlugin::refreshInfo()
 {
+    // Don't refresh data if itn't init
+    if (!m_isInited) {
+        return;
+    }
+
 	//获得cpu信息
 	fp = fopen("/proc/stat", "r");
     if (fp == NULL) {perror("Could not open stat file");return;}
@@ -166,6 +171,8 @@ void SysMonitorPlugin::init(PluginProxyInterface *proxyInter)
     if (!pluginIsDisable()) {
         m_proxyInter->itemAdded(this, pluginName());
     }
+
+    m_isInited = true;
 }
 
 QWidget *SysMonitorPlugin::itemWidget(const QString &itemKey)

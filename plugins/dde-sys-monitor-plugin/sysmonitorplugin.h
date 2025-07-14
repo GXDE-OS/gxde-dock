@@ -84,6 +84,7 @@ private:
     InformationWidget *m_pluginWidget;
     QLabel *m_tipsWidget;
     QLabel *m_appletWidget;
+    bool m_isInited = false;
 };
 
 #endif // HOMEMONITORPLUGIN_H

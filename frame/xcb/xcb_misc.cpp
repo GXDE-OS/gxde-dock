@@ -25,13 +25,19 @@
 
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
+#include <dapplication.h>
 
 #include "xcb_misc.h"
+
+DWIDGET_USE_NAMESPACE
 
 static XcbMisc * _xcb_misc_instance = NULL;
 
 XcbMisc::XcbMisc()
 {
+    if (DApplication::isWayland()) {
+        return;
+    }
     xcb_intern_atom_cookie_t * cookie = xcb_ewmh_init_atoms(QX11Info::connection(), &m_ewmh_connection);
     xcb_ewmh_init_atoms_replies(&m_ewmh_connection, cookie, NULL);
 }
@@ -52,6 +58,10 @@ XcbMisc * XcbMisc::instance()
 
 void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
 {
+    if (DApplication::isWayland()) {
+        return;
+    }
+
     xcb_atom_t atoms[1];
 
     switch (winType) {
@@ -70,6 +80,10 @@ void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
 
 void XcbMisc::clear_strut_partial(xcb_window_t winId)
 {
+    if (DApplication::isWayland()) {
+        return;
+    }
+
     xcb_ewmh_wm_strut_partial_t strutPartial;
     memset(&strutPartial, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
 
@@ -78,6 +92,10 @@ void XcbMisc::clear_strut_partial(xcb_window_t winId)
 
 void XcbMisc::set_strut_partial(xcb_window_t winId, Orientation orientation, uint strut, uint start, uint end)
 {
+    if (DApplication::isWayland()) {
+        return;
+    }
+
     xcb_ewmh_wm_strut_partial_t strut_partial;
     memset(&strut_partial, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
 
@@ -117,6 +135,9 @@ void XcbMisc::set_strut_partial(xcb_window_t winId, Orientation orientation, uin
 
 void XcbMisc::set_window_icon_geometry(xcb_window_t winId, QRect geo)
 {
+    if (DApplication::isWayland()) {
+        return;
+    }
 //    qDebug() << Q_FUNC_INFO << winId << geo;
 
     const auto ratio = qApp->devicePixelRatio();

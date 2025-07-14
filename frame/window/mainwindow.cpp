@@ -30,6 +30,7 @@
 #include <QGuiApplication>
 #include <QX11Info>
 #include <qpa/qplatformwindow.h>
+#include <dapplication.h>
 
 #include <DPlatformWindowHandle>
 
@@ -100,13 +101,18 @@ MainWindow::MainWindow(QWidget *parent)
     m_platformWindowHandle.setShadowRadius(0);
 
     m_settings = &DockSettings::Instance();
-    m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
+    
+    if (!DApplication::isWayland()) {
+        m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
+    }
 
     initSNIHost();
     initComponents();
     initConnections();
 
     m_mainPanel->setFixedSize(m_settings->panelSize());
+
+    show();
 }
 
 MainWindow::~MainWindow()
@@ -521,7 +527,9 @@ void MainWindow::updateGeometry()
 
 void MainWindow::clearStrutPartial()
 {
-    m_xcbMisc->clear_strut_partial(winId());
+    if (!DApplication::isWayland()) {
+        m_xcbMisc->clear_strut_partial(winId());
+    }
 }
 
 void MainWindow::setStrutPartial()
@@ -612,7 +620,9 @@ void MainWindow::setStrutPartial()
         return;
     }
 
-    m_xcbMisc->set_strut_partial(winId(), orientation, strut, strutStart, strutEnd);
+    if (!DApplication::isWayland()) {
+        m_xcbMisc->set_strut_partial(winId(), orientation, strut, strutStart, strutEnd);
+    }
 }
 
 void MainWindow::expand()
