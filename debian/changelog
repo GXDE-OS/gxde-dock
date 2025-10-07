@@ -1,4 +1,4 @@
-gxde-dock (5.0.4) UNRELEASED; urgency=medium
+gxde-dock (5.0.5) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -11,8 +11,9 @@ gxde-dock (5.0.4) UNRELEASED; urgency=medium
   * 调整 Conflicts 版本号
   * 修复部分机器任务栏资源监视板块显示不全的问题
   * Use XWayland in Wayland environment
+  * Solve running problem in WSL
 
- -- gfdgd_xi <3025613752@qq.com>  Mon, 14 Jul 2025 17:37:15 +0800
+ -- gfdgd xi <3025613752@qq.com>  Tue, 07 Oct 2025 15:51:08 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 

@@ -223,6 +223,11 @@ bool SysMonitorPlugin::pluginIsAllowDisable()
 
 bool SysMonitorPlugin::pluginIsDisable()
 {
+    // Don't use this plugin in wsl
+    // It will make dock crash
+    if (QFile::exists("/etc/wsl.conf")) {
+        return false;
+    }
     // 第二个参数 “disabled” 表示存储这个值的键（所有配置都是以键值对的方式存储的）
     // 第三个参数表示默认值，即默认不禁用
     return m_proxyInter->getValue(this, "disabled", false).toBool();
