@@ -81,9 +81,6 @@ void SysMonitorPlugin::refreshInfo()
 	oldrbytes=rbytes;
 	oldsbytes=sbytes;
 
-    info.netup=toHumanRead(tmps,"B",0);
-    info.netdwon=toHumanRead(tmpr,"B",0);
-
     //获得电池信息
     fp=NULL;
     //使用popen执行shell命令并返回一个流来读取电池信息
@@ -94,11 +91,49 @@ void SysMonitorPlugin::refreshInfo()
     fscanf(fp,"    energy-rate:         %f W",&battery_watts);
     if(strcmp("discharging",buffer)==0){battery_watts=0-battery_watts;}
     pclose(fp);
+    // 获取 CPU 温度
+    QDir sensorDirList("/sys/class/hwmon/");
+    int cpuAllTemp = 0;
+    int cpuSensorNum = 0;
+    for (QString i: sensorDirList.entryList(QDir::Dirs)) {
+        if (!QFile::exists("/sys/class/hwmon/" + i + "/name")) {
+            continue;
+        }
+        QString name = readFile("/sys/class/hwmon/" + i + "/name");
+
+        if (name.replace("\n", "") == "coretemp") {
+            QDir cpuSensorList("/sys/class/hwmon/" + i);
+            for (QString j: cpuSensorList.entryList(QDir::Files)) {
+                if (!(j.contains("temp") && j.contains("_input"))) {
+                    continue;
+                }
+                ++cpuSensorNum;
+                cpuAllTemp += readFile("/sys/class/hwmon/" + i + "/" + j).toInt();
+            }
+        }
+    }
+    if(cpuSensorNum) {
+        cpu_temp = cpuAllTemp / cpuSensorNum / 1000.0;
+    }
+
+    info.netup=toHumanRead(tmps,"B",0);
+    info.netdwon=toHumanRead(tmpr,"B",0);
+    info.battery=QString::number((double)battery_watts,'f',1);
+    info.cpuTemp=QString::number((double)cpu_temp,'f',1);
 	
     // 更新内容
     m_pluginWidget->UpdateData(info,dismode,settings);
     if(m_tipsWidget->isVisible())m_tipsWidget_update();
     //qDebug()<<"m_tipsWidget->isVisible():"<<QString::number(m_tipsWidget->isVisible());
+}
+
+const QString SysMonitorPlugin::readFile(const QString path)
+{
+    QFile file(path);
+    file.open(QFile::ReadOnly);
+    QString data = file.readAll();
+    file.close();
+    return data;
 }
 
 const QString SysMonitorPlugin::toHumanRead(unsigned long l,const char *unit,int digit)
@@ -185,12 +220,13 @@ QWidget *SysMonitorPlugin::itemWidget(const QString &itemKey)
 void SysMonitorPlugin::m_tipsWidget_update()
 {
     // 设置/刷新 tips 中的信息
-    m_tipsWidget->setText(QString("<p>MEM: %1/%2=%3<br/>SWAP:%4/%5=%6<br/>UP:&nbsp;&nbsp;%7 %8/S<br/>DOWN:%9 %10/S<br/>BATTERY:%11W</p>")
-.arg(toHumanRead(totalmem-availablemem,"KB",1)).arg(toHumanRead(totalmem,"KB",1)).arg(info.mem)
-.arg(toHumanRead(totalswap-freeswap,"KB",1)).arg(toHumanRead(totalswap,"KB",1)).arg(strswap)
-.arg(toHumanRead(oldsbytes,"B",1)).arg(toHumanRead(tmps,"B",1))
-.arg(toHumanRead(oldrbytes,"B",1)).arg(toHumanRead(tmpr,"B",1))
-.arg(QString::number((double)battery_watts,'f',2))
+    m_tipsWidget->setText(QString("<p>MEM: %1/%2=%3<br/>SWAP:%4/%5=%6<br/>UP:&nbsp;&nbsp;%7 %8/S<br/>DOWN:%9 %10/S<br/>BATTERY:%11W<br/>CPU Temp:%12°C</p>")
+                                    .arg(toHumanRead(totalmem-availablemem,"KB",1)).arg(toHumanRead(totalmem,"KB",1)).arg(info.mem)
+                                    .arg(toHumanRead(totalswap-freeswap,"KB",1)).arg(toHumanRead(totalswap,"KB",1)).arg(strswap)
+                                    .arg(toHumanRead(oldsbytes,"B",1)).arg(toHumanRead(tmps,"B",1))
+                                    .arg(toHumanRead(oldrbytes,"B",1)).arg(toHumanRead(tmpr,"B",1))
+                                    .arg(QString::number((double)battery_watts,'f',2))
+                                    .arg(QString::number((double)cpu_temp,'f',2))
 );
 }
 

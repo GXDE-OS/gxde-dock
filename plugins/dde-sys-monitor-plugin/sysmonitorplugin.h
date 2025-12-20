@@ -48,6 +48,8 @@ private slots:
     //更新tipsWidget气泡数据的函数
     void m_tipsWidget_update();
 private:
+    const QString readFile(const QString path);
+
     //CPU工作时间除以总时间,内存百分比,交换区百分比
     int cpuPercent,memPercent,swapPercent;
     QString strswap;
@@ -69,6 +71,8 @@ private:
     char devname[1024];
     //电池功率瓦特，根据电池充放电状态设置正负
     float battery_watts;
+    //CPU温度
+    float cpu_temp;
 	// 字体
 	QFont font;
 	//显示模式

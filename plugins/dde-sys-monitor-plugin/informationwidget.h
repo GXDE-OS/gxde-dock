@@ -13,6 +13,8 @@ struct Info{
     QString mem;
     QString netup;
     QString netdwon;
+    QString battery;
+    QString cpuTemp;
 };
 
 class InformationWidget : public QWidget

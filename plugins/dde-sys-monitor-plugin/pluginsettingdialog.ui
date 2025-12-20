@@ -30,8 +30,8 @@
        <rect>
         <x>31</x>
         <y>41</y>
-        <width>147</width>
-        <height>86</height>
+        <width>196</width>
+        <height>95</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -53,6 +53,13 @@
         <widget class="QRadioButton" name="showAllRadioButton">
          <property name="text">
           <string>显示CP&amp;U、内存和网速</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="showAllAndCPUAndBattery">
+         <property name="text">
+          <string>显示CPU、内存、网速、电池和CPU温度</string>
          </property>
         </widget>
        </item>

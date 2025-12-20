@@ -48,6 +48,12 @@ void InformationWidget::UpdateData(const Info& info,Dock::DisplayMode dismode,co
                              .arg(info.cpu).arg(info.netup)
                              .arg(info.mem).arg(info.netdwon));
         break;
+    case DisplayContentSetting::AllAndTempAndBattery:
+        m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S Tem:%4°C<br/>MEM:%5↓%6/S Bat:%7W</p>")
+                                 .arg(settings.lineHeight)
+                                 .arg(info.cpu).arg(info.netup).arg(info.cpuTemp)
+                                 .arg(info.mem).arg(info.netdwon).arg(info.battery));
+        break;
     default:
         m_infoLabel->setText(QString("<p style='line-height:%1%'>CPU:%2↑%3/S<br/>MEM:%4↓%5/S</p>")
                              .arg(settings.lineHeight)

@@ -8,7 +8,8 @@ enum DisplayContentSetting
 {
     CPUMEM=1,//只显示CPU内存
     NETSPEED=2,//只显示网速
-    ALL=3//两个都显示
+    ALL=3,//两个都显示
+    AllAndTempAndBattery=4
 };
 struct Settings//设置结构体
 {
