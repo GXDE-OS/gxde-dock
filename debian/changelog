@@ -1,4 +1,4 @@
-gxde-dock (5.0.6) UNRELEASED; urgency=medium
+gxde-dock (5.0.7) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -13,8 +13,9 @@ gxde-dock (5.0.6) UNRELEASED; urgency=medium
   * Use XWayland in Wayland environment
   * Solve running problem in WSL
   * 任务栏资源监视插件新增CPU温度显示
+  * 支持获取龙芯 CPU 温度
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 20 Dec 2025 15:48:52 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 20 Dec 2025 16:38:19 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
