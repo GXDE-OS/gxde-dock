@@ -102,7 +102,7 @@ void SysMonitorPlugin::refreshInfo()
         QString name = readFile("/sys/class/hwmon/" + i + "/name");
         name = name.replace("\n", "");
 
-        if (name == "coretemp" || name == "k10temp") {
+        if (name == "coretemp" || name == "k10temp" || name == "k8temp") {
             QDir cpuSensorList("/sys/class/hwmon/" + i);
             for (QString j: cpuSensorList.entryList(QDir::Files)) {
                 if (!((j.contains("temp")) && j.contains("_input"))) {
