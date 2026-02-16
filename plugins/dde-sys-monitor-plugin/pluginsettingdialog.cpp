@@ -1,7 +1,7 @@
 #include "pluginsettingdialog.h"
 #include "ui_pluginsettingdialog.h"
 
-pluginSettingDialog::pluginSettingDialog(Settings *settings,QWidget *parent) :
+pluginSettingDialog::pluginSettingDialog(Settings *settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::pluginSettingDialog)
 {

@@ -1,4 +1,4 @@
-gxde-dock (5.0.8) UNRELEASED; urgency=medium
+gxde-dock (5.0.9) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -15,8 +15,10 @@ gxde-dock (5.0.8) UNRELEASED; urgency=medium
   * 任务栏资源监视插件新增CPU温度显示
   * 支持获取龙芯 CPU 温度
   * 调整资源监视插件设置 UI
+  * 修复清空回收站引起的dock崩溃的问题
+  * 修复设置资源监视插件引起的dock崩溃的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 27 Dec 2025 11:30:34 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 16 Feb 2026 22:40:57 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 
