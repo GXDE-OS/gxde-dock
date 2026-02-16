@@ -36,6 +36,9 @@
 #include <DDesktopServices>
 
 #include <QCoreApplication>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QDesktopWidget>
 
 DWIDGET_USE_NAMESPACE
 
@@ -88,12 +91,14 @@ void PopupControlWidget::clearTrashFloder()
     QString ClearTrashMutliple = qApp->translate("DialogManager", "Are you sure you want to empty %1 items?");
 
     // show confrim dialog
-    DDialog d;
+    //DDialog d;
+    DDialog *d = new DDialog(this->window()); // 使用堆分配
+    d->setAttribute(Qt::WA_DeleteOnClose); // 自动删除对象，避免内存泄露
     QStringList buttonTexts;
     buttonTexts << qApp->translate("DialogManager", "Cancel") << qApp->translate("DialogManager", "Delete");
 
-    if (!d.parentWidget()) {
-        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    if (!d->parentWidget()) {
+        d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);
     }
 
     QDir dir(TrashDir + "/files");//QDir::homePath() + "/.local/share/Trash/files");
@@ -109,14 +114,20 @@ void PopupControlWidget::clearTrashFloder()
         m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(64));
         m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(128));
 
-        d.setTitle(ClearTrashMutliple.arg(count));
-        d.setMessage(qApp->translate("DialogManager", "This action cannot be restored"));
-        d.setIcon(m_dialogTrashFullIcon, QSize(64, 64));
-        d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
-        d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
-        d.setDefaultButton(1);
-        d.moveToCenter();
-        execCode = d.exec();
+        d->setTitle(ClearTrashMutliple.arg(count));
+        d->setMessage(qApp->translate("DialogManager", "This action cannot be restored"));
+        d->setIcon(m_dialogTrashFullIcon, QSize(64, 64));
+        d->addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+        d->addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+        d->setDefaultButton(1);
+        //d->moveToCenter();
+        // 因为 dock 栏只能在主屏幕显示，所以我们只需要在主屏幕居中显示即可
+        QRect rect = d->frameGeometry();
+        QDesktopWidget desktop;
+        QPoint centerPoint = desktop.availableGeometry().center();
+        rect.moveCenter(centerPoint);
+        d->move(rect.topLeft());
+        execCode = d->exec();
     }
 
     if (execCode != QDialog::Accepted) {
