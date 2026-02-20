@@ -175,6 +175,10 @@
         <source>System Monitor</source>
         <translation>系统监视器</translation>
     </message>
+    <message>
+        <source>Window Split</source>
+        <translation>合并图标</translation>
+    </message>
 </context>
 <context>
     <name>LauncherItem</name>
@@ -418,6 +422,11 @@
     <message>
         <source>显示内容设置</source>
         <translation>显示内容设置</translation>
+    </message>
+    <message>
+        <source>显示CPU、内存、网速、
+电池和CPU温度</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

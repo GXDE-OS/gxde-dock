@@ -173,7 +173,11 @@
     </message>
     <message>
         <source>System Monitor</source>
-        <translation type="unfinished"></translation>
+        <translation>系統監視器</translation>
+    </message>
+    <message>
+        <source>Window Split</source>
+        <translation>合併圖標</translation>
     </message>
 </context>
 <context>
@@ -198,11 +202,11 @@
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>消息提示</translation>
     </message>
     <message>
         <source>Open Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟控制中心</translation>
     </message>
 </context>
 <context>
@@ -417,6 +421,11 @@
     </message>
     <message>
         <source>显示内容设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>显示CPU、内存、网速、
+电池和CPU温度</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

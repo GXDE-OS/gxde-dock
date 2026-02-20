@@ -69,22 +69,22 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="88"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="91"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="93"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="93"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="98"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="113"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="118"/>
         <source>This action cannot be restored</source>
         <translation type="unfinished"></translation>
     </message>
@@ -188,27 +188,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="95"/>
+        <location filename="../frame/util/docksettings.cpp" line="61"/>
+        <source>Window Split</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="97"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="104"/>
+        <location filename="../frame/util/docksettings.cpp" line="106"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="111"/>
+        <location filename="../frame/util/docksettings.cpp" line="113"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="118"/>
+        <location filename="../frame/util/docksettings.cpp" line="120"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="122"/>
+        <location filename="../frame/util/docksettings.cpp" line="124"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -470,43 +475,50 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="123"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
         <source>系统监控插件设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="124"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="125"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="126"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示CPU、内存</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="127"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="71"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="128"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
+        <source>显示CPU、内存、网速、
+电池和CPU温度</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="136"/>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="81"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>

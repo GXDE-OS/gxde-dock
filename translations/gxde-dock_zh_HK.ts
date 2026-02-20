@@ -105,11 +105,11 @@
     <name>DockSettings</name>
     <message>
         <source>Fashion Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>時尚模式</translation>
     </message>
     <message>
         <source>Efficient Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>高效模式</translation>
     </message>
     <message>
         <source>Top</source>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>大</translation>
     </message>
     <message>
         <source>Medium</source>
@@ -153,7 +153,7 @@
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>模式</translation>
     </message>
     <message>
         <source>Location</source>
@@ -165,7 +165,7 @@
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>狀態</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -173,7 +173,11 @@
     </message>
     <message>
         <source>System Monitor</source>
-        <translation type="unfinished"></translation>
+        <translation>系統監視器</translation>
+    </message>
+    <message>
+        <source>Window Split</source>
+        <translation>合併圖標</translation>
     </message>
 </context>
 <context>
@@ -418,6 +422,11 @@
     <message>
         <source>显示内容设置</source>
         <translation>顯示內容設置</translation>
+    </message>
+    <message>
+        <source>显示CPU、内存、网速、
+电池和CPU温度</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
