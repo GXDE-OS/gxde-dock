@@ -155,6 +155,7 @@ private:
     QAction m_keepHiddenAct;
     QAction m_smartHideAct;
     QAction m_systemMonitor;
+    QAction m_windowSplit;
 
     DBusDisplay *m_displayInter;
     DBusDock *m_dockInter;

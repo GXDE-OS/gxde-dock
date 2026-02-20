@@ -58,6 +58,7 @@ DockSettings::DockSettings(QWidget *parent)
     , m_keepHiddenAct(tr("Keep Hidden"), this)
     , m_smartHideAct(tr("Smart Hide"), this)
     , m_systemMonitor(tr("System Monitor"), this)
+    , m_windowSplit(tr("Window Split"), this)
     , m_displayInter(new DBusDisplay(this))
     , m_dockInter(new DBusDock("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
     , m_itemController(DockItemController::instance(this))
@@ -88,6 +89,7 @@ DockSettings::DockSettings(QWidget *parent)
     m_keepShownAct.setCheckable(true);
     m_keepHiddenAct.setCheckable(true);
     m_smartHideAct.setCheckable(true);
+    m_windowSplit.setCheckable(true);
 
     WhiteMenu *modeSubMenu = new WhiteMenu(&m_settingsMenu);
     modeSubMenu->addAction(&m_fashionModeAct);
@@ -127,6 +129,7 @@ DockSettings::DockSettings(QWidget *parent)
     m_settingsMenu.addAction(sizeSubMenuAct);
     m_settingsMenu.addAction(statusSubMenuAct);
     m_settingsMenu.addAction(hideSubMenuAct);
+    m_settingsMenu.addAction(&m_windowSplit);
     // 需要确保安装了系统监视器才可显示
     if (QFile::exists("/usr/bin/deepin-system-monitor") || QFile::exists("/usr/bin/gxde-system-monitor")) {
         m_settingsMenu.addAction(&m_systemMonitor);
@@ -286,6 +289,7 @@ void DockSettings::showDockSettingsMenu()
     m_keepShownAct.setChecked(m_hideMode == KeepShowing);
     m_keepHiddenAct.setChecked(m_hideMode == KeepHidden);
     m_smartHideAct.setChecked(m_hideMode == SmartHide);
+    m_windowSplit.setChecked(m_dockInter->windowSplit());
 
     m_settingsMenu.exec(QCursor::pos());
 
@@ -337,6 +341,11 @@ void DockSettings::menuActionClicked(QAction *action)
         return m_dockInter->setHideMode(KeepHidden);
     if (action == &m_smartHideAct)
         return m_dockInter->setHideMode(SmartHide);
+
+    if (action == &m_windowSplit) {
+        m_dockInter->setWindowSplit(m_windowSplit.isChecked());
+        return;
+    }
 
     // check plugin hide menu.
     const QString &data = action->data().toString();

@@ -49,6 +49,7 @@ public:
     bool itemIsInContainer(DockItem * const item) const;
     void setDropping(const bool dropping);
     void startLoadPlugins() const;
+    void reloadAppItems();
 
 signals:
     void itemInserted(const int index, DockItem *item) const;
@@ -77,7 +78,7 @@ private:
     void appItemRemoved(AppItem *appItem);
     void pluginItemInserted(PluginsItem *item);
     void pluginItemRemoved(PluginsItem *item);
-    void reloadAppItems();
+
 
 private:
     QTimer *m_updatePluginsOrderTimer;

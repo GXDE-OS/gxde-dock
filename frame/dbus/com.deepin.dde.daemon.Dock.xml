@@ -27,5 +27,6 @@
           <property name="Position" type="i" access="readwrite"></property>
           <property name="ActiveWindow" type="u" access="read"></property>
           <property name="HideState" type="i" access="read"></property>
+          <property name="WindowSplit" type="b" access="readwrite"></property>
      </interface>
 
