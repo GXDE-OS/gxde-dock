@@ -1,4 +1,4 @@
-gxde-dock (5.0.10) UNRELEASED; urgency=medium
+gxde-dock (5.0.11) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -18,8 +18,9 @@ gxde-dock (5.0.10) UNRELEASED; urgency=medium
   * 修复清空回收站引起的dock崩溃的问题
   * 修复设置资源监视插件引起的dock崩溃的问题
   * 支持设置不合并任务栏图标
+  * 支持调用麒麟虚拟键盘
 
- -- gfdgd_xi <3025613752@qq.com>  Fri, 20 Feb 2026 12:02:20 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Fri, 20 Mar 2026 14:37:28 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 

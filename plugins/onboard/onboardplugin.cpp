@@ -85,6 +85,10 @@ const QString OnboardPlugin::itemCommand(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
 
+    if (QFile::exists("/usr/bin/kylin-virtual-keyboard")) {
+        // 如果存在麒麟虚拟键盘，则默认使用该键盘
+        return QString("dbus-send --print-reply --dest=org.fcitx.Fcitx5 /virtualkeyboard org.fcitx.Fcitx.VirtualKeyboard1.ToggleVirtualKeyboard");
+    }
     return QString("dbus-send --print-reply --dest=org.onboard.Onboard /org/onboard/Onboard/Keyboard org.onboard.Onboard.Keyboard.ToggleVisible");
 }
 
