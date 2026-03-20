@@ -212,7 +212,7 @@
 <context>
     <name>OnboardPlugin</name>
     <message>
-        <source>Onboard</source>
+        <source>Virtual Keyboard</source>
         <translation>Ekran Klavyesi</translation>
     </message>
     <message>

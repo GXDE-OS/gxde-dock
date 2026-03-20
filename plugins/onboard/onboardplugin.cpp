@@ -38,12 +38,12 @@ OnboardPlugin::OnboardPlugin(QObject *parent)
 
 const QString OnboardPlugin::pluginName() const
 {
-    return "onboard";
+    return "keyboard";
 }
 
 const QString OnboardPlugin::pluginDisplayName() const
 {
-    return tr("Onboard");
+    return tr("Virtual Keyboard");
 }
 
 QWidget *OnboardPlugin::itemWidget(const QString &itemKey)

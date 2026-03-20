@@ -189,7 +189,7 @@
 <context>
     <name>OnboardPlugin</name>
     <message>
-        <source>Onboard</source>
+        <source>Virtual Keyboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

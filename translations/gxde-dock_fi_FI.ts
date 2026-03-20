@@ -261,7 +261,7 @@
     <message>
         <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
         <location filename="../plugins/onboard/onboardplugin.cpp" line="46"/>
-        <source>Onboard</source>
+        <source>Virtual Keyboard</source>
         <translation>Koneella</translation>
     </message>
     <message>
