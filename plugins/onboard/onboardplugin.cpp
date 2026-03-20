@@ -99,7 +99,7 @@ const QString OnboardPlugin::itemContextMenu(const QString &itemKey)
     QMap<QString, QVariant> onboardSettings;
     onboardSettings["itemId"] = "onboard-settings";
     onboardSettings["itemText"] = tr("Settings");
-    onboardSettings["isActive"] = true;
+    onboardSettings["isActive"] = !QFile::exists("/usr/bin/kylin-virtual-keyboard");
     items.push_back(onboardSettings);
 
     QMap<QString, QVariant> menu;
