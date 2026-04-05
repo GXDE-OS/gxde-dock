@@ -45,7 +45,7 @@ void PowerStatusWidget::refreshIcon()
 
 QSize PowerStatusWidget::sizeHint() const
 {
-    return QSize(26, 26);
+    return QSize(60, 26);
 }
 
 void PowerStatusWidget::paintEvent(QPaintEvent *e)
@@ -58,7 +58,25 @@ void PowerStatusWidget::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     const QRectF &rf = QRectF(rect());
     const QRectF &rfp = QRectF(icon.rect());
-    painter.drawPixmap(rf.center() - rfp.center() / ratio, icon);
+    
+    // 绘制图标，调整位置为左侧
+    QPointF iconPos = rf.center() - rfp.center() / ratio;
+    iconPos.setX(5 * ratio); // 左侧留出一些空间，考虑设备像素比
+    painter.drawPixmap(iconPos, icon);
+
+    // 绘制电池百分比
+    const BatteryPercentageMap data = m_powerInter->batteryPercentage();
+    const uint value = qMin(100.0, qMax(0.0, data.value("Display")));
+    const int percentage = std::round(value);
+    
+    // 保持固定字体大小，避免文字超出范围
+    painter.setFont(QFont("Source Han Sans SC", 10));
+    painter.setPen(QColor("#ffffff"));
+    
+    // 计算文本位置，显示在图标右侧，增加间距
+    QRect textRect = rect();
+    textRect.adjust(25, 0, 0, 0); // 左侧留出图标的空间，增加间距
+    painter.drawText(textRect, Qt::AlignVCenter, QString("%1%").arg(percentage));
 }
 
 QPixmap PowerStatusWidget::getBatteryIcon()

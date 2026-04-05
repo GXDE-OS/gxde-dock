@@ -1,4 +1,4 @@
-gxde-dock (5.0.13) UNRELEASED; urgency=medium
+gxde-dock (5.0.14) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
   * 新增 Mac 模式
@@ -21,8 +21,9 @@ gxde-dock (5.0.13) UNRELEASED; urgency=medium
   * 支持调用麒麟虚拟键盘
   * 修改虚拟键盘插件名称
   * 添加麒麟虚拟键盘依赖
+  * 任务栏支持直接显示电池电量
 
- -- gfdgd_xi <3025613752@qq.com>  Mon, 23 Mar 2026 22:19:14 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sun, 05 Apr 2026 16:47:41 +0800
 
 gxde-dock (4.10.14gxde3) UNRELEASED; urgency=medium
 

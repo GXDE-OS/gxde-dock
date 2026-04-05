@@ -219,6 +219,10 @@
         <source>Settings</source>
         <translation>設定</translation>
     </message>
+    <message>
+        <source>Onboard</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PowerPlugin</name>
