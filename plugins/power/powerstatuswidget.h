@@ -46,6 +46,7 @@ protected:
 
 private:
     QPixmap getBatteryIcon();
+    bool isEfficientMode() const;
 
 private:
     DBusPower *m_powerInter;
