@@ -73,7 +73,10 @@ void PowerStatusWidget::paintEvent(QPaintEvent *e)
     
     // 绘制图标，调整位置为左侧
     QPointF iconPos = rf.center() - rfp.center() / ratio;
-    iconPos.setX(5 * ratio); // 左侧留出一些空间，考虑设备像素比
+    // 使时尚模式下电量图标在中间
+    if (isEfficientMode()) {
+        iconPos.setX(5 * ratio); // 左侧留出一些空间，考虑设备像素比
+    }
     painter.drawPixmap(iconPos, icon);
 
     // 高效模式下显示电池百分比
