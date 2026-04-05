@@ -75,6 +75,7 @@ private:
     void loadPlugin();
     void refreshPluginItemsVisible();
     void refreshTipsData();
+    int getBatteryHealth();
 
 private:
     bool m_pluginLoaded;

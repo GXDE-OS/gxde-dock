@@ -203,6 +203,89 @@ void PowerPlugin::refreshPluginItemsVisible()
     }
 }
 
+int PowerPlugin::getBatteryHealth()
+{
+    // 尝试使用upower命令获取 - 优先使用battery_BAT0
+    QProcess process;
+    process.start("upower", QStringList() << "-i" << "/org/freedesktop/UPower/devices/battery_BAT0");
+    process.waitForFinished(1000);
+    
+    if (process.exitCode() == 0) {
+        QString output = process.readAllStandardOutput();
+        
+        // 直接搜索capacity字符串
+        int capacityIndex = output.indexOf("capacity:");
+        if (capacityIndex != -1) {
+            QString capacityLine = output.mid(capacityIndex).split("\n").first();
+            QRegularExpression rx("(\\d+)%");
+            QRegularExpressionMatch match = rx.match(capacityLine);
+            if (match.hasMatch()) {
+                return match.captured(1).toInt();
+            }
+        }
+    }
+    
+    // 尝试从系统文件获取电池健康度
+    QDir batteryDir("/sys/class/power_supply");
+    QStringList batteryNames = batteryDir.entryList(QStringList() << "BAT*");
+    
+    if (!batteryNames.isEmpty()) {
+        QString batteryPath = batteryDir.absolutePath() + "/" + batteryNames.first();
+        
+        // 读取设计容量和当前满电容量
+        QFile designFile(batteryPath + "/charge_full_design");
+        QFile fullFile(batteryPath + "/charge_full");
+        
+        if (designFile.open(QIODevice::ReadOnly) && fullFile.open(QIODevice::ReadOnly)) {
+            bool ok1, ok2;
+            int designCapacity = designFile.readAll().trimmed().toInt(&ok1);
+            int fullCapacity = fullFile.readAll().trimmed().toInt(&ok2);
+            
+            if (ok1 && ok2 && designCapacity > 0) {
+                int health = static_cast<int>((static_cast<double>(fullCapacity) / designCapacity) * 100);
+                return qMin(100, qMax(0, health));
+            }
+        }
+        
+        // 尝试读取能量容量
+        QFile energyFullFile(batteryPath + "/energy_full");
+        QFile energyFullDesignFile(batteryPath + "/energy_full_design");
+        
+        if (energyFullFile.open(QIODevice::ReadOnly) && energyFullDesignFile.open(QIODevice::ReadOnly)) {
+            bool ok1, ok2;
+            double energyFull = energyFullFile.readAll().trimmed().toDouble(&ok1);
+            double energyFullDesign = energyFullDesignFile.readAll().trimmed().toDouble(&ok2);
+            
+            if (ok1 && ok2 && energyFullDesign > 0) {
+                int health = static_cast<int>((energyFull / energyFullDesign) * 100);
+                return qMin(100, qMax(0, health));
+            }
+        }
+    }
+    
+    // 尝试使用DisplayDevice
+    process.start("upower", QStringList() << "-i" << "/org/freedesktop/UPower/devices/DisplayDevice");
+    process.waitForFinished(1000);
+    
+    if (process.exitCode() == 0) {
+        QString output = process.readAllStandardOutput();
+        
+        // 直接搜索capacity字符串
+        int capacityIndex = output.indexOf("capacity:");
+        if (capacityIndex != -1) {
+            QString capacityLine = output.mid(capacityIndex).split("\n").first();
+            QRegularExpression rx("(\\d+)%");
+            QRegularExpressionMatch match = rx.match(capacityLine);
+            if (match.hasMatch()) {
+                return match.captured(1).toInt();
+            }
+        }
+    }
+    
+    // 如果无法获取，返回默认值
+    return 0;
+}
+
 void PowerPlugin::refreshTipsData()
 {
     const BatteryPercentageMap data = m_powerInter->batteryPercentage();
@@ -210,6 +293,9 @@ void PowerPlugin::refreshTipsData()
     const uint percentage = qMin(100.0, qMax(0.0, data.value("Display")));
     const QString value = QString("%1%").arg(std::round(percentage));
     const int batteryState = m_powerInter->batteryState()["Display"];
+
+    // 获取电池健康度
+    int healthPercentage = getBatteryHealth();
 
     if (m_powerInter->onBattery()) {
         qulonglong timeToEmpty = m_systemPowerInter->batteryTimeToEmpty();
@@ -220,17 +306,17 @@ void PowerPlugin::refreshTipsData()
         QString tips;
 
         if (hour == 0) {
-            tips = tr("Capacity %1, %2 min remaining").arg(value).arg(min);
+            tips = tr("Capacity %1, %2 min remaining, Health: %3%").arg(value).arg(min).arg(healthPercentage);
         }
         else {
-            tips = tr("Capacity %1, %2 hr %3 min remaining").arg(value).arg(hour).arg(min);
+            tips = tr("Capacity %1, %2 hr %3 min remaining, Health: %4%").arg(value).arg(hour).arg(min).arg(healthPercentage);
         }
 
         m_tipsLabel->setText(tips);
     }
     else {
         if (batteryState == BatteryState::FULLY_CHARGED || percentage == 100.) {
-            m_tipsLabel->setText(tr("Charged %1").arg(value));
+            m_tipsLabel->setText(tr("Charged %1, Health: %2%").arg(value).arg(healthPercentage));
         }
         else {
             qulonglong timeToFull = m_systemPowerInter->batteryTimeToFull();
@@ -241,10 +327,10 @@ void PowerPlugin::refreshTipsData()
             QString tips;
 
             if (hour == 0) {
-                tips = tr("Charging %1, %2 min until full").arg(value).arg(min);
+                tips = tr("Charging %1, %2 min until full, health: %3%").arg(value).arg(min).arg(healthPercentage);
             }
             else {
-                tips = tr("Charging %1, %2 hr %3 min until full").arg(value).arg(hour).arg(min);
+                tips = tr("Charging %1, %2 hr %3 min until full, health: %4%").arg(value).arg(hour).arg(min).arg(healthPercentage);
             }
 
             m_tipsLabel->setText(tips);
