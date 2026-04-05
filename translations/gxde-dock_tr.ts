@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>%1 Şarj Oldu</translation>
+        <translation type="vanished">%1 Şarj Oldu</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>%1 ve boşalıyor, %2 dakika kaldı</translation>
+        <translation type="vanished">%1 ve boşalıyor, %2 dakika kaldı</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>%1 ve boşalıyor, %2 saat %3 dakika kaldı</translation>
+        <translation type="vanished">%1 ve boşalıyor, %2 saat %3 dakika kaldı</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>%1 ve doluyor, tam dolmaya %2 dakika kaldı</translation>
+        <translation type="vanished">%1 ve doluyor, tam dolmaya %2 dakika kaldı</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>%1 ve doluyor, tam dolmaya %2 saat %3 dakika kaldı</translation>
+        <translation type="vanished">%1 ve doluyor, tam dolmaya %2 saat %3 dakika kaldı</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

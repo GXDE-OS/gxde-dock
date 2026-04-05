@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Carica %1</translation>
+        <translation type="vanished">Carica %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Capacità %1, %2 min. rimanenti</translation>
+        <translation type="vanished">Capacità %1, %2 min. rimanenti</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Capacità %1, 2% ore e %3 min. rimanenti</translation>
+        <translation type="vanished">Capacità %1, 2% ore e %3 min. rimanenti</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Carica %1, %2 min. per la carica completa</translation>
+        <translation type="vanished">Carica %1, %2 min. per la carica completa</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Carica %1, %2 ore e %3 min. per la carica completa</translation>
+        <translation type="vanished">Carica %1, %2 ore e %3 min. per la carica completa</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

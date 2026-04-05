@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Заряджений на %1</translation>
+        <translation type="vanished">Заряджений на %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Батарея %1, %2 хв залишилося</translation>
+        <translation type="vanished">Батарея %1, %2 хв залишилося</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Батарея %1, %2 год %3 хв залишилося</translation>
+        <translation type="vanished">Батарея %1, %2 год %3 хв залишилося</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Зарядка %1, %2 хв до повної</translation>
+        <translation type="vanished">Зарядка %1, %2 хв до повної</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Зарядка %1, %2 год %3 хв до повної</translation>
+        <translation type="vanished">Зарядка %1, %2 год %3 хв до повної</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Ladattu: %1</translation>
+        <translation type="vanished">Ladattu: %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Akku %1, %2 min jäljellä</translation>
+        <translation type="vanished">Akku %1, %2 min jäljellä</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Akku %1, %2 t %3 min jäljellä</translation>
+        <translation type="vanished">Akku %1, %2 t %3 min jäljellä</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Lataa %1, %2 min täyteen</translation>
+        <translation type="vanished">Lataa %1, %2 min täyteen</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Lataa %1, %2 t %3 min täyteen</translation>
+        <translation type="vanished">Lataa %1, %2 t %3 min täyteen</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

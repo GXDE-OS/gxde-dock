@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Напуњено %1</translation>
+        <translation type="vanished">Напуњено %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Капацитет %1, %2 мин преостало</translation>
+        <translation type="vanished">Капацитет %1, %2 мин преостало</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Капацитет %1, %2 ч %3 мин преостало</translation>
+        <translation type="vanished">Капацитет %1, %2 ч %3 мин преостало</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Пуни се %1, %2 мин преостало</translation>
+        <translation type="vanished">Пуни се %1, %2 мин преостало</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Пуни се %1, %2 ч %3 мин преостало</translation>
+        <translation type="vanished">Пуни се %1, %2 ч %3 мин преостало</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

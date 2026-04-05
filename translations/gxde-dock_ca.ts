@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Càrrega: %1</translation>
+        <translation type="vanished">Càrrega: %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Capacitat %1, %2 min restants</translation>
+        <translation type="vanished">Capacitat %1, %2 min restants</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Capacitat %1, %2 h %3 min restants</translation>
+        <translation type="vanished">Capacitat %1, %2 h %3 min restants</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>S&apos;està carregant %1, %2 min fins càrrega completa</translation>
+        <translation type="vanished">S&apos;està carregant %1, %2 min fins càrrega completa</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>S&apos;està carregant %1, %2 h %3 min fins càrrega completa</translation>
+        <translation type="vanished">S&apos;està carregant %1, %2 h %3 min fins càrrega completa</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

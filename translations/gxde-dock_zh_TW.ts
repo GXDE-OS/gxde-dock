@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>%1 充電完成</translation>
+        <translation type="vanished">%1 充電完成</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>電量 %1，剩餘 %2 分鐘</translation>
+        <translation type="vanished">電量 %1，剩餘 %2 分鐘</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>電量 %1，剩餘 %2 小時 %3 分鐘</translation>
+        <translation type="vanished">電量 %1，剩餘 %2 小時 %3 分鐘</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>正在充電 %1，距離完成尚餘 %2 分鐘</translation>
+        <translation type="vanished">正在充電 %1，距離完成尚餘 %2 分鐘</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>正在充電 %1，距離完成尚餘 %2 小時 %3 分鐘</translation>
+        <translation type="vanished">正在充電 %1，距離完成尚餘 %2 小時 %3 分鐘</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation>電量 %1，剩餘 %2 分鐘，健康度：%3%</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation>電量 %1，剩餘 %2 小時 %3 分鐘，健康度：%4%</translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation>已充滿 %1，健康度：%2%</translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation>正在充電 %1，還需 %2 分鐘，健康度：%3%</translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation>正在充電 %1，還需 %2 小時 %3 分鐘，健康度：%4%</translation>
     </message>
 </context>
 <context>

@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Nabito %1</translation>
+        <translation type="vanished">Nabito %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Stav %1, %2 min zbývá</translation>
+        <translation type="vanished">Stav %1, %2 min zbývá</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Stav %1, %2 h %3 min zbývá</translation>
+        <translation type="vanished">Stav %1, %2 h %3 min zbývá</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Nabíjení %1, %2 min do úplného nabití</translation>
+        <translation type="vanished">Nabíjení %1, %2 min do úplného nabití</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Nabíjení %1, %2 h %3 min do úplného nabití</translation>
+        <translation type="vanished">Nabíjení %1, %2 h %3 min do úplného nabití</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

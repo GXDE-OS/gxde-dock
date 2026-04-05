@@ -279,28 +279,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="223"/>
-        <source>Capacity %1, %2 min remaining</source>
+        <location filename="../plugins/power/powerplugin.cpp" line="309"/>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="226"/>
-        <source>Capacity %1, %2 hr %3 min remaining</source>
+        <location filename="../plugins/power/powerplugin.cpp" line="312"/>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="233"/>
-        <source>Charged %1</source>
+        <location filename="../plugins/power/powerplugin.cpp" line="319"/>
+        <source>Charged %1, Health: %2%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="244"/>
-        <source>Charging %1, %2 min until full</source>
+        <location filename="../plugins/power/powerplugin.cpp" line="330"/>
+        <source>Charging %1, %2 min until full, health: %3%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="247"/>
-        <source>Charging %1, %2 hr %3 min until full</source>
+        <location filename="../plugins/power/powerplugin.cpp" line="333"/>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

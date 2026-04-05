@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Φορτισμένη %1</translation>
+        <translation type="vanished">Φορτισμένη %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Χωρητικότητα %1, απομένουν %2 λεπτά</translation>
+        <translation type="vanished">Χωρητικότητα %1, απομένουν %2 λεπτά</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Χωρητικότητα %1, απομένουν %2 ώρες και 3% λεπτά</translation>
+        <translation type="vanished">Χωρητικότητα %1, απομένουν %2 ώρες και 3% λεπτά</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Φόρτιση %1, 2% λεπτά μέχρι να γεμίσει</translation>
+        <translation type="vanished">Φόρτιση %1, 2% λεπτά μέχρι να γεμίσει</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Φόρτιση %1, 2% ώρες και %3 λεπτά μέχρι να γεμίσει</translation>
+        <translation type="vanished">Φόρτιση %1, 2% ώρες και %3 λεπτά μέχρι να γεμίσει</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

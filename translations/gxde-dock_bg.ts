@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Заредено %1</translation>
+        <translation type="vanished">Заредено %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Капацитет %1, остават %2 минути</translation>
+        <translation type="vanished">Капацитет %1, остават %2 минути</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Капацитет %1, остават %2 ч. % 3 мин. </translation>
+        <translation type="vanished">Капацитет %1, остават %2 ч. % 3 мин. </translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Зареждане на %1, %2 мин. до пълно зареждане</translation>
+        <translation type="vanished">Зареждане на %1, %2 мин. до пълно зареждане</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Зареждане на %1, %2 ч. %3 мин. до пълно зареждане</translation>
+        <translation type="vanished">Зареждане на %1, %2 ч. %3 мин. до пълно зареждане</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

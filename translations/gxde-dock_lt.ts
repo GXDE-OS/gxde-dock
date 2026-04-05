@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Įkrauta %1</translation>
+        <translation type="vanished">Įkrauta %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Talpa %1, liko %2 min.</translation>
+        <translation type="vanished">Talpa %1, liko %2 min.</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Talpa %1, liko %2 val. %3 min.</translation>
+        <translation type="vanished">Talpa %1, liko %2 val. %3 min.</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Įkraunama %1, iki pilnos liko %2 min.</translation>
+        <translation type="vanished">Įkraunama %1, iki pilnos liko %2 min.</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Įkraunama %1, iki pilnos liko %2 val. %3 min.</translation>
+        <translation type="vanished">Įkraunama %1, iki pilnos liko %2 val. %3 min.</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

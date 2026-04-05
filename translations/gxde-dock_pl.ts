@@ -236,23 +236,43 @@
     </message>
     <message>
         <source>Charged %1</source>
-        <translation>Naładowana %1</translation>
+        <translation type="vanished">Naładowana %1</translation>
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation>Poziom: %1, pozostało: %2min</translation>
+        <translation type="vanished">Poziom: %1, pozostało: %2min</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>Poziom: %1, pozostało: %2:%3</translation>
+        <translation type="vanished">Poziom: %1, pozostało: %2:%3</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation>Ładowanie %1, %2min do końca</translation>
+        <translation type="vanished">Ładowanie %1, %2min do końca</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>Ładowanie %1, %2:%3 do końca</translation>
+        <translation type="vanished">Ładowanie %1, %2:%3 do końca</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining, Health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charged %1, Health: %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full, health: %3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
