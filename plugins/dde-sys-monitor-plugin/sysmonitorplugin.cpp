@@ -1,5 +1,7 @@
 #include "sysmonitorplugin.h"
 #include <QDesktopWidget>
+#include <QProcess>
+#include <QProcessEnvironment>
 
 SysMonitorPlugin::SysMonitorPlugin(QObject *parent)
     : QObject(parent)
@@ -328,7 +330,14 @@ void SysMonitorPlugin::invokedMenuItem(const QString &itemKey, const QString &me
     if (menuId == "refresh") {
         
     } else if (menuId == "open") {
-        QProcess::startDetached("deepin-system-monitor");
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("QT_QPA_PLATFORM", "dxcb;xcb");
+        env.insert("QT_QPA_PLATFORMTHEME", "deepin");
+
+        QProcess process;
+        process.setProcessEnvironment(env);
+        process.setProgram("deepin-system-monitor");
+        process.startDetached();
     }
     else if(menuId == "setting") {
         pluginSettingDialog *setting = new pluginSettingDialog(&settings, m_pluginWidget->window());

@@ -26,6 +26,8 @@
 
 #include <QDebug>
 #include <QX11Info>
+#include <QProcess>
+#include <QProcessEnvironment>
 
 #include <DApplication>
 #include <QScreen>
@@ -175,13 +177,21 @@ DockSettings &DockSettings::Instance()
 
 void DockSettings::openSystemMonitor()
 {
-    //QProcess *process = new QProcess();
+    QString program;
     if (QFile::exists("/usr/bin/gxde-system-monitor")) {
-        QProcess::startDetached("gxde-system-monitor");
+        program = "gxde-system-monitor";
+    } else {
+        program = "deepin-system-monitor";
     }
-    else {
-        QProcess::startDetached("deepin-system-monitor");
-    }
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("QT_QPA_PLATFORM", "dxcb;xcb");
+    env.insert("QT_QPA_PLATFORMTHEME", "deepin");
+
+    QProcess process;
+    process.setProcessEnvironment(env);
+    process.setProgram(program);
+    process.startDetached();
 }
 
 const QRect DockSettings::primaryRect() const

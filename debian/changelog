@@ -1,3 +1,9 @@
+gxde-dock (5.0.17) UNRELEASED; urgency=medium
+
+  * 修复 dock 右键启动系统监视器时主题错误的问题
+
+ -- gfdgd_xi <3025613752@qq.com>  Sun, 02 May 2026 22:06:48 +0800
+
 gxde-dock (5.0.16) UNRELEASED; urgency=medium
 
   * 修复任务栏托盘图标重复的问题
