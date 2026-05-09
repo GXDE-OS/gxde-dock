@@ -34,7 +34,7 @@ VolumeSlider::VolumeSlider(QWidget *parent)
     setPageStep(50);
     setTickPosition(QSlider::NoTicks);
     setFixedHeight(22);
-    setStyleSheet("QSlider::groove {"
+    /*setStyleSheet("QSlider::groove {"
                   "margin-left:11px;"
                   "margin-right:11px;"
                   "border:none;"
@@ -53,7 +53,7 @@ VolumeSlider::VolumeSlider(QWidget *parent)
                   "}"
                   "QSlider::sub-page {"
                   "background-color:rgba(255, 255, 255, .8);"
-                  "}");
+                  "}");*/
 
     m_timer->setInterval(100);
 
