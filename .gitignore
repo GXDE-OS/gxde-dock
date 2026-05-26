@@ -19,6 +19,28 @@ CMakeLists.txt.user*
 *.qm
 .directory
 
-# binary file
+# Binary file
 dde-dock
 .vscode
+
+# Deb build output
+build/*
+obj-*-linux-gnu/*
+
+# dpkg-buildpackage artifacts
+debian/.debhelper/
+debian/files
+debian/*.debhelper.log
+debian/*.substvars
+debian/gxde-dock*/
+debian/tmp/
+debian/debhelper-build-stamp
+../gxde-dock_*.deb
+../gxde-dock_*.buildinfo
+../gxde-dock_*.changes
+
+# Clangd
+.cache/clangd/*
+
+# Misc
+.lock

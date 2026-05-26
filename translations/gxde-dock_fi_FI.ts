@@ -127,97 +127,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="48"/>
+        <location filename="../frame/util/docksettings.cpp" line="50"/>
         <source>Fashion Mode</source>
         <translation>Keskitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="49"/>
+        <location filename="../frame/util/docksettings.cpp" line="51"/>
         <source>Efficient Mode</source>
         <translation>Levitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="50"/>
+        <location filename="../frame/util/docksettings.cpp" line="52"/>
         <source>Top</source>
         <translation>Ylös</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="51"/>
+        <location filename="../frame/util/docksettings.cpp" line="53"/>
         <source>Bottom</source>
         <translation>Alas</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="52"/>
+        <location filename="../frame/util/docksettings.cpp" line="54"/>
         <source>Left</source>
         <translation>Vasen</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="53"/>
+        <location filename="../frame/util/docksettings.cpp" line="55"/>
         <source>Right</source>
         <translation>Oikea</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="54"/>
+        <location filename="../frame/util/docksettings.cpp" line="56"/>
         <source>Large</source>
         <translation>Suuri</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="55"/>
+        <location filename="../frame/util/docksettings.cpp" line="57"/>
         <source>Medium</source>
         <translation>Keskikoko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="56"/>
+        <location filename="../frame/util/docksettings.cpp" line="58"/>
         <source>Small</source>
         <translation>Pieni</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="57"/>
+        <location filename="../frame/util/docksettings.cpp" line="59"/>
         <source>Keep Shown</source>
         <translation>Pidä näkyvänä</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="58"/>
+        <location filename="../frame/util/docksettings.cpp" line="60"/>
         <source>Keep Hidden</source>
         <translation>Pidä piilotettuna</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="59"/>
+        <location filename="../frame/util/docksettings.cpp" line="61"/>
         <source>Smart Hide</source>
         <translation>Älykäs piilotus</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="60"/>
+        <location filename="../frame/util/docksettings.cpp" line="62"/>
         <source>System Monitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="61"/>
+        <location filename="../frame/util/docksettings.cpp" line="63"/>
         <source>Window Split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="97"/>
+        <location filename="../frame/util/docksettings.cpp" line="99"/>
         <source>Mode</source>
         <translation>Tila</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="106"/>
+        <location filename="../frame/util/docksettings.cpp" line="108"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="113"/>
+        <location filename="../frame/util/docksettings.cpp" line="115"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="120"/>
+        <location filename="../frame/util/docksettings.cpp" line="122"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="124"/>
+        <location filename="../frame/util/docksettings.cpp" line="126"/>
         <source>Plugins</source>
         <translation>Liitännäiset</translation>
     </message>
@@ -503,58 +503,42 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
         <source>系统监控插件设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示CPU、内存</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="136"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="136"/>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
-        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
-        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
