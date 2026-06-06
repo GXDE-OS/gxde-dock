@@ -28,6 +28,7 @@
 #include <dapplication.h>
 
 #include "xcb_misc.h"
+#include "wayland/layershellhelper.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -35,7 +36,7 @@ static XcbMisc * _xcb_misc_instance = NULL;
 
 XcbMisc::XcbMisc()
 {
-    if (DApplication::isWayland()) {
+    if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
     xcb_intern_atom_cookie_t * cookie = xcb_ewmh_init_atoms(QX11Info::connection(), &m_ewmh_connection);
@@ -58,7 +59,7 @@ XcbMisc * XcbMisc::instance()
 
 void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
 {
-    if (DApplication::isWayland()) {
+    if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
 
@@ -80,7 +81,7 @@ void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
 
 void XcbMisc::clear_strut_partial(xcb_window_t winId)
 {
-    if (DApplication::isWayland()) {
+    if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
 
@@ -92,7 +93,7 @@ void XcbMisc::clear_strut_partial(xcb_window_t winId)
 
 void XcbMisc::set_strut_partial(xcb_window_t winId, Orientation orientation, uint strut, uint start, uint end)
 {
-    if (DApplication::isWayland()) {
+    if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
 
@@ -135,7 +136,7 @@ void XcbMisc::set_strut_partial(xcb_window_t winId, Orientation orientation, uin
 
 void XcbMisc::set_window_icon_geometry(xcb_window_t winId, QRect geo)
 {
-    if (DApplication::isWayland()) {
+    if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
 //    qDebug() << Q_FUNC_INFO << winId << geo;

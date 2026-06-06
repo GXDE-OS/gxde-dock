@@ -22,6 +22,7 @@
 #include "mainwindow.h"
 #include "panel/mainpanel.h"
 #include "util/utils.h"
+#include "wayland/layershellhelper.h"
 
 #include <QDebug>
 #include <QEvent>
@@ -92,17 +93,28 @@ MainWindow::MainWindow(QWidget *parent)
     setMouseTracking(true);
     setAcceptDrops(true);
 
-    DPlatformWindowHandle::enableDXcbForWindow(this, true);
-    m_platformWindowHandle.setEnableBlurWindow(false);
-    m_platformWindowHandle.setTranslucentBackground(true);
-    m_platformWindowHandle.setWindowRadius(0);
-    m_platformWindowHandle.setBorderWidth(0);
-    m_platformWindowHandle.setShadowOffset(QPoint(0, 0));
-    m_platformWindowHandle.setShadowRadius(0);
+    const bool wayland = Wayland::LayerShellHelper::isWayland();
+
+    if (!wayland) {
+        DPlatformWindowHandle::enableDXcbForWindow(this, true);
+        m_platformWindowHandle.setEnableBlurWindow(false);
+        m_platformWindowHandle.setTranslucentBackground(true);
+        m_platformWindowHandle.setWindowRadius(0);
+        m_platformWindowHandle.setBorderWidth(0);
+        m_platformWindowHandle.setShadowOffset(QPoint(0, 0));
+        m_platformWindowHandle.setShadowRadius(0);
+    }
 
     m_settings = &DockSettings::Instance();
-    
-    if (!DApplication::isWayland()) {
+
+    if (wayland) {
+        // layer-shell-qt在创建表面时固定窗体尺寸，即使后期resize也不会重新发送set_size
+        // 所以初始化之前就得确定真实高度了
+        // 不然的话dock的尺寸会卡在100*30 在桌面上看就是半个dock
+        resize(m_settings->windowSize());
+        Wayland::LayerShellHelper::setDockRole(this, qApp->primaryScreen(),
+            QStringLiteral("dde-shell/dock"), m_settings->position());
+    } else {
         m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
     }
 
@@ -122,10 +134,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::launch()
 {
+    const bool wayland = Wayland::LayerShellHelper::isWayland();
+
     m_updatePanelVisible = false;
     m_mainPanel->setVisible(false);
     resetPanelEnvironment(false);
-    setVisible(false);
+
+    if (!wayland) {
+        setVisible(false);
+    }
 
     QTimer::singleShot(400, this, [&] {
         m_launched = true;
@@ -147,7 +164,9 @@ void MainWindow::launch()
     });
 
     qApp->processEvents();
-    QTimer::singleShot(300, this, &MainWindow::show);
+    if (!wayland) {
+        QTimer::singleShot(300, this, &MainWindow::show);
+    }
 }
 
 bool MainWindow::event(QEvent *e)
@@ -168,12 +187,19 @@ void MainWindow::showEvent(QShowEvent *e)
 {
     QWidget::showEvent(e);
 
-    m_platformWindowHandle.setEnableBlurWindow(false);
-    m_platformWindowHandle.setShadowOffset(QPoint());
-    m_platformWindowHandle.setShadowRadius(0);
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        m_platformWindowHandle.setEnableBlurWindow(false);
+        m_platformWindowHandle.setShadowOffset(QPoint());
+        m_platformWindowHandle.setShadowRadius(0);
+    }
 
     connect(qGuiApp, &QGuiApplication::primaryScreenChanged,
             windowHandle(), [this] (QScreen *new_screen) {
+        if (Wayland::LayerShellHelper::isWayland()) {
+            Wayland::LayerShellHelper::updateOutput(this, new_screen);
+            return;
+        }
+
         QScreen *old_screen = windowHandle()->screen();
         windowHandle()->setScreen(new_screen);
         // 屏幕变化后可能导致控件缩放比变化，此时应该重设控件位置大小
@@ -239,6 +265,12 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 
 void MainWindow::setFixedSize(const QSize &size)
 {
+    if (Wayland::LayerShellHelper::isWayland()) {
+        m_sizeChangeAni->stop();
+        QWidget::setFixedSize(size);
+        return;
+    }
+
     const QPropertyAnimation::State state = m_sizeChangeAni->state();
 
     if (state == QPropertyAnimation::Stopped && this->size() == size)
@@ -332,6 +364,13 @@ void MainWindow::compositeChanged()
 
 void MainWindow::internalMove(const QPoint &p)
 {
+    // 在Wayland上，layer-shell surface是由WM和锚设定控制的
+    // internalMove在Wayland上会部分把窗体移动到屏幕外
+    // Wayland上跳过，使用updateGeometry/setFixedSize代替
+    if (Wayland::LayerShellHelper::isWayland()) {
+        return;
+    }
+
     const bool isHide = m_settings->hideState() == HideState::Hide && !testAttribute(Qt::WA_UnderMouse);
     const bool pos_adjust = m_settings->hideMode() != HideMode::KeepShowing &&
                              isHide &&
@@ -488,6 +527,10 @@ void MainWindow::updateGeometry()
     const Position position = m_settings->position();
     QSize size = m_settings->windowSize();
 
+    if (Wayland::LayerShellHelper::isWayland()) {
+        Wayland::LayerShellHelper::updateDockAnchor(this, position);
+    }
+
     // DockDisplayMode and DockPosition MUST be set before invoke setFixedSize method of MainPanel
     m_mainPanel->updateDockDisplayMode(m_settings->displayMode());
     m_mainPanel->updateDockPosition(position);
@@ -527,9 +570,12 @@ void MainWindow::updateGeometry()
 
 void MainWindow::clearStrutPartial()
 {
-    if (!DApplication::isWayland()) {
-        m_xcbMisc->clear_strut_partial(winId());
+    if (Wayland::LayerShellHelper::isWayland()) {
+        Wayland::LayerShellHelper::updateExclusiveZone(this, 0);
+        return;
     }
+
+    m_xcbMisc->clear_strut_partial(winId());
 }
 
 void MainWindow::setStrutPartial()
@@ -542,6 +588,18 @@ void MainWindow::setStrutPartial()
 
     if (m_settings->hideMode() != Dock::KeepShowing)
         return;
+
+
+    // Wayland上保留区域是layer-shell设置的exclusive zone，WM负责处理
+    // 所以我们放松就好~
+    if (Wayland::LayerShellHelper::isWayland()) {
+        const Position side = m_settings->position();
+        const QSize s = m_settings->windowSize();
+        const int zone = (side == Position::Top || side == Position::Bottom)
+            ? s.height() : s.width();
+        Wayland::LayerShellHelper::updateExclusiveZone(this, zone);
+        return;
+    }
 
     const auto ratio = devicePixelRatioF();
     const int maxScreenHeight = m_settings->screenRawHeight();
@@ -620,9 +678,7 @@ void MainWindow::setStrutPartial()
         return;
     }
 
-    if (!DApplication::isWayland()) {
-        m_xcbMisc->set_strut_partial(winId(), orientation, strut, strutStart, strutEnd);
-    }
+    m_xcbMisc->set_strut_partial(winId(), orientation, strut, strutStart, strutEnd);
 }
 
 void MainWindow::expand()

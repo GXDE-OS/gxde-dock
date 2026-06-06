@@ -28,6 +28,9 @@
 #include <QX11Info>
 #include <QProcess>
 #include <QProcessEnvironment>
+#include <QGSettings>
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
 
 #include <DApplication>
 #include <QScreen>
@@ -37,9 +40,100 @@
 #define ICON_SIZE_SMALL         30
 #define FASHION_MODE_PADDING    30
 
+#define DOCK_GSETTINGS_SCHEMA       "com.deepin.dde.dock"
+#define DOCK_GSETTINGS_PATH         "/com/deepin/dde/dock/"
+#define APPEARANCE_GSETTINGS_SCHEMA "com.deepin.dde.appearance"
+#define APPEARANCE_GSETTINGS_PATH   "/com/deepin/dde/appearance/"
+
 DWIDGET_USE_NAMESPACE
 
 extern const QPoint rawXPosition(const QPoint &scaledPos);
+
+namespace {
+
+Position positionFromString(const QString& s) {
+    if (s == "top") {
+        return Top;
+    } else if (s == "right") {
+        return Right;
+    } else if (s == "left") {
+        return Left;
+    } else {
+        return Bottom;
+    }
+}
+
+QString positionToString(const Position p) {
+    switch (p) {
+        case Top: {
+            return "top";
+        }
+
+        case Right: {
+            return "right";
+        }
+
+        case Left: {
+            return "left";
+        }
+
+        case Bottom: {
+            return "bottom";
+        }
+
+        default: {
+            return "bottom";
+        }
+    }
+}
+
+DisplayMode displayModeFromString(const QString& s) {
+    if (s == "fashion") {
+        return Fashion;
+    } else {
+        return Efficient;
+    }
+}
+
+QString displayModeToString(const DisplayMode m) {
+    if (m == Fashion) {
+        return "fashion";
+    } else {
+        return "efficient";
+    }
+}
+
+HideMode hideModeFromString(const QString& s) {
+    if (s == "keep-hidden") {
+        return KeepHidden;
+    } else if (s == "smart-hide") {
+        return SmartHide;
+    } else {
+        return KeepShowing;
+    }
+}
+
+QString hideModeToString(const HideMode m) {
+    switch (m) {
+        case KeepHidden: {
+            return "keep-hidden";
+        }
+
+        case SmartHide: {
+            return "smart-hide";
+        }
+
+        case KeepShowing: {
+            return "keep-showing";
+        }
+
+        default: {
+            return "keep-showing";
+        }
+    }
+}
+
+}  // namespace
 
 DockSettings::DockSettings(QWidget *parent)
     : QObject(parent)
@@ -65,14 +159,22 @@ DockSettings::DockSettings(QWidget *parent)
     , m_dockInter(new DBusDock("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
     , m_itemController(DockItemController::instance(this))
 {
+    m_daemonAvailable = QDBusConnection::sessionBus().interface()
+        ->isServiceRegistered("com.deepin.dde.daemon.Dock").value();
+    m_dockGsettings = new QGSettings(DOCK_GSETTINGS_SCHEMA,
+        DOCK_GSETTINGS_PATH, this);
+    m_appearanceGsettings = new QGSettings(APPEARANCE_GSETTINGS_SCHEMA,
+        APPEARANCE_GSETTINGS_PATH, this);
+
     m_primaryRawRect = m_displayInter->primaryRawRect();
     m_screenRawHeight = m_displayInter->screenRawHeight();
     m_screenRawWidth = m_displayInter->screenRawWidth();
-    m_position = Dock::Position(m_dockInter->position());
-    m_displayMode = Dock::DisplayMode(m_dockInter->displayMode());
-    m_hideMode = Dock::HideMode(m_dockInter->hideMode());
-    m_hideState = Dock::HideState(m_dockInter->hideState());
-    m_iconSize = m_dockInter->iconSize();
+    m_position = currentPosition();
+    m_displayMode = currentDisplayMode();
+    m_hideMode = currentHideMode();
+    m_hideState = m_daemonAvailable
+        ? Dock::HideState(m_dockInter->hideState()) : Show;
+    m_iconSize = currentIconSize();
     AppItem::setIconBaseSize(m_iconSize * dockRatio());
     DockItem::setDockPosition(m_position);
     qApp->setProperty(PROP_POSITION, QVariant::fromValue(m_position));
@@ -162,11 +264,23 @@ DockSettings::DockSettings(QWidget *parent)
         connect(app, &DApplication::iconThemeChanged, this, &DockSettings::gtkIconThemeChanged);
     }
 
+    // Daemon不可用时使用GSettings做完备选方案获取位置/大小/模式等
+    if (!m_daemonAvailable) {
+        connect(m_dockGsettings, &QGSettings::changed,
+          this, &DockSettings::onGsettingsChanged);
+        connect(m_appearanceGsettings, &QGSettings::changed, this,
+                [this](const QString &key) {
+            if (key == "opacity") {
+                onOpacityChanged(currentOpacity());
+            }
+        });
+    }
+
     calculateWindowConfig();
     updateForbidPostions();
     resetFrontendGeometry();
 
-    QTimer::singleShot(0, this, [=] {onOpacityChanged(m_dockInter->opacity());});
+    QTimer::singleShot(0, this, [=] {onOpacityChanged(currentOpacity());});
 }
 
 DockSettings &DockSettings::Instance()
@@ -325,32 +439,32 @@ void DockSettings::menuActionClicked(QAction *action)
     Q_ASSERT(action);
 
     if (action == &m_fashionModeAct)
-        return m_dockInter->setDisplayMode(Fashion);
+        return writeDisplayMode(Fashion);
     if (action == &m_efficientModeAct)
-        return m_dockInter->setDisplayMode(Efficient);
+        return writeDisplayMode(Efficient);
 
     if (action == &m_topPosAct)
-        return m_dockInter->setPosition(Top);
+        return writePosition(Top);
     if (action == &m_bottomPosAct)
-        return m_dockInter->setPosition(Bottom);
+        return writePosition(Bottom);
     if (action == &m_leftPosAct)
-        return m_dockInter->setPosition(Left);
+        return writePosition(Left);
     if (action == &m_rightPosAct)
-        return m_dockInter->setPosition(Right);
+        return writePosition(Right);
 
     if (action == &m_largeSizeAct)
-        return m_dockInter->setIconSize(ICON_SIZE_LARGE);
+        return writeIconSize(ICON_SIZE_LARGE);
     if (action == &m_mediumSizeAct)
-        return m_dockInter->setIconSize(ICON_SIZE_MEDIUM);
+        return writeIconSize(ICON_SIZE_MEDIUM);
     if (action == &m_smallSizeAct)
-        return m_dockInter->setIconSize(ICON_SIZE_SMALL);
+        return writeIconSize(ICON_SIZE_SMALL);
 
     if (action == &m_keepShownAct)
-        return m_dockInter->setHideMode(KeepShowing);
+        return writeHideMode(KeepShowing);
     if (action == &m_keepHiddenAct)
-        return m_dockInter->setHideMode(KeepHidden);
+        return writeHideMode(KeepHidden);
     if (action == &m_smartHideAct)
-        return m_dockInter->setHideMode(SmartHide);
+        return writeHideMode(SmartHide);
 
     if (action == &m_windowSplit) {
         m_dockInter->setWindowSplit(m_windowSplit.isChecked());
@@ -371,7 +485,7 @@ void DockSettings::menuActionClicked(QAction *action)
 void DockSettings::onPositionChanged()
 {
     const Position prevPos = m_position;
-    const Position nextPos = Dock::Position(m_dockInter->position());
+    const Position nextPos = currentPosition();
 
     if (prevPos == nextPos)
         return;
@@ -392,7 +506,7 @@ void DockSettings::onPositionChanged()
 void DockSettings::iconSizeChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    m_iconSize = m_dockInter->iconSize();
+    m_iconSize = currentIconSize();
     AppItem::setIconBaseSize(m_iconSize * dockRatio());
 
     calculateWindowConfig();
@@ -403,7 +517,7 @@ void DockSettings::iconSizeChanged()
 void DockSettings::onDisplayModeChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    m_displayMode = Dock::DisplayMode(m_dockInter->displayMode());
+    m_displayMode = currentDisplayMode();
     DockItem::setDockDisplayMode(m_displayMode);
     qApp->setProperty(PROP_DISPLAY_MODE, QVariant::fromValue(m_displayMode));
 
@@ -417,7 +531,7 @@ void DockSettings::onDisplayModeChanged()
 void DockSettings::hideModeChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    m_hideMode = Dock::HideMode(m_dockInter->hideMode());
+    m_hideMode = currentHideMode();
 
     emit windowHideModeChanged();
 }
@@ -425,7 +539,9 @@ void DockSettings::hideModeChanged()
 void DockSettings::hideStateChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    const Dock::HideState state = Dock::HideState(m_dockInter->hideState());
+    const Dock::HideState state = m_daemonAvailable
+                                      ? Dock::HideState(m_dockInter->hideState())
+                                      : m_hideState;
 
     if (state == Dock::Unknown)
         return;
@@ -658,4 +774,85 @@ qreal DockSettings::dockRatio() const
     QScreen const *screen = Utils::screenAtByScaled(m_frontendRect.center());
 
     return screen ? screen->devicePixelRatio() : qApp->devicePixelRatio();
+}
+
+Position DockSettings::currentPosition() const {
+    if (m_daemonAvailable) {
+        return Dock::Position(m_dockInter->position());
+    } else {
+        return positionFromString(m_dockGsettings->get("position").toString());
+    }
+}
+
+DisplayMode DockSettings::currentDisplayMode() const {
+    if (m_daemonAvailable) {
+        return Dock::DisplayMode(m_dockInter->displayMode());
+    } else {
+        return displayModeFromString(m_dockGsettings->get("display-mode")
+            .toString());
+    }
+}
+
+HideMode DockSettings::currentHideMode() const {
+    if (m_daemonAvailable) {
+        return Dock::HideMode(m_dockInter->hideMode());
+    } else {
+        return hideModeFromString(m_dockGsettings->get("hide-mode")
+            .toString());
+    }
+}
+
+int DockSettings::currentIconSize() const {
+    if (m_daemonAvailable) {
+        return m_dockInter->iconSize();
+    } else {
+        return m_dockGsettings->get("icon-size").toInt();
+    }
+}
+
+double DockSettings::currentOpacity() const {
+    if (m_daemonAvailable) {
+        return m_dockInter->opacity();
+    } else {
+        return m_appearanceGsettings->get("opacity").toDouble();
+    }
+}
+
+void DockSettings::writePosition(const Position position) {
+    if (m_daemonAvailable) {
+        m_dockInter->setPosition(position);
+    } else {
+        m_dockGsettings->set("position", positionToString(position));
+    }
+}
+
+void DockSettings::writeDisplayMode(const DisplayMode mode) {
+    if (m_daemonAvailable) {
+        m_dockInter->setDisplayMode(mode);
+    } else {
+        m_dockGsettings->set("display-mode", displayModeToString(mode));
+    }
+}
+
+void DockSettings::writeHideMode(const HideMode mode) {
+    if (m_daemonAvailable) {
+        m_dockInter->setHideMode(mode);
+    } else {
+        m_dockGsettings->set("hide-mode", hideModeToString(mode));
+    }
+}
+
+void DockSettings::writeIconSize(const int size) {
+    if (m_daemonAvailable) {
+        m_dockInter->setIconSize(size);
+    } else {
+        m_dockGsettings->set("icon-size", size);
+    }
+}
+
+void DockSettings::onGsettingsChanged() {
+    onPositionChanged();
+    onDisplayModeChanged();
+    hideModeChanged();
+    iconSizeChanged();
 }

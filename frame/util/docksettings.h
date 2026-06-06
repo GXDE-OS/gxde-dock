@@ -39,6 +39,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+class QGSettings;
+
 using namespace Dock;
 using DBusDock = com::deepin::dde::daemon::Dock;
 
@@ -121,6 +123,17 @@ private:
     void calculateWindowConfig();
     void gtkIconThemeChanged();
 
+    Position currentPosition() const;
+    DisplayMode currentDisplayMode() const;
+    HideMode currentHideMode() const;
+    int currentIconSize() const;
+    double currentOpacity() const;
+    void writePosition(const Position position);
+    void writeDisplayMode(const DisplayMode mode);
+    void writeHideMode(const HideMode mode);
+    void writeIconSize(const int size);
+    void onGsettingsChanged();
+
     void openSystemMonitor();
 
 private:
@@ -160,6 +173,10 @@ private:
     DBusDisplay *m_displayInter;
     DBusDock *m_dockInter;
     DockItemController *m_itemController;
+
+    QGSettings *m_dockGsettings;
+    QGSettings *m_appearanceGsettings;
+    bool m_daemonAvailable;
 };
 
 #endif // DOCKSETTINGS_H

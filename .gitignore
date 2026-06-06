@@ -42,5 +42,8 @@ debian/debhelper-build-stamp
 # Clangd
 .cache/clangd/*
 
+# Personal stuff
+.charofstring/*
+
 # Misc
 .lock

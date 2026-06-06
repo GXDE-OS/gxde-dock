@@ -14,7 +14,9 @@ find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5X11Extras REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
+find_package(DtkGui REQUIRED)
 find_package(DtkCMake REQUIRED)
+find_package(LayerShellQt REQUIRED)
 
 pkg_check_modules(XCB_EWMH REQUIRED xcb-ewmh x11)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
@@ -33,11 +35,13 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkGui_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${QGSettings_LIBRARIES}
+    LayerShellQt::Interface
 )
 
 if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "sw_64")

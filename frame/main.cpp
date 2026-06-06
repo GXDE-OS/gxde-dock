@@ -21,12 +21,20 @@
 
 #include "window/mainwindow.h"
 #include "util/themeappicon.h"
+#include "wayland/layershellhelper.h"
+#include "wayland/xsettings.h"
 
 #include <DApplication>
 #include <DLog>
 #include <DDBusSender>
 
 #include <QDir>
+#include <QEvent>
+#include <QIcon>
+#include <QSettings>
+#include <QWidget>
+
+#include <LayerShellQt/Shell>
 
 #include <unistd.h>
 #include "dbus/dbusdockadaptors.h"
@@ -61,15 +69,63 @@ void RegisterDdeSession()
 
 int main(int argc, char *argv[])
 {
-    // XWayland
-    if (DApplication::isWayland()) {
-        qDebug() << "Use xwayland, not wayland";
-        qputenv("QT_QPA_PLATFORM", "dxcb");
-        qputenv("XDG_SESSION_TYPE", "x11");
+    // 以前dock不支持原生Wayland所以在Wayland下加D-XCB
+    // 现在我们支持原生Wayland以后，启动时就不需要D-XCB了
+    // 等layershell设置好后再把D-XCB弄回来，这样不支持Wayland的子进程就吃D-XCB了
+    const QByteArray savedDtk2XWayland = qgetenv("DTK2_XWAYLAND");
+    const bool waylandSession = qgetenv("XDG_SESSION_TYPE") == "wayland";
+
+    if (waylandSession) {
+        qDebug() << "Detected Wayland session!!";
+        qunsetenv("DTK2_XWAYLAND");
+        qputenv("QT_QPA_PLATFORM", "wayland");
+        LayerShellQt::Shell::useLayerShell();
+    } else {
+        DApplication::loadDXcbPlugin();
     }
 
-    DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
+
+    if (waylandSession) {
+        // 默认情况下，图标是从XSETTINGS的Net/IconThemeName读出来的
+        // 拿不到的话从qt-theme读取图标主题，拿这个兜底
+        QString iconTheme = Wayland::xsettingsString(QStringLiteral(
+            "Net/IconThemeName"));
+
+        // 如果没成功从XSETTINGS拿到...
+        if (iconTheme.isEmpty()) {
+            QSettings qtSettings(QSettings::IniFormat, QSettings::UserScope,
+                "deepin", "qt-theme");
+            qtSettings.beginGroup("Theme");
+            iconTheme = qtSettings.value("IconThemeName").toString();
+        }
+
+        if (!iconTheme.isEmpty()) {
+            QIcon::setThemeName(iconTheme);
+        }
+
+        // useLayerShell会把所有窗体变成layer-shell surface
+        // 这下弹出菜单什么的都得糊满屏幕了
+        // 为了防止这种情况发生弄一个小助手单独为菜单之类的设置锚点
+        class PopupLayerShellPatcher : public QObject {
+        public:
+            using QObject::QObject;
+
+        protected:
+            bool eventFilter(QObject* object, QEvent* event) override {
+                if (event->type() == QEvent::Show) {
+                    QWidget* target = qobject_cast<QWidget*>(object);
+                    if (target && target->windowType() == Qt::Popup) {
+                        Wayland::LayerShellHelper::fixPopupLayerShell(target);
+                    }
+                }
+                return QObject::eventFilter(object, event);
+            }
+        };
+
+        app.installEventFilter(new PopupLayerShellPatcher(&app));
+    }
+
     app.setOrganizationName("deepin");
     app.setApplicationName("gxde-dock");
     app.setApplicationDisplayName("DDE Dock");
@@ -107,6 +163,18 @@ int main(int argc, char *argv[])
     QDir::setCurrent(QApplication::applicationDirPath());
 #endif
     MainWindow mw;
+
+    if (waylandSession) {
+        // 等layershell设置好后再把D-XCB弄回来，这样不支持Wayland的子进程就吃D-XCB了
+        if (!savedDtk2XWayland.isEmpty()) {
+            qputenv("DTK2_XWAYLAND", savedDtk2XWayland);
+        }
+
+        // 取消layer-shell集成，不然子进程自带layer-shell集成照样糊满屏幕
+        qunsetenv("QT_WAYLAND_SHELL_INTEGRATION");
+        qunsetenv("QT_QPA_PLATFORM");
+    }
+
     if (QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/dock-hide")) {
         return app.exec();
     }
