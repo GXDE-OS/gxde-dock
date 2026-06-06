@@ -17,6 +17,8 @@
 
 #include <QDebug>
 #include <QGuiApplication>
+#include <QMargins>
+#include <QPoint>
 #include <QScreen>
 #include <QWidget>
 #include <QWindow>
@@ -172,12 +174,24 @@ void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
         return;
     }
 
-    // 为了防止弹出菜单糊满整个屏幕，撤销锚点设定
-    layer->setAnchors({});
+    // 不设anchor的话Treeland会把弹窗摆到屏幕中间，有时候还会糊屏幕上
+    // 改为锚定左上角，再用margin偏移到弹出位置 (popup->pos())
+    const QPoint pos = popup->pos();
+    LayerShellQt::Window::Anchors anchors;
+    anchors |= LayerShellQt::Window::AnchorTop;
+    anchors |= LayerShellQt::Window::AnchorLeft;
+    layer->setAnchors(anchors);
+    layer->setMargins(QMargins(pos.x(), pos.y(), 0, 0));
     layer->setLayer(LayerShellQt::Window::LayerOverlay);
     layer->setExclusiveZone(0);
+
+    // 子菜单 (如「位置/大小」展开项) 不要键盘交互
+    // 否则它会requestActive抢走激活态，Treeland 把父菜单设为非激活
+    // 然后整个菜单就被关了
+    const bool isSubMenu = window->transientParent() != nullptr;
     layer->setKeyboardInteractivity(
-        LayerShellQt::Window::KeyboardInteractivityOnDemand);
+        isSubMenu ? LayerShellQt::Window::KeyboardInteractivityNone
+            : LayerShellQt::Window::KeyboardInteractivityOnDemand);
 
     DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
 }

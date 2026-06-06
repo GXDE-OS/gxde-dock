@@ -23,6 +23,7 @@
 #include "panel/mainpanel.h"
 #include "item/appitem.h"
 #include "util/utils.h"
+#include "wayland/layershellhelper.h"
 
 #include <QDebug>
 #include <QX11Info>
@@ -166,9 +167,7 @@ DockSettings::DockSettings(QWidget *parent)
     m_appearanceGsettings = new QGSettings(APPEARANCE_GSETTINGS_SCHEMA,
         APPEARANCE_GSETTINGS_PATH, this);
 
-    m_primaryRawRect = m_displayInter->primaryRawRect();
-    m_screenRawHeight = m_displayInter->screenRawHeight();
-    m_screenRawWidth = m_displayInter->screenRawWidth();
+    updateScreenSize();
     m_position = currentPosition();
     m_displayMode = currentDisplayMode();
     m_hideMode = currentHideMode();
@@ -308,6 +307,26 @@ void DockSettings::openSystemMonitor()
     process.startDetached();
 }
 
+// 新的ScreenSize获取逻辑: X11仍然走原逻辑(com.deepin.daemon.Display)
+// Wayland下使用Qt屏幕几何以解决popup位置不正确的问题
+void DockSettings::updateScreenSize() {
+    if (Wayland::LayerShellHelper::isWayland() && qApp->primaryScreen()) {
+        const QScreen* s = qApp->primaryScreen();
+        const qreal dpr = s->devicePixelRatio();
+        const QRect g = s->geometry();
+
+        m_primaryRawRect = QRect(g.topLeft(),
+            QSize(qRound(g.width() * dpr), qRound(g.height() * dpr)));
+        m_screenRawWidth = m_primaryRawRect.width();
+        m_screenRawHeight = m_primaryRawRect.height();
+    } else {
+        // X11: 保留原逻辑
+        m_primaryRawRect = m_displayInter->primaryRawRect();
+        m_screenRawHeight = m_displayInter->screenRawHeight();
+        m_screenRawWidth = m_displayInter->screenRawWidth();
+    }
+}
+
 const QRect DockSettings::primaryRect() const
 {
     QRect rect = m_primaryRawRect;
@@ -415,7 +434,51 @@ void DockSettings::showDockSettingsMenu()
     m_smartHideAct.setChecked(m_hideMode == SmartHide);
     m_windowSplit.setChecked(m_dockInter->windowSplit());
 
-    m_settingsMenu.exec(QCursor::pos());
+    // Wayland下dock是个layer-shell surface, Qt其实并不知道其真实屏幕位置
+    // QCursor::pos() 返回的是dock表面内的局部坐标
+    // 直接 exec 会让菜单乱飘，所以为Wayland计算全局坐标
+    QPoint menuPos = QCursor::pos();
+    if (Wayland::LayerShellHelper::isWayland()) {
+        // Wayland下QCursor::pos()是dock表面内的局部坐标
+        // 且QMenu不会像X11那样自动翻转避免出屏
+        // 备选方案: 把菜单摆到 dock 所在边的外侧，横轴对齐光标
+        // 再整体夹进屏幕内 (仅限Wayland)
+        const QRect dockRect = windowRect(m_position);
+        const QRect screen = primaryRect();
+        const QSize menuSize = m_settingsMenu.sizeHint();
+        QPoint global = QCursor::pos() + dockRect.topLeft();
+
+        switch (m_position) {
+            case Top: {
+                global.setY(dockRect.bottom());
+                break;
+            }
+
+            case Bottom: {
+                global.setY(dockRect.top() - menuSize.height());
+                break;
+            }
+
+            case Left: {
+                global.setX(dockRect.right());
+                break;
+            }
+
+            case Right: {
+                global.setX(dockRect.left() - menuSize.width());
+                break;
+            }
+        }
+
+        global.setX(qBound(screen.left(), global.x(),
+            screen.right() - menuSize.width()));
+        global.setY(qBound(screen.top(), global.y(),
+            screen.bottom() - menuSize.height()));
+
+        menuPos = global;
+    }
+
+    m_settingsMenu.exec(menuPos);
 
     setAutoHide(true);
 }
@@ -564,9 +627,7 @@ void DockSettings::dockItemCountChanged()
 void DockSettings::primaryScreenChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    m_primaryRawRect = m_displayInter->primaryRawRect();
-    m_screenRawHeight = m_displayInter->screenRawHeight();
-    m_screenRawWidth = m_displayInter->screenRawWidth();
+    updateScreenSize();
 
     calculateWindowConfig();
     updateForbidPostions();

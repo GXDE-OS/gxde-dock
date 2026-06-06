@@ -121,6 +121,7 @@ private:
 
     bool test(const Position pos, const QList<QRect> &otherScreens) const;
     void calculateWindowConfig();
+    void updateScreenSize();
     void gtkIconThemeChanged();
 
     Position currentPosition() const;

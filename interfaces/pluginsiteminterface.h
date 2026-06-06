@@ -243,7 +243,9 @@ protected:
     /// \brief m_proxyInter
     /// NEVER delete this object.
     ///
-    PluginProxyInterface *m_proxyInter;
+    /// 显式初始化为 nullptr: 插件在pluginList中但init()尚未被调用时
+    /// (如等待某个daemon), m_proxyInter是野指针, 为了安全显式指定nullptr
+    PluginProxyInterface *m_proxyInter = nullptr;
 };
 
 QT_BEGIN_NAMESPACE

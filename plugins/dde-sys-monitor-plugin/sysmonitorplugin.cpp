@@ -268,6 +268,12 @@ bool SysMonitorPlugin::pluginIsDisable()
     if (QFile::exists("/etc/wsl.conf")) {
         return false;
     }
+    // init()尚未被调用时 (如插件在pluginList里但还在等某个daemon),m_proxyInter为空
+    // 右键菜单会遍历插件调本函数，此时解引用m_proxyInter会崩溃
+    // 未初始化即视作未禁用，避免空指针。
+    if (!m_isInited || !m_proxyInter) {
+        return false;
+    }
     // 第二个参数 “disabled” 表示存储这个值的键（所有配置都是以键值对的方式存储的）
     // 第三个参数表示默认值，即默认不禁用
     return m_proxyInter->getValue(this, "disabled", false).toBool();
