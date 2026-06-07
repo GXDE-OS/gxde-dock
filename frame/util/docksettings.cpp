@@ -454,46 +454,9 @@ void DockSettings::showDockSettingsMenu()
     // Wayland下dock是个layer-shell surface, Qt其实并不知道其真实屏幕位置
     // QCursor::pos() 返回的是dock表面内的局部坐标
     // 直接 exec 会让菜单乱飘，所以为Wayland计算全局坐标
-    QPoint menuPos = QCursor::pos();
+    const QPoint menuPos = wlAdjustMenuPos(m_settingsMenu.sizeHint());
+
     if (Wayland::LayerShellHelper::isWayland()) {
-        // Wayland下QCursor::pos()是dock表面内的局部坐标
-        // 且QMenu不会像X11那样自动翻转避免出屏
-        // 备选方案: 把菜单摆到 dock 所在边的外侧，横轴对齐光标
-        // 再整体夹进屏幕内 (仅限Wayland)
-        const QRect dockRect = windowRect(m_position);
-        const QRect screen = primaryRect();
-        const QSize menuSize = m_settingsMenu.sizeHint();
-        QPoint global = QCursor::pos() + dockRect.topLeft();
-
-        switch (m_position) {
-            case Top: {
-                global.setY(dockRect.bottom());
-                break;
-            }
-
-            case Bottom: {
-                global.setY(dockRect.top() - menuSize.height());
-                break;
-            }
-
-            case Left: {
-                global.setX(dockRect.right());
-                break;
-            }
-
-            case Right: {
-                global.setX(dockRect.left() - menuSize.width());
-                break;
-            }
-        }
-
-        global.setX(qBound(screen.left(), global.x(),
-            screen.right() - menuSize.width()));
-        global.setY(qBound(screen.top(), global.y(),
-            screen.bottom() - menuSize.height()));
-
-        menuPos = global;
-
         if (!m_menuMask) {
             m_menuMask = new MenuDismissMask(&m_settingsMenu);
         }
@@ -508,6 +471,47 @@ void DockSettings::showDockSettingsMenu()
     }
 
     setAutoHide(true);
+}
+
+QPoint DockSettings::wlAdjustMenuPos(const QSize& menuSize) const {
+    // X11下QCursor::pos()是全局坐标，如果是X11直接返回这个
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        return QCursor::pos();
+    }
+
+    // Wayland下QCursor::pos()是dock表面内的局部坐标
+    // 换算成全局坐标再返回
+    const QRect dockRect = windowRect(m_position);
+    const QRect screen = primaryRect();
+    QPoint global = QCursor::pos() + dockRect.topLeft();
+
+    switch (m_position) {
+        case Top: {
+            global.setY(dockRect.bottom());
+            break;
+        }
+
+        case Bottom: {
+            global.setY(dockRect.top() - menuSize.height());
+            break;
+        }
+
+        case Left: {
+            global.setX(dockRect.right());
+            break;
+        }
+
+        case Right: {
+            global.setX(dockRect.left() - menuSize.width());
+            break;
+        }
+    }
+
+    global.setX(qBound(screen.left(), global.x(),
+        screen.right() - menuSize.width()));
+    global.setY(qBound(screen.top(), global.y(),
+        screen.bottom() - menuSize.height()));
+    return global;
 }
 
 void DockSettings::updateGeometry()

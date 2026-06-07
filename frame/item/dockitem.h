@@ -97,6 +97,10 @@ protected slots:
     void showContextMenu();
     void onContextMenuAccepted();
 
+protected:
+    // com.deepin.menu缺失时使用QMenu代替
+    void popupMenuWayland(const QString& menuJson);
+
 private:
     void updatePopupPosition();
 

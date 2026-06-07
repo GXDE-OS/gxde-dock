@@ -23,10 +23,17 @@
 #include "dbus/dbusmenu.h"
 #include "dbus/dbusmenumanager.h"
 #include "components/hoverhighlighteffect.h"
+#include "util/docksettings.h"
+#include "wayland/layershellhelper.h"
 
 #include <QMouseEvent>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <QCursor>
+#include <QMenu>
+#include <QAction>
+#include <QStyleFactory>
 
 Position DockItem::DockPosition = Position::Top;
 DisplayMode DockItem::DockDisplayMode = DisplayMode::Efficient;
@@ -216,9 +223,14 @@ void DockItem::showContextMenu()
     if (result.isError())
     {
         qWarning() << result.error();
+        // Wayland下, 若com.deepin.menu不可用，使用QMenu代替
+        if (Wayland::LayerShellHelper::isWayland()) {
+            popupMenuWayland(menuJson);
+        }
         return;
     }
 
+    // popupMarkPoint()在X11与Treeland下都已是屏幕全局坐标, 直接传给com.deepin.menu
     const QPoint p = popupMarkPoint();
 
     QJsonObject menuObject;
@@ -250,6 +262,38 @@ void DockItem::showContextMenu()
 
 void DockItem::onContextMenuAccepted()
 {
+    emit requestRefreshWindowVisible();
+    emit requestWindowAutoHide(true);
+}
+
+void DockItem::popupMenuWayland(const QString& menuJson) {
+    const QJsonArray items =
+        QJsonDocument::fromJson(menuJson.toUtf8()).object().value("items")
+            .toArray();
+    if (items.isEmpty())
+        return;
+
+    QMenu menu;
+    QStyle* style = QStyleFactory::create("ddark");
+    if (style) {
+        menu.setStyle(style);
+    }
+
+    for (const QJsonValue& v : items) {
+        const QJsonObject obj = v.toObject();
+        QAction* act = menu.addAction(obj.value("itemText").toString());
+        act->setEnabled(obj.value("isActive").toBool(true));
+        act->setData(obj.value("itemId").toString());  // 供回调取itemId
+    }
+
+    emit requestWindowAutoHide(false);
+    QAction* chosen = menu.exec(DockSettings::Instance().wlAdjustMenuPos(
+        menu.sizeHint()));
+
+    if (chosen) {
+        invokedMenuItem(chosen->data().toString(), true);
+    }
+
     emit requestRefreshWindowVisible();
     emit requestWindowAutoHide(true);
 }

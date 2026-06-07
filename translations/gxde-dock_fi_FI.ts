@@ -127,97 +127,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="106"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>Keskitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="107"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>Levitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="108"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>Ylös</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="109"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>Alas</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="110"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>Vasen</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="111"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>Oikea</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="112"/>
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>Suuri</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="113"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>Keskikoko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="114"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>Pieni</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="115"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>Pidä näkyvänä</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="116"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>Pidä piilotettuna</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="117"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>Älykäs piilotus</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="118"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="119"/>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>Tila</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="181"/>
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="188"/>
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="192"/>
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>Liitännäiset</translation>
     </message>

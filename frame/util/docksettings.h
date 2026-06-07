@@ -84,6 +84,8 @@ public:
     const QRect windowRect(const Position position, const bool hide = false) const;
     qreal dockRatio() const;
 
+    QPoint wlAdjustMenuPos(const QSize &menuSize) const;
+
     void showDockSettingsMenu();
 
 signals:
