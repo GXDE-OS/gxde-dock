@@ -156,6 +156,7 @@ private:
 
     WhiteMenu m_settingsMenu;
     WhiteMenu *m_hideSubMenu;
+    QWidget *m_menuMask = nullptr;
     QAction m_fashionModeAct;
     QAction m_efficientModeAct;
     QAction m_topPosAct;

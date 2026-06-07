@@ -134,6 +134,23 @@ QString hideModeToString(const HideMode m) {
     }
 }
 
+// 透明遮罩: 点菜单以外的地方落到它身上触发菜单关闭
+class MenuDismissMask : public QWidget {
+public:
+    explicit MenuDismissMask(QMenu* menu) : m_menu(menu) {}
+
+protected:
+    void mousePressEvent(QMouseEvent*) override {
+        if (m_menu) {
+            m_menu->close();
+        }
+        hide();
+    }
+
+private:
+    QMenu* m_menu;
+};
+
 }  // namespace
 
 DockSettings::DockSettings(QWidget *parent)
@@ -476,9 +493,19 @@ void DockSettings::showDockSettingsMenu()
             screen.bottom() - menuSize.height()));
 
         menuPos = global;
+
+        if (!m_menuMask) {
+            m_menuMask = new MenuDismissMask(&m_settingsMenu);
+        }
+        Wayland::LayerShellHelper::setMenuMaskRole(m_menuMask);
+        m_menuMask->show();
     }
 
     m_settingsMenu.exec(menuPos);
+
+    if (m_menuMask) {
+        m_menuMask->hide();
+    }
 
     setAutoHide(true);
 }

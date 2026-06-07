@@ -79,6 +79,26 @@ bool LayerShellHelper::isWayland() {
     return QGuiApplication::platformName().toLower().contains("wayland");
 }
 
+// Treeland会话检测
+bool LayerShellHelper::isTreeland() {
+    if (!isWayland()) {
+        return false;
+    }
+
+    if (qEnvironmentVariable("XDG_SESSION_DESKTOP").toLower().contains(
+                QLatin1String("treeland")) ||
+            qEnvironmentVariable("DESKTOP_SESSION").toLower().contains(
+               QLatin1String("treeland")) ||
+            qEnvironmentVariable("XDG_CURRENT_DESKTOP").toLower().contains(
+               QLatin1String("treeland")) ||
+            qEnvironmentVariable("GDMSESSION").toLower().contains(
+               QLatin1String("treeland"))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
         const QString& scope, Dock::Position position) {
     if (widget == nullptr) {
@@ -192,6 +212,45 @@ void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
     layer->setKeyboardInteractivity(
         isSubMenu ? LayerShellQt::Window::KeyboardInteractivityNone
             : LayerShellQt::Window::KeyboardInteractivityOnDemand);
+
+    DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
+}
+
+// 全屏Mask的layer-shell属性
+void LayerShellHelper::setMenuMaskRole(QWidget* widget) {
+    if (widget == nullptr || !isWayland()) {
+        return;
+    }
+
+    widget->setAttribute(Qt::WA_TranslucentBackground);
+    widget->setWindowFlags(Qt::FramelessWindowHint |
+        Qt::WindowDoesNotAcceptFocus | Qt::Tool);
+    widget->createWinId();
+
+    QWindow* window = widget->windowHandle();
+    if (!window) {
+        return;
+    }
+
+    LayerShellQt::Window* layer = LayerShellQt::Window::get(window);
+    if (!layer) {
+        return;
+    }
+
+    // 四边锚定: mask铺满屏幕
+    LayerShellQt::Window::Anchors anchors;
+    anchors |= LayerShellQt::Window::AnchorTop;
+    anchors |= LayerShellQt::Window::AnchorBottom;
+    anchors |= LayerShellQt::Window::AnchorLeft;
+    anchors |= LayerShellQt::Window::AnchorRight;
+    layer->setAnchors(anchors);
+    layer->setLayer(LayerShellQt::Window::LayerTop);
+    layer->setExclusiveZone(0);
+    layer->setKeyboardInteractivity(
+        LayerShellQt::Window::KeyboardInteractivityNone);
+
+    // Treeland: 需要"dde-shell/dock"，Treeland才不会为其添加边框
+    layer->setScope(QStringLiteral("dde-shell/dock"));
 
     DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
 }

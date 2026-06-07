@@ -28,12 +28,14 @@ namespace Wayland {
 class LayerShellHelper {
 public:
     static bool isWayland();
+    static bool isTreeland();
     static void setDockRole(QWidget* widget, QScreen* screen,
         const QString& scope, Dock::Position position);
     static void updateDockAnchor(QWidget* widget, Dock::Position position);
     static void updateExclusiveZone(QWidget* widget, int zone);
     static void updateOutput(QWidget* widget, QScreen* screen);
     static void fixPopupLayerShell(QWidget* popup);
+    static void setMenuMaskRole(QWidget* widget);
 };
 
 }  // namespace Wayland

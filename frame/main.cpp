@@ -29,10 +29,14 @@
 #include <DDBusSender>
 
 #include <QDir>
+#include <QCursor>
+#include <QElapsedTimer>
 #include <QEvent>
 #include <QIcon>
 #include <QSettings>
+#include <QApplication>
 #include <QWidget>
+#include <QWindow>
 
 #include <LayerShellQt/Shell>
 
@@ -107,20 +111,50 @@ int main(int argc, char *argv[])
         // useLayerShell会把所有窗体变成layer-shell surface
         // 这下弹出菜单什么的都得糊满屏幕了
         // 为了防止这种情况发生弄一个小助手单独为菜单之类的设置锚点
+        //
+        // (仅 Treeland): 带子菜单的项(位置/大小/状态/插件)hover 出子菜单后继续下滑,
+        // 整条菜单会消失。注意到子菜单关闭时, QtWayland 会在同一同步批次给父菜单误发一个
+        // QEvent::Close,把整条菜单关掉(全程没有 FocusOut)
+        // 处理方案: 当「刚有子菜单关闭」且「鼠标仍在父菜单矩形内」时,吞掉父菜单
+        // Close; 如果是点外部→鼠标在菜单外或者直接选项→没有刚关的子菜单则视为关闭意图
         class PopupLayerShellPatcher : public QObject {
         public:
             using QObject::QObject;
 
         protected:
             bool eventFilter(QObject* object, QEvent* event) override {
-                if (event->type() == QEvent::Show) {
-                    QWidget* target = qobject_cast<QWidget*>(object);
-                    if (target && target->windowType() == Qt::Popup) {
+                QWidget* target = qobject_cast<QWidget*>(object);
+                if (target && target->windowType() == Qt::Popup) {
+                    QWindow* wh = target->windowHandle();
+                    const bool isSubMenu = wh && wh->transientParent();
+
+                    if (event->type() == QEvent::Show) {
                         Wayland::LayerShellHelper::fixPopupLayerShell(target);
+                    } else if ((event->type() == QEvent::Close
+                                || event->type() == QEvent::Hide)
+                               && isSubMenu) {
+                        // 记下子菜单刚关闭的时刻, 用于识别误发Close
+                        m_subMenuClosedTimer.restart();
+                    } else if (event->type() == QEvent::Close && !isSubMenu
+                               && Wayland::LayerShellHelper::isTreeland()) {
+                        const bool subMenuJustClosed =
+                            m_subMenuClosedTimer.isValid()
+                            && m_subMenuClosedTimer.elapsed() < 50;
+                        const bool cursorInsideMenu =
+                            target->geometry().contains(QCursor::pos());
+                        if (subMenuJustClosed && cursorInsideMenu) {
+                            // 必须使用ignore()把QCloseEvent标为未接受, 这样
+                            // QWidget::close() 才会放弃隐藏
+                            event->ignore();
+                            return true;
+                        }  // 如果是false positive
                     }
                 }
                 return QObject::eventFilter(object, event);
             }
+
+        private:
+            QElapsedTimer m_subMenuClosedTimer;
         };
 
         app.installEventFilter(new PopupLayerShellPatcher(&app));
