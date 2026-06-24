@@ -122,6 +122,18 @@ auto_install_deps() {
     if [[ "$NO_ASSERT_DEPS" == true ]]; then
         echo "准备安装构建依赖，请稍候..."
         sudo apt update
+        sudo apt install \
+            build-essential devscripts debhelper cmake pkg-config \
+            qt6-base-dev qt6-base-private-dev qt6-tools-dev-tools \
+            qt6-multimedia-dev qt6-svg-dev qt6-l10n-tools qt6-scxml-dev \
+            libdtk6core-dev libdtk6log-dev libdtk6gui-dev \
+            libgsettings-qt6-dev \
+            libudev-dev libxext-dev x11proto-xext-dev libxcb-util-dev \
+            libstartup-notification0-dev libmtdev-dev libegl1-mesa-dev \
+            libfontconfig1-dev libfreetype6-dev libglib2.0-dev \
+            libxrender-dev librsvg2-dev libxi-dev \
+            libdtk2widget6-dev qttools6-dev-tools \
+            libdbusmenu-qt6-dev layershellqtinterface6-dev
 
         echo "开始安装了，请特别留意是否会卸载掉任何已有GXDE系统包i！！"
         sudo apt install build-essential devscripts debhelper cmake
