@@ -21,7 +21,7 @@ Build-Depends: debhelper (>= 8.0.0),
  libgsettings-qt-dev,
  cmake,
  libgxde-network-utils-dev (>= 15.11~0.1.4),
- libdbusmenu-qt6-dev,
+ libdbusmenu-qt5-dev,
  liblayershellqtinterface6-dev,
  clang [mips64el]
 Standards-Version: 3.9.8

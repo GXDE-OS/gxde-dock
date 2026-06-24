@@ -29,7 +29,7 @@
 #ifndef GXDE_DOCK_X11HELPER_H
 #define GXDE_DOCK_X11HELPER_H
 
-#include <QGuiApplication>
+#include <QApplication>
 
 // Xlib will define None as 0L, which CONFLICTS with QUrl::None
 // That fails the complication of qurl.h:
@@ -45,7 +45,7 @@ typedef struct xcb_connection_t xcb_connection_t;
  * @return (Xlib Display*) The display, or @c nullptr in Wayland.
  */
 inline Display* x11Display() {
-    auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+    auto* x11App = static_cast<QGuiApplication*>(QCoreApplication::instance())->nativeInterface<QNativeInterface::QX11Application>();
     if (!x11App) {
         qWarning() << "x11Display(): no X11 connection (Wayland?), returning nullptr";
         return nullptr;
@@ -58,7 +58,7 @@ inline Display* x11Display() {
  * @return (xcb_connection_t*) The connection, or @c nullptr in Wayland.
  */
 inline xcb_connection_t* x11Connection() {
-    auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+    auto* x11App = static_cast<QGuiApplication*>(QCoreApplication::instance())->nativeInterface<QNativeInterface::QX11Application>();
     if (!x11App) {
         qWarning() << "x11Connection(): no X11 connection (Wayland?), returning nullptr";
         return nullptr;

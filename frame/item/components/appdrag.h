@@ -36,7 +36,6 @@ public:
     void setPixmap(const QPixmap &);
     QPixmap pixmap() const;
 
-    Qt::DropAction start(Qt::DropActions supportedActions = Qt::CopyAction);
     Qt::DropAction exec(Qt::DropActions supportedActions = Qt::MoveAction);
     Qt::DropAction exec(Qt::DropActions supportedActions, Qt::DropAction defaultAction);
 
