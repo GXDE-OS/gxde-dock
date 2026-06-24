@@ -39,7 +39,7 @@ FloatingPreview::FloatingPreview(QWidget *parent)
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addWidget(m_closeBtn3D);
     centralLayout->setAlignment(m_closeBtn3D, Qt::AlignRight | Qt::AlignTop);
-    centralLayout->setMargin(0);
+    centralLayout->setContentsMargins(0, 0, 0, 0);
     centralLayout->setSpacing(0);
 
     setLayout(centralLayout);

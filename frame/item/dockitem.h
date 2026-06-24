@@ -75,7 +75,7 @@ protected:
     bool event(QEvent *event);
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
-    void enterEvent(QEvent *e);
+    void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
 
     const QRect perfectIconRect() const;

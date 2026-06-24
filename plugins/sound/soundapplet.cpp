@@ -57,7 +57,7 @@ SoundApplet::SoundApplet(QWidget *parent)
     deviceLineLayout->addWidget(deviceLabel);
 //    deviceLineLayout->addSpacing(12);
     deviceLineLayout->addWidget(new HorizontalSeparator);
-    deviceLineLayout->setMargin(0);
+    deviceLineLayout->setContentsMargins(0, 0, 0, 0);
     deviceLineLayout->setSpacing(10);
 
     QHBoxLayout *volumeCtrlLayout = new QHBoxLayout;
@@ -66,7 +66,7 @@ SoundApplet::SoundApplet(QWidget *parent)
     volumeCtrlLayout->addSpacing(10);
     volumeCtrlLayout->addWidget(m_volumeSlider);
     volumeCtrlLayout->setSpacing(0);
-    volumeCtrlLayout->setMargin(0);
+    volumeCtrlLayout->setContentsMargins(0, 0, 0, 0);
 
     TipsWidget *appLabel = new TipsWidget;
     appLabel->setText(tr("Application"));
@@ -74,7 +74,7 @@ SoundApplet::SoundApplet(QWidget *parent)
     QHBoxLayout *appLineHLayout = new QHBoxLayout;
     appLineHLayout->addWidget(appLabel);
     appLineHLayout->addWidget(new HorizontalSeparator);
-    appLineHLayout->setMargin(0);
+    appLineHLayout->setContentsMargins(0, 0, 0, 0);
     appLineHLayout->setSpacing(10);
 
     QVBoxLayout *appLineVLayout = new QVBoxLayout;
@@ -82,7 +82,7 @@ SoundApplet::SoundApplet(QWidget *parent)
     appLineVLayout->addLayout(appLineHLayout);
     appLineVLayout->addSpacing(8);
     appLineVLayout->setSpacing(0);
-    appLineVLayout->setMargin(0);
+    appLineVLayout->setContentsMargins(0, 0, 0, 0);
 
     m_applicationTitle->setLayout(appLineVLayout);
 

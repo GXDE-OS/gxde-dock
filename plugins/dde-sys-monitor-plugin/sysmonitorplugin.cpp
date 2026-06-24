@@ -1,5 +1,6 @@
 #include "sysmonitorplugin.h"
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QProcess>
 #include <QProcessEnvironment>
 
@@ -350,8 +351,7 @@ void SysMonitorPlugin::invokedMenuItem(const QString &itemKey, const QString &me
         setting->setAttribute(Qt::WA_DeleteOnClose); // 自动删除对象，避免内存泄露
         // 因为 dock 栏只能在主屏幕显示，所以我们只需要在主屏幕居中显示即可
         QRect rect = setting->frameGeometry();
-        QDesktopWidget desktop;
-        QPoint centerPoint = desktop.availableGeometry().center();
+        QPoint centerPoint = QGuiApplication::primaryScreen()->availableGeometry().center();
         rect.moveCenter(centerPoint);
         setting->move(rect.topLeft());
         if(setting->exec()==QDialog::Accepted)

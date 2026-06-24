@@ -26,7 +26,6 @@
 #include "wayland/layershellhelper.h"
 
 #include <QDebug>
-#include <QX11Info>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QGSettings>

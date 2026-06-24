@@ -23,7 +23,6 @@
 
 #include <QWindow>
 #include <QPainter>
-#include <QX11Info>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QScopedPointer>
@@ -39,6 +38,9 @@
 
 #include <xcb/composite.h>
 #include <xcb/xcb_image.h>
+
+#include "../../frame/util/x11helper.h"
+#include <QDateTime>
 
 #define NORMAL_WINDOW_PROP_NAME "WM_CLASS"
 #define WINE_WINDOW_PROP_NAME "__wine_prefix"
@@ -161,7 +163,7 @@ void XEmbedTrayWidget::mouseMoveEvent(QMouseEvent *e)
 
 void XEmbedTrayWidget::configContainerPosition()
 {
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
 
     const QPoint p(rawXPosition(QCursor::pos()));
 
@@ -181,7 +183,7 @@ void XEmbedTrayWidget::configContainerPosition()
 
 void XEmbedTrayWidget::wrapWindow()
 {
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
 
     auto cookie = xcb_get_geometry(c, m_windowId);
     QScopedPointer<xcb_get_geometry_reply_t, QScopedPointerPodDeleter> clientGeom(xcb_get_geometry_reply(c, cookie, Q_NULLPTR));
@@ -318,9 +320,9 @@ void XEmbedTrayWidget::sendHoverEvent()
     configContainerPosition();
     setX11PassMouseEvent(false);
     setWindowOnTop(true);
-    XTestFakeMotionEvent(QX11Info::display(), 0, p.x(), p.y(), CurrentTime);
-    XFlush(QX11Info::display());
-    Display *display = QX11Info::display();
+    XTestFakeMotionEvent(x11Display(), 0, p.x(), p.y(), CurrentTime);
+    XFlush(x11Display());
+    Display *display = x11Display();
     if (display) {
         if (m_injectMode == XTest) {
             // fake enter event
@@ -328,13 +330,13 @@ void XEmbedTrayWidget::sendHoverEvent()
             XFlush(display);
         } else {
             // 发送 montion notify event到client，实现hover事件
-            auto c = QX11Info::connection();
+            auto c = x11Connection();
             xcb_motion_notify_event_t* event = new xcb_motion_notify_event_t;
             memset(event, 0x00, sizeof(xcb_button_press_event_t));
             event->response_type = XCB_MOTION_NOTIFY;
             event->event = m_windowId;
             event->same_screen = 1;
-            event->root = QX11Info::appRootWindow();
+            event->root = DefaultRootWindow(x11Display());
             event->time = 0;
             event->root_x = p.x();
             event->root_y = p.y();
@@ -357,7 +359,7 @@ void XEmbedTrayWidget::updateIcon()
 
 //void TrayWidget::hideIcon()
 //{
-//    auto c = QX11Info::connection();
+//    auto c = x11Connection();
 
 //    const uint32_t stackAboveData[] = {XCB_STACK_MODE_BELOW};
 //    xcb_configure_window(c, m_containerWid, XCB_CONFIG_WINDOW_STACK_MODE, stackAboveData);
@@ -377,9 +379,9 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
 
     m_sendHoverEvent->stop();
 
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
     if (!c) {
-        qWarning() << "QX11Info::connection() is " << c;
+        qWarning() << "x11Connection() is " << c;
         return;
     }
 
@@ -388,7 +390,7 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
     setX11PassMouseEvent(false);
     setWindowOnTop(true);
 
-    Display *display = QX11Info::display();
+    Display *display = x11Display();
 
     if (m_injectMode == XTest) {
         XTestFakeMotionEvent(display, 0, p.x(), p.y(), CurrentTime);
@@ -404,7 +406,7 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
         pressEvent->response_type = XCB_BUTTON_PRESS;
         pressEvent->event = m_windowId;
         pressEvent->same_screen = 1;
-        pressEvent->root = QX11Info::appRootWindow();
+        pressEvent->root = DefaultRootWindow(x11Display());
         pressEvent->time = 0;
         pressEvent->root_x = x;
         pressEvent->root_y = y;
@@ -420,8 +422,8 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
         releaseEvent->response_type = XCB_BUTTON_RELEASE;
         releaseEvent->event = m_windowId;
         releaseEvent->same_screen = 1;
-        releaseEvent->root = QX11Info::appRootWindow();
-        releaseEvent->time = QX11Info::getTimestamp();
+        releaseEvent->root = DefaultRootWindow(x11Display());
+        releaseEvent->time = QDateTime::currentMSecsSinceEpoch();
         releaseEvent->root_x = x;
         releaseEvent->root_y = y;
         releaseEvent->child = 0;
@@ -431,19 +433,19 @@ void XEmbedTrayWidget::sendClick(uint8_t mouseButton, int x, int y)
         delete releaseEvent;
     }
 
-    XTestFakeMotionEvent(QX11Info::display(), 0, p.x(), p.y(), CurrentTime);
-    XFlush(QX11Info::display());
-    XTestFakeButtonEvent(QX11Info::display(), mouseButton, true, CurrentTime);
-    XFlush(QX11Info::display());
-    XTestFakeButtonEvent(QX11Info::display(), mouseButton, false, CurrentTime);
-    XFlush(QX11Info::display());
+    XTestFakeMotionEvent(x11Display(), 0, p.x(), p.y(), CurrentTime);
+    XFlush(x11Display());
+    XTestFakeButtonEvent(x11Display(), mouseButton, true, CurrentTime);
+    XFlush(x11Display());
+    XTestFakeButtonEvent(x11Display(), mouseButton, false, CurrentTime);
+    XFlush(x11Display());
     QTimer::singleShot(100, this, [=] { setX11PassMouseEvent(true); });
 }
 
 // NOTE: WM_NAME may can not obtain successfully
 QString XEmbedTrayWidget::getWindowProperty(quint32 winId, QString propName)
 {
-    const auto display = QX11Info::display();
+    const auto display = x11Display();
 
     Atom atom_prop = XInternAtom(display, propName.toLocal8Bit(), true);
     if (!atom_prop) {
@@ -492,7 +494,7 @@ void XEmbedTrayWidget::setActive(const bool active)
 void XEmbedTrayWidget::refershIconImage()
 {
     const auto ratio = devicePixelRatioF();
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
     auto cookie = xcb_get_geometry(c, m_windowId);
     QScopedPointer<xcb_get_geometry_reply_t> geom(xcb_get_geometry_reply(c, cookie, Q_NULLPTR));
     if (geom.isNull())
@@ -594,8 +596,8 @@ void XEmbedTrayWidget::setX11PassMouseEvent(const bool pass)
 {
     if (pass)
     {
-        XShapeCombineRectangles(QX11Info::display(), m_containerWid, ShapeBounding, 0, 0, nullptr, 0, ShapeSet, YXBanded);
-        XShapeCombineRectangles(QX11Info::display(), m_containerWid, ShapeInput, 0, 0, nullptr, 0, ShapeSet, YXBanded);
+        XShapeCombineRectangles(x11Display(), m_containerWid, ShapeBounding, 0, 0, nullptr, 0, ShapeSet, YXBanded);
+        XShapeCombineRectangles(x11Display(), m_containerWid, ShapeInput, 0, 0, nullptr, 0, ShapeSet, YXBanded);
     }
     else
     {
@@ -605,16 +607,16 @@ void XEmbedTrayWidget::setX11PassMouseEvent(const bool pass)
         rectangle.width = 1;
         rectangle.height = 1;
 
-        XShapeCombineRectangles(QX11Info::display(), m_containerWid, ShapeBounding, 0, 0, &rectangle, 1, ShapeSet, YXBanded);
-        XShapeCombineRectangles(QX11Info::display(), m_containerWid, ShapeInput, 0, 0, &rectangle, 1, ShapeSet, YXBanded);
+        XShapeCombineRectangles(x11Display(), m_containerWid, ShapeBounding, 0, 0, &rectangle, 1, ShapeSet, YXBanded);
+        XShapeCombineRectangles(x11Display(), m_containerWid, ShapeInput, 0, 0, &rectangle, 1, ShapeSet, YXBanded);
     }
 
-    XFlush(QX11Info::display());
+    XFlush(x11Display());
 }
 
 void XEmbedTrayWidget::setWindowOnTop(const bool top)
 {
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
     const uint32_t stackAboveData[] = {top ? XCB_STACK_MODE_ABOVE : XCB_STACK_MODE_BELOW};
     xcb_configure_window(c, m_containerWid, XCB_CONFIG_WINDOW_STACK_MODE, stackAboveData);
     xcb_flush(c);
@@ -622,7 +624,7 @@ void XEmbedTrayWidget::setWindowOnTop(const bool top)
 
 bool XEmbedTrayWidget::isBadWindow()
 {
-    auto c = QX11Info::connection();
+    auto c = x11Connection();
 
     auto cookie = xcb_get_geometry(c, m_windowId);
     QScopedPointer<xcb_get_geometry_reply_t> clientGeom(xcb_get_geometry_reply(c, cookie, Q_NULLPTR));

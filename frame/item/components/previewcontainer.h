@@ -63,7 +63,7 @@ private:
     void adjustSize();
     void appendSnapWidget(const WId wid);
 
-    void enterEvent(QEvent *e);
+    void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
     void dragLeaveEvent(QDragLeaveEvent *e);

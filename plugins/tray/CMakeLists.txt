@@ -14,22 +14,18 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
     "../../frame/dbus/dbusmenumanager.h" "../../frame/dbus/dbusmenumanager.cpp")
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Svg REQUIRED)
-find_package(Qt5DBus REQUIRED)
-find_package(Qt5X11Extras REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus Gui)
+pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 
 pkg_check_modules(XCB_LIBS REQUIRED xcb-ewmh xcb xcb-image xcb-composite xtst xcb-icccm dbusmenu-qt5)
 pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
-pkg_check_modules(QGSettings REQUIRED gsettings-qt)
+pkg_check_modules(QGSettings REQUIRED gsettings-qt6)
 
 add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
 add_library(${PLUGIN_NAME} SHARED ${SRCS} tray.qrc)
 set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS}
-                                                 ${Qt5DBus_INCLUDE_DIRS}
+target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
                                                  ${XCB_LIBS_INCLUDE_DIRS}
                                                  ${DDE-Network-Utils_INCLUDE_DIRS}
                                                  ${DFrameworkDBus_INCLUDE_DIRS}
@@ -37,11 +33,12 @@ target_include_directories(${PLUGIN_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS}
                                                  ../../interfaces
                                                  ../../frame)
 target_link_libraries(${PLUGIN_NAME} PRIVATE
-    ${DtkWidget_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES}
-    ${Qt5X11Extras_LIBRARIES}
-    ${Qt5DBus_LIBRARIES}
-    ${Qt5Svg_LIBRARIES}
+    ${dtk2widget_LIBRARIES}
+    Qt6::Widgets
+    Qt6::DBus
+    Qt6::Svg
+    Qt6::Gui
+    Qt6::GuiPrivate
     ${XCB_LIBS_LIBRARIES}
     ${DDE-Network-Utils_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}

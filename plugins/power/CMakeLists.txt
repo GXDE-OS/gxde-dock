@@ -7,24 +7,22 @@ project(${PLUGIN_NAME})
 file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp")
 
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Svg REQUIRED)
-find_package(Qt5DBus REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus)
+pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 
 add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
 add_library(${PLUGIN_NAME} SHARED ${SRCS} power.qrc)
 set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../system-trays)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS}
-                                                 ${Qt5DBus_INCLUDE_DIRS}
+target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
                                                  ${DFrameworkDBus_INCLUDE_DIRS}
                                                  ../../interfaces)
 target_link_libraries(${PLUGIN_NAME} PRIVATE
-    ${DtkWidget_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES}
-    ${Qt5Svg_LIBRARIES}
+    ${dtk2widget_LIBRARIES}
+    Qt6::Widgets
+    Qt6::Svg
+    Qt6::DBus
     ${DFrameworkDBus_LIBRARIES}
 )
 

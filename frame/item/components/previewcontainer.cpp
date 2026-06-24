@@ -21,7 +21,6 @@
 
 #include "previewcontainer.h"
 
-#include <QDesktopWidget>
 #include <QScreen>
 #include <QApplication>
 #include <QDragEnterEvent>
@@ -180,7 +179,7 @@ void PreviewContainer::appendSnapWidget(const WId wid)
         snap->fetchSnapshot();
 }
 
-void PreviewContainer::enterEvent(QEvent *e)
+void PreviewContainer::enterEvent(QEnterEvent *e)
 {
     QWidget::enterEvent(e);
 

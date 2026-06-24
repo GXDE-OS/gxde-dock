@@ -20,7 +20,6 @@
  */
 
 #include <QDebug>
-#include <QX11Info>
 #include <QApplication>
 
 #include <xcb/xcb.h>
@@ -29,6 +28,7 @@
 
 #include "xcb_misc.h"
 #include "wayland/layershellhelper.h"
+#include "util/x11helper.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -39,7 +39,7 @@ XcbMisc::XcbMisc()
     if (Wayland::LayerShellHelper::isWayland()) {
         return;
     }
-    xcb_intern_atom_cookie_t * cookie = xcb_ewmh_init_atoms(QX11Info::connection(), &m_ewmh_connection);
+    xcb_intern_atom_cookie_t * cookie = xcb_ewmh_init_atoms(x11Connection(), &m_ewmh_connection);
     xcb_ewmh_init_atoms_replies(&m_ewmh_connection, cookie, NULL);
 }
 

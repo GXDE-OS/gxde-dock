@@ -70,7 +70,7 @@ public slots:
 
 private:
     void dragEnterEvent(QDragEnterEvent *e);
-    void enterEvent(QEvent *e);
+    void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);

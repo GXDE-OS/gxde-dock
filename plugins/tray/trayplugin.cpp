@@ -27,7 +27,7 @@
 #include <QDir>
 #include <QWindow>
 #include <QWidget>
-#include <QX11Info>
+#include "../../frame/util/x11helper.h"
 
 #include "../widgets/tipswidget.h"
 #include "xcb/xcb_icccm.h"

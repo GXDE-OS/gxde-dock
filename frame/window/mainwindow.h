@@ -56,7 +56,7 @@ private:
     void showEvent(QShowEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void keyPressEvent(QKeyEvent *e);
-    void enterEvent(QEvent *e);
+    void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
 

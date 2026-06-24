@@ -22,7 +22,7 @@ InformationWidget::InformationWidget(QWidget *parent)
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addWidget(m_infoLabel);
     centralLayout->setSpacing(5);
-    centralLayout->setMargin(5);
+    centralLayout->setContentsMargins(5, 5, 5, 5);
 
     setLayout(centralLayout);
 }

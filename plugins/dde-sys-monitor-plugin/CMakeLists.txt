@@ -37,8 +37,8 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "*.ui")
 # <库名>_DIR            在哪个目录下找到的（Qt5Widgets_DIR）
 # <库名>_INCLUDE_DIRS   有哪些头文件目录（Qt5Widgets_INCLUDE_DIRS）
 # <库名>_LIBRARIES      有哪些库文件（Qt5Widgets_LIBRARIES）
-find_package(Qt5Widgets REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 
 # find_package 命令还可以用来加载 cmake 的功能模块
 # 并不是所有的库都直接支持 cmake 查找的，但大部分都支持了 pkg-config 这个标准，
@@ -78,14 +78,13 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS} sys_monitor.qrc)
 # 设置目标的生成位置，这里表示生成在执行 make 的目录,
 # 另外还有很多可用于设置的属性，可查阅 cmake 文档。
 set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS} ../../interfaces)
+target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS} ../../interfaces)
 
 # 设置目标要使用的 include 目录，即头文件目录
 # 变量 ${DtkWidget_INCLUDE_DIRS} 是在前面执行 find_package 命令时引入的
 # 当出现编译失败提示找不到某些库的头文件时应该检查此处是否将所有需要的头文件都包含了
 target_include_directories(${PLUGIN_NAME} PUBLIC
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${DtkWidget_INCLUDE_DIRS}
+    ${dtk2widget_INCLUDE_DIRS}
     #${DdeDockInterface_INCLUDE_DIRS}
 )
 
@@ -93,8 +92,8 @@ target_include_directories(${PLUGIN_NAME} PUBLIC
 # 变量 ${DtkWidget_LIBRARIES} 和 ${Qt5Widgets_LIBRARIES} 是在前面执行 find_package 命令时引入的
 # 当出现运行时错误提示某些符号没有定义时应该检查此处是否将所有用的库都写在了这里
 target_link_libraries(${PLUGIN_NAME} PRIVATE
-    ${Qt5Widgets_LIBRARIES}
-    ${DtkWidget_LIBRARIES}
+    Qt6::Widgets
+    ${dtk2widget_LIBRARIES}
     #${DdeDockInterface_LIBRARIES}
 )
 

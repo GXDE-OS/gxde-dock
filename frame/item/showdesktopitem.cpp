@@ -38,7 +38,7 @@ ShowDesktopItem::~ShowDesktopItem()
 {
 }
 
-void ShowDesktopItem::enterEvent(QEvent *event)
+void ShowDesktopItem::enterEvent(QEnterEvent *event)
 {
     m_isHovered = true;
     update();

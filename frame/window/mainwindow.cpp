@@ -29,7 +29,7 @@
 #include <QResizeEvent>
 #include <QScreen>
 #include <QGuiApplication>
-#include <QX11Info>
+
 #include <qpa/qplatformwindow.h>
 #include <dapplication.h>
 
@@ -37,6 +37,8 @@
 
 #include <X11/X.h>
 #include <X11/Xutil.h>
+
+#include "util/x11helper.h"
 
 #define SNI_WATCHER_SERVICE "org.kde.StatusNotifierWatcher"
 #define SNI_WATCHER_PATH "/StatusNotifierWatcher"
@@ -237,7 +239,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
 }
 
-void MainWindow::enterEvent(QEvent *e)
+void MainWindow::enterEvent(QEnterEvent *e)
 {
     QWidget::enterEvent(e);
 
@@ -452,7 +454,7 @@ void MainWindow::initConnections()
 
 const QPoint MainWindow::x11GetWindowPos()
 {
-    const auto disp = QX11Info::display();
+    const auto disp = x11Display();
 
     unsigned int unused;
     int x;
@@ -467,7 +469,7 @@ const QPoint MainWindow::x11GetWindowPos()
 
 void MainWindow::x11MoveWindow(const int x, const int y)
 {
-    const auto disp = QX11Info::display();
+    const auto disp = x11Display();
 
     XMoveWindow(disp, winId(), x, y);
     XFlush(disp);
@@ -475,7 +477,7 @@ void MainWindow::x11MoveWindow(const int x, const int y)
 
 void MainWindow::x11MoveResizeWindow(const int x, const int y, const int w, const int h)
 {
-    const auto disp = QX11Info::display();
+    const auto disp = x11Display();
 
     XMoveResizeWindow(disp, winId(), x, y, w, h);
     XFlush(disp);

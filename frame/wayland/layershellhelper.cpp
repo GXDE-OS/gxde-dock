@@ -24,11 +24,11 @@
 #include <QWindow>
 
 #include <LayerShellQt/Window>
-#include <DPlatformHandle>
+#include <dplatformwindowhandle.h>
 
 #include "layershellhelper.h"
 
-DGUI_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 namespace Wayland {
 
@@ -124,7 +124,7 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
     }
 
     layer->setScope(scope);
-    layer->setDesiredOutput(screen);
+    layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
     layer->setLayer(LayerShellQt::Window::LayerTop);
     layer->setAnchors(anchorsForPosition(position));
     layer->setKeyboardInteractivity(
@@ -132,7 +132,7 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
 
     // Treeland上为layer-shell禁用标题栏
     if (window) {
-        DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
+        DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
     }
 }
 
@@ -167,7 +167,7 @@ void LayerShellHelper::updateOutput(QWidget* widget, QScreen* screen) {
     LayerShellQt::Window* layer = layerWindowFor(widget);
     if (layer) {
         widget->windowHandle()->setScreen(screen);
-        layer->setDesiredOutput(screen);
+        layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
     }
 }
 
@@ -213,7 +213,7 @@ void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
         isSubMenu ? LayerShellQt::Window::KeyboardInteractivityNone
             : LayerShellQt::Window::KeyboardInteractivityOnDemand);
 
-    DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
+    DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
 }
 
 // 全屏Mask的layer-shell属性
@@ -252,7 +252,7 @@ void LayerShellHelper::setMenuMaskRole(QWidget* widget) {
     // Treeland: 需要"dde-shell/dock"，Treeland才不会为其添加边框
     layer->setScope(QStringLiteral("dde-shell/dock"));
 
-    DPlatformHandle::setEnabledNoTitlebarForWindow(window, true);
+    DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
 }
 
 }  // namespace Wayland

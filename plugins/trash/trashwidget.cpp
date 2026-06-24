@@ -228,7 +228,7 @@ void TrashWidget::removeApp(const QString &appKey)
 
 void TrashWidget::moveToTrash(const QUrl &url)
 {
-    const QFileInfo info = url.toLocalFile();
+    const QFileInfo info(url.toLocalFile());
 
     QProcess::startDetached("gio", QStringList() << "trash" << "-f" << info.absoluteFilePath());
 }

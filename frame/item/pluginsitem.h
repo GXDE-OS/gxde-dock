@@ -24,6 +24,7 @@
 
 #include "dockitem.h"
 #include "pluginsiteminterface.h"
+#include <QEnterEvent>
 
 class PluginsItem : public DockItem
 {
@@ -60,7 +61,7 @@ protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
-    void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
+    void enterEvent(QEnterEvent *event) override;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 

@@ -38,7 +38,10 @@
 #include <QHBoxLayout>
 #include <QGraphicsScene>
 #include <QTimeLine>
-#include <QX11Info>
+#include <QDateTime>
+
+// QX11Info is NOT avaliable in Qt6, using own helper...
+#include "../util/x11helper.h"
 
 #define APP_DRAG_THRESHOLD      20
 
@@ -75,7 +78,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
       m_largeWatcher(new QFutureWatcher<QPixmap>(this))
 {
     QHBoxLayout *centralLayout = new QHBoxLayout;
-    centralLayout->setMargin(0);
+    centralLayout->setContentsMargins(0, 0, 0, 0);
     centralLayout->setSpacing(0);
     setStyleSheet("background-color: rgba(255, 255, 255, 0);");  // 任务栏启动程序时不会出现阴影
 
@@ -298,7 +301,7 @@ void AppItem::paintEvent(QPaintEvent *e)
 void AppItem::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::MiddleButton) {
-        m_itemEntryInter->NewInstance(QX11Info::getTimestamp());
+        m_itemEntryInter->NewInstance(e->timestamp());
 
         // play launch effect
         if (m_windowInfos.isEmpty())
@@ -313,7 +316,7 @@ void AppItem::mouseReleaseEvent(QMouseEvent *e)
         qDebug() << "app item clicked, name:" << m_itemEntryInter->name()
             << "id:" << m_itemEntryInter->id() << "my-id:" << m_id << "icon:" << m_itemEntryInter->icon();
 
-        m_itemEntryInter->Activate(QX11Info::getTimestamp());
+        m_itemEntryInter->Activate(e->timestamp());
 
         // play launch effect
         if (m_windowInfos.isEmpty())
@@ -405,7 +408,8 @@ void AppItem::dropEvent(QDropEvent *e)
     }
 
     qDebug() << "accept drop event with URIs: " << uriList;
-    m_itemEntryInter->HandleDragDrop(QX11Info::getTimestamp(), uriList);
+    m_itemEntryInter->HandleDragDrop(QDateTime::currentMSecsSinceEpoch(),
+        uriList);
 }
 
 void AppItem::leaveEvent(QEvent *e)
@@ -438,7 +442,8 @@ void AppItem::invokedMenuItem(const QString &itemId, const bool checked)
 {
     Q_UNUSED(checked);
 
-    m_itemEntryInter->HandleMenuItem(QX11Info::getTimestamp(), itemId);
+    m_itemEntryInter->HandleMenuItem(QDateTime::currentMSecsSinceEpoch(),
+        itemId);
 }
 
 const QString AppItem::contextMenu() const

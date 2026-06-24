@@ -36,7 +36,7 @@ ContainerWidget::ContainerWidget(QWidget *parent)
 {
     m_centralLayout->addStretch();
     m_centralLayout->setSpacing(0);
-    m_centralLayout->setMargin(0);
+    m_centralLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(m_centralLayout);
     setFixedHeight(ITEM_HEIGHT);
@@ -51,7 +51,7 @@ void ContainerWidget::addWidget(QWidget * const w)
     m_centralLayout->addWidget(w);
     m_itemList.append(w);
 
-    setFixedWidth(ITEM_WIDTH * std::max(1, m_itemList.size()));
+    setFixedWidth(ITEM_WIDTH * std::max(qsizetype(1), m_itemList.size()));
 }
 
 void ContainerWidget::removeWidget(QWidget * const w)
@@ -59,7 +59,7 @@ void ContainerWidget::removeWidget(QWidget * const w)
     m_centralLayout->removeWidget(w);
     m_itemList.removeOne(w);
 
-    setFixedWidth(ITEM_WIDTH * std::max(1, m_itemList.size()));
+    setFixedWidth(ITEM_WIDTH * std::max(qsizetype(1), m_itemList.size()));
 }
 
 int ContainerWidget::itemCount() const

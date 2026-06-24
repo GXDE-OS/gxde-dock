@@ -106,7 +106,7 @@ void VolumeSlider::wheelEvent(QWheelEvent *e)
 
     m_timer->start();
 
-    QSlider::setValue(value() + (e->delta() > 0 ? 10 : -10));
+    QSlider::setValue(value() + (e->angleDelta().y() > 0 ? 10 : -10));
 }
 
 void VolumeSlider::onTimeout()

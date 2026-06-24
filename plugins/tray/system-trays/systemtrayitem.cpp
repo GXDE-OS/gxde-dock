@@ -173,7 +173,7 @@ bool SystemTrayItem::event(QEvent *event)
     return AbstractTrayWidget::event(event);
 }
 
-void SystemTrayItem::enterEvent(QEvent *event)
+void SystemTrayItem::enterEvent(QEnterEvent *event)
 {
     m_popupTipsDelayTimer->start();
     update();

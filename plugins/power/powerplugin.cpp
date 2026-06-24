@@ -19,10 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QUrl>
 #include "powerplugin.h"
 #include "dbus/dbusaccount.h"
 
 #include <QIcon>
+#undef None
 
 #define PLUGIN_STATE_KEY    "enable"
 
@@ -299,7 +301,7 @@ void PowerPlugin::refreshTipsData()
 
     if (m_powerInter->onBattery()) {
         qulonglong timeToEmpty = m_systemPowerInter->batteryTimeToEmpty();
-        QDateTime time = QDateTime::fromTime_t(timeToEmpty).toUTC();
+        QDateTime time = QDateTime::fromSecsSinceEpoch(timeToEmpty).toUTC();
         uint hour = time.toString("hh").toUInt();
         uint min = time.toString("mm").toUInt();
 
@@ -320,7 +322,7 @@ void PowerPlugin::refreshTipsData()
         }
         else {
             qulonglong timeToFull = m_systemPowerInter->batteryTimeToFull();
-            QDateTime time = QDateTime::fromTime_t(timeToFull).toUTC();
+            QDateTime time = QDateTime::fromSecsSinceEpoch(timeToFull).toUTC();
             uint hour = time.toString("hh").toUInt();
             uint min = time.toString("mm").toUInt();
 

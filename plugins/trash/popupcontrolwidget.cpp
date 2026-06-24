@@ -38,7 +38,6 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QScreen>
-#include <QDesktopWidget>
 
 DWIDGET_USE_NAMESPACE
 
@@ -123,8 +122,7 @@ void PopupControlWidget::clearTrashFloder()
         //d->moveToCenter();
         // 因为 dock 栏只能在主屏幕显示，所以我们只需要在主屏幕居中显示即可
         QRect rect = d->frameGeometry();
-        QDesktopWidget desktop;
-        QPoint centerPoint = desktop.availableGeometry().center();
+        QPoint centerPoint = QGuiApplication::primaryScreen()->availableGeometry().center();
         rect.moveCenter(centerPoint);
         d->move(rect.topLeft());
         execCode = d->exec();

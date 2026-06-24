@@ -129,7 +129,7 @@ void AccessPointWidget::setActiveState(const NetworkDevice::DeviceStatus state)
     m_disconnectBtn->setVisible(isActive);
 }
 
-void AccessPointWidget::enterEvent(QEvent *e)
+void AccessPointWidget::enterEvent(QEnterEvent *e)
 {
     QWidget::enterEvent(e);
     m_disconnectBtn->setNormalPic(":/wireless/resources/wireless/disconnect.svg");

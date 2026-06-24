@@ -53,7 +53,7 @@ PluginsItem::PluginsItem(PluginsItemInterface* const pluginInter, const QString 
     QBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(m_centralWidget);
     hLayout->setSpacing(0);
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(hLayout);
     setAccessibleName(pluginInter->pluginName() + "-" + m_itemKey);
@@ -204,7 +204,7 @@ void PluginsItem::mouseReleaseEvent(QMouseEvent *e)
         mouseClicked();
 }
 
-void PluginsItem::enterEvent(QEvent *event)
+void PluginsItem::enterEvent(QEnterEvent *event)
 {
     m_hover = true;
     update();
@@ -296,7 +296,7 @@ void PluginsItem::mouseClicked()
     {
         QProcess *proc = new QProcess(this);
 
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished), proc, &QProcess::deleteLater);
+        connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), proc, &QProcess::deleteLater);
 
         proc->startDetached(command);
         return;

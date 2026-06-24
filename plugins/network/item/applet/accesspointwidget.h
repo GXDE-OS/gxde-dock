@@ -70,7 +70,7 @@ signals:
     void clicked() const;
 
 private:
-    void enterEvent(QEvent *e);
+    void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void setStrengthIcon(const int strength);
 

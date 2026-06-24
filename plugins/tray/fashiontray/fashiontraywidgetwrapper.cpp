@@ -130,7 +130,7 @@ void FashionTrayWidgetWrapper::dragEnterEvent(QDragEnterEvent *event)
     QWidget::dragEnterEvent(event);
 }
 
-void FashionTrayWidgetWrapper::enterEvent(QEvent *event)
+void FashionTrayWidgetWrapper::enterEvent(QEnterEvent *event)
 {
     m_hover = true;
     update();

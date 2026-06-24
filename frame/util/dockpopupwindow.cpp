@@ -24,7 +24,6 @@
 #include <QTimer>
 #include <QScreen>
 #include <QApplication>
-#include <QDesktopWidget>
 
 DWIDGET_USE_NAMESPACE
 
@@ -111,7 +110,7 @@ void DockPopupWindow::showEvent(QShowEvent *e)
     QTimer::singleShot(1, this, &DockPopupWindow::ensureRaised);
 }
 
-void DockPopupWindow::enterEvent(QEvent *e)
+void DockPopupWindow::enterEvent(QEnterEvent *e)
 {
     DArrowRectangle::enterEvent(e);
 
