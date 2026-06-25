@@ -13,11 +13,12 @@ Note that `layer-shell-qt` conflicts/replaces with `layer-shell-qt5`.
 
 ---
 
-Install those Qt6-ported packages before you even start to complie (they're NOT in APT source yet): 
+Install those Qt6-ported packages before you even start to complie (they're NOT in APT source yet, your complie sequence is simply the same as how they are listed from top to bottom): 
 
-在尝试编译前先编译安装如下包（还没进源，是Qt6移植版本）：
+在尝试编译前先编译安装如下包（还没进源，是Qt6移植版本，编译顺序即列表顺序）：
 
 * https://gitee.com/GXDE-OS/dframework-dbus-qt6
+* https://gitee.com/GXDE-OS/gxde-network-utils-qt6
 
 ---
 
