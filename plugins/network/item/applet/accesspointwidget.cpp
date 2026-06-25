@@ -68,7 +68,7 @@ AccessPointWidget::AccessPointWidget()
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addLayout(infoLayout);
     centralLayout->setSpacing(0);
-    centralLayout->setMargin(0);
+    centralLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(centralLayout);
     setStyleSheet("AccessPointWidget #Ssid {"

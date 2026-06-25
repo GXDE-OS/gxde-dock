@@ -225,7 +225,7 @@ void WirelessItem::init()
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->addWidget(m_APList->controlPanel());
     vLayout->addWidget(m_APList);
-    vLayout->setMargin(0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
     m_wirelessApplet->setLayout(vLayout);
 

@@ -12,7 +12,7 @@ AbstractContainer::AbstractContainer(TrayPlugin *trayPlugin, QWidget *parent)
 {
     setAcceptDrops(true);
 
-    m_wrapperLayout->setMargin(0);
+    m_wrapperLayout->setContentsMargins(0, 0, 0, 0);
     m_wrapperLayout->setContentsMargins(0, 0, 0, 0);
     m_wrapperLayout->setSpacing(TraySpace);
 

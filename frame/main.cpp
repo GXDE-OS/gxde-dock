@@ -190,6 +190,8 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    qDBusRegisterMetaType<QMap<QString, QString>>();
+    qDBusRegisterMetaType<QMap<QString, QString>>();
     qDebug() << "\n\ngxde-dock startup";
     RegisterDdeSession();
 

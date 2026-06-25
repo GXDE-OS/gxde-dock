@@ -117,27 +117,28 @@ check_toolchains() {
     echo "恭喜，必要工具链检查通过！"
 }
 
-# 如果制定了则安装依赖
+# 如果指定了则安装依赖
 auto_install_deps() {
     if [[ "$NO_ASSERT_DEPS" == true ]]; then
         echo "准备安装构建依赖，请稍候..."
-        sudo apt update
-        sudo apt install \
-            build-essential devscripts debhelper cmake pkg-config \
-            qt6-base-dev qt6-base-private-dev qt6-tools-dev-tools \
-            qt6-multimedia-dev qt6-svg-dev qt6-l10n-tools qt6-scxml-dev \
-            libdtk6core-dev libdtk6log-dev libdtk6gui-dev \
-            libgsettings-qt6-dev \
-            libudev-dev libxext-dev x11proto-xext-dev libxcb-util-dev \
-            libstartup-notification0-dev libmtdev-dev libegl1-mesa-dev \
-            libfontconfig1-dev libfreetype6-dev libglib2.0-dev \
-            libxrender-dev librsvg2-dev libxi-dev \
-            libdtk2widget6-dev qttools6-dev-tools \
-            libdbusmenu-qt6-dev layershellqtinterface6-dev
 
-        echo "开始安装了，请特别留意是否会卸载掉任何已有GXDE系统包i！！"
-        sudo apt install build-essential devscripts debhelper cmake
-        echo "恭喜，必要工具链检查通过！"
+        cd "$CUR_SCRIPT_DIR" || exit 1
+
+        # 先装基础工具链
+        sudo apt install -y build-essential devscripts debhelper cmake pkg-config
+
+        # 从 debian/control 自动安装构建依赖（推荐方式）
+        if command -v mk-build-deps &> /dev/null; then
+            echo "使用 mk-build-deps 安装依赖..."
+            sudo mk-build-deps --install --remove \
+                --root-cmd sudo \
+                debian/control
+        else
+            echo "mk-build-deps 不可用，尝试 apt-get build-dep..."
+            sudo apt-get build-dep -y .
+        fi
+
+        echo "构建依赖安装完成！"
     fi
 }
 

@@ -26,7 +26,7 @@
 //#include "dbus/sni/statusnotifieritem_interface.h"
 
 #include <org_kde_statusnotifieritem.h>
-#include <dbusmenu-qt5/dbusmenuimporter.h>
+#include <dbusmenuimporter.h>
 
 #include <QMenu>
 #include <QDBusObjectPath>

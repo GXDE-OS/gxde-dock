@@ -55,7 +55,7 @@ FashionTrayItem::FashionTrayItem(TrayPlugin *trayPlugin, QWidget *parent)
     m_attentionContainer->setVisible(false);
     m_holdContainer->setVisible(false);
 
-    m_mainBoxLayout->setMargin(0);
+    m_mainBoxLayout->setContentsMargins(0, 0, 0, 0);
     m_mainBoxLayout->setContentsMargins(0, 0, 0, 0);
     m_mainBoxLayout->setSpacing(TraySpace);
 

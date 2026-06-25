@@ -47,3 +47,9 @@ debian/debhelper-build-stamp
 
 # Misc
 .lock
+
+# Agents
+.claude/*
+.codex/*
+.gemini/*
+.qwen/*

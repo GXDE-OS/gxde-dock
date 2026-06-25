@@ -6,7 +6,7 @@ HoldContainer::HoldContainer(TrayPlugin *trayPlugin, QWidget *parent)
       m_mainBoxLayout(new QBoxLayout(QBoxLayout::Direction::LeftToRight)),
       m_holdSpliter(new SpliterAnimated(this))
 {
-    m_mainBoxLayout->setMargin(0);
+    m_mainBoxLayout->setContentsMargins(0, 0, 0, 0);
     m_mainBoxLayout->setContentsMargins(0, 0, 0, 0);
     m_mainBoxLayout->setSpacing(TraySpace);
 

@@ -68,7 +68,7 @@ DeviceControlWidget::DeviceControlWidget(QWidget *parent)
     centralLayout->addLayout(infoLayout);
     centralLayout->addStretch();
 //    centralLayout->addWidget(m_seperator);
-    centralLayout->setMargin(0);
+    centralLayout->setContentsMargins(0, 0, 0, 0);
     centralLayout->setSpacing(0);
 
     setLayout(centralLayout);

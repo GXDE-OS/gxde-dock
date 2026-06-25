@@ -40,6 +40,9 @@ endif()
 
 file(GLOB INTERFACES "interfaces/*.h")
 
+# Vendored dbusmenu-lxqt for Qt6 builds
+add_subdirectory("cmake/libdbusmenu")
+
 add_subdirectory("frame")
 add_subdirectory("plugins")
 

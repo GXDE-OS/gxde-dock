@@ -15,15 +15,17 @@ find_package(LayerShellQt REQUIRED)
 pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 pkg_check_modules(dtk6core REQUIRED dtk6core)
 pkg_check_modules(XCB_EWMH REQUIRED xcb-ewmh x11)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 pkg_check_modules(QGSettings REQUIRED gsettings-qt6)
+
+# Qt6 VER. of dframeworkdbus
+find_package(DFrameworkdbusQt6 REQUIRED)
 
 # driver-manager
 add_executable(${BIN_NAME} ${SRCS} ${INTERFACES} item/item.qrc frame.qrc)
 target_include_directories(${BIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
                                               ${dtk6core_INCLUDE_DIRS}
                                               ${XCB_EWMH_INCLUDE_DIRS}
-                                              ${DFrameworkDBus_INCLUDE_DIRS}
+                                              /usr/include/libdframeworkdbus-2.0
                                               ${PROJECT_BINARY_DIR}
                                               ${QGSettings_INCLUDE_DIRS}
                                               ../interfaces)
@@ -36,8 +38,8 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${dtk2widget_LIBRARIES}
     ${dtk6core_LIBRARIES}
     ${XCB_EWMH_LIBRARIES}
-    ${DFrameworkDBus_LIBRARIES}
     ${QGSettings_LIBRARIES}
+    DFrameworkdbusQt6::DFrameworkdbusQt6
     LayerShellQt::Interface
 )
 

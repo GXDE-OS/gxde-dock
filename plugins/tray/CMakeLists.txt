@@ -16,10 +16,10 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus Gui)
 pkg_check_modules(dtk2widget REQUIRED dtk2widget)
+find_package(DFrameworkdbusQt6 REQUIRED)
 
-pkg_check_modules(XCB_LIBS REQUIRED xcb-ewmh xcb xcb-image xcb-composite xtst xcb-icccm dbusmenu-qt5)
+pkg_check_modules(XCB_LIBS REQUIRED xcb-ewmh xcb xcb-image xcb-composite xtst xcb-icccm)
 pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 pkg_check_modules(QGSettings REQUIRED gsettings-qt6)
 
 add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
@@ -28,10 +28,14 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../)
 target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
                                                  ${XCB_LIBS_INCLUDE_DIRS}
                                                  ${DDE-Network-Utils_INCLUDE_DIRS}
-                                                 ${DFrameworkDBus_INCLUDE_DIRS}
+                                                 
                                                  ${QGSettings_INCLUDE_DIRS}
                                                  ../../interfaces
                                                  ../../frame)
+# Vendored dbusmenu-lxqt headers
+target_include_directories(${PLUGIN_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}/lib/3rdparty/libdbusmenu/src"
+    "${CMAKE_BINARY_DIR}/cmake/libdbusmenu/dbusmenu-build/src")
 target_link_libraries(${PLUGIN_NAME} PRIVATE
     ${dtk2widget_LIBRARIES}
     Qt6::Widgets
@@ -39,9 +43,10 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
     Qt6::Svg
     Qt6::Gui
     Qt6::GuiPrivate
+    dbusmenu-lxqt
     ${XCB_LIBS_LIBRARIES}
     ${DDE-Network-Utils_LIBRARIES}
-    ${DFrameworkDBus_LIBRARIES}
+    DFrameworkdbusQt6::DFrameworkdbusQt6
     ${QGSettings_LIBRARIES}
 )
 

@@ -50,7 +50,7 @@ SystemTrayItem::SystemTrayItem(PluginsItemInterface * const pluginInter, const Q
     QBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(m_centralWidget);
     hLayout->setSpacing(0);
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(hLayout);
     setAccessibleName(m_pluginInter->pluginName() + "-" + m_itemKey);

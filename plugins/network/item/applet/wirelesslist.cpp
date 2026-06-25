@@ -65,7 +65,7 @@ WirelessList::WirelessList(WirelessDevice *deviceIter, QWidget *parent)
 
     m_centralLayout->addWidget(m_controlPanel);
     m_centralLayout->setSpacing(0);
-    m_centralLayout->setMargin(0);
+    m_centralLayout->setContentsMargins(0, 0, 0, 0);
 
     setWidget(m_centralWidget);
     setFrameStyle(QFrame::NoFrame);

@@ -203,9 +203,9 @@ void DatetimePlugin::updateCurrentTimeString()
     const QDateTime currentDateTime = QDateTime::currentDateTime();
 
     if (m_centralWidget->is24HourFormat())
-        m_dateTipsLabel->setText(currentDateTime.date().toString(Qt::SystemLocaleLongDate) + currentDateTime.toString(" HH:mm:ss"));
+        m_dateTipsLabel->setText(currentDateTime.date().toString(QLocale().dateFormat(QLocale::LongFormat)) + currentDateTime.toString(" HH:mm:ss"));
     else
-        m_dateTipsLabel->setText(currentDateTime.date().toString(Qt::SystemLocaleLongDate) + currentDateTime.toString(" hh:mm:ss A"));
+        m_dateTipsLabel->setText(currentDateTime.date().toString(QLocale().dateFormat(QLocale::LongFormat)) + currentDateTime.toString(" hh:mm:ss A"));
 
     const QString currentString = currentDateTime.toString("mm");
 

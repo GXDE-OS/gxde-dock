@@ -39,8 +39,8 @@ IndicatorTrayWidget::IndicatorTrayWidget(const QString &indicatorName, QWidget *
     m_label = new QLabel(this);
 
     QPalette p = palette();
-    p.setColor(QPalette::Foreground, Qt::white);
-    p.setColor(QPalette::Background, Qt::red);
+    p.setColor(QPalette::WindowText, Qt::white);
+    p.setColor(QPalette::Window, Qt::red);
     m_label->setPalette(p);
 
     m_label->setAttribute(Qt::WA_TranslucentBackground);
