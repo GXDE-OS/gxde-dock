@@ -4,6 +4,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>插件%1和系统版本不兼容。</translation>
     </message>
@@ -11,6 +12,7 @@
 <context>
     <name>ContainerItem</name>
     <message>
+        <location filename="../frame/item/containeritem.cpp" line="33"/>
         <source>Click to display hidden icon</source>
         <translation>点击显示隐藏图标</translation>
     </message>
@@ -18,6 +20,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
         <source>Add keyboard layout</source>
         <translation>添加键盘布局</translation>
     </message>
@@ -25,18 +28,22 @@
 <context>
     <name>DatetimePlugin</name>
     <message>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43"/>
         <source>Datetime</source>
         <translation>时间</translation>
     </message>
     <message>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154"/>
         <source>12 Hour Time</source>
         <translation>12小时制</translation>
     </message>
     <message>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156"/>
         <source>24 Hour Time</source>
         <translation>24小时制</translation>
     </message>
     <message>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162"/>
         <source>Time Settings</source>
         <translation>时间设置</translation>
     </message>
@@ -44,14 +51,17 @@
 <context>
     <name>DeviceItem</name>
     <message>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="59"/>
         <source>Enable network</source>
         <translation>启用网络</translation>
     </message>
     <message>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="61"/>
         <source>Disable network</source>
         <translation>关闭网络</translation>
     </message>
     <message>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="67"/>
         <source>Network settings</source>
         <translation>网络设置</translation>
     </message>
@@ -59,18 +69,22 @@
 <context>
     <name>DialogManager</name>
     <message>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>您确定要清空回收站里的%1项内容吗？</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
         <source>This action cannot be restored</source>
         <translation>此操作不可恢复</translation>
     </message>
@@ -78,10 +92,12 @@
 <context>
     <name>DiskControlItem</name>
     <message>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106"/>
         <source>Unknown device</source>
         <translation>未知的设备</translation>
     </message>
     <message>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112"/>
         <source>Unknown volume</source>
         <translation>容量未知</translation>
     </message>
@@ -89,14 +105,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
     <message>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96"/>
         <source>Unmount all</source>
         <translation>卸载全部</translation>
     </message>
@@ -104,78 +123,97 @@
 <context>
     <name>DockSettings</name>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="161"/>
         <source>Fashion Mode</source>
         <translation>时尚模式</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Efficient Mode</source>
         <translation>高效模式</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Top</source>
         <translation>上</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Bottom</source>
         <translation>下</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Left</source>
         <translation>左</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Right</source>
         <translation>右</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Keep Shown</source>
         <translation>一直显示</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Hidden</source>
         <translation>一直隐藏</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Smart Hide</source>
         <translation>智能隐藏</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="216"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="225"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="232"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="239"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="243"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>System Monitor</source>
         <translation>系统监视器</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>Window Split</source>
         <translation>合并图标</translation>
     </message>
@@ -183,6 +221,7 @@
 <context>
     <name>LauncherItem</name>
     <message>
+        <location filename="../frame/item/launcheritem.cpp" line="105"/>
         <source>Launcher</source>
         <translation>启动器</translation>
     </message>
@@ -190,6 +229,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
+        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
         <source>Network</source>
         <translation>网络</translation>
     </message>
@@ -201,10 +241,13 @@
         <translation type="vanished">电源</translation>
     </message>
     <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
         <source>Notify</source>
         <translation>消息通知</translation>
     </message>
     <message>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
         <source>Open Control Center</source>
         <translation>打开控制中心</translation>
     </message>
@@ -212,14 +255,17 @@
 <context>
     <name>OnboardPlugin</name>
     <message>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="46"/>
         <source>Virtual Keyboard</source>
         <translation>屏幕键盘</translation>
     </message>
     <message>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="101"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
         <source>Onboard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,10 +273,12 @@
 <context>
     <name>PowerPlugin</name>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
         <source>Power</source>
         <translation>电源</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
         <source>Power settings</source>
         <translation>电源设置</translation>
     </message>
@@ -255,22 +303,27 @@
         <translation type="vanished">正在充电%1，还需%2小时%3分钟</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>电量%1，剩余%2分钟，健康度：%3%</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>电量%1，剩余%2小时%3分钟，健康度：%4%</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Charged %1, Health: %2%</source>
         <translation>已充满%1，健康度：%2%</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>正在充电%1，还需%2分钟，健康度：%3%</translation>
     </message>
     <message>
+        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>正在充电%1，还需%2小时%3分钟，健康度：%4%</translation>
     </message>
@@ -278,38 +331,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
         <source>Power</source>
         <translation>电源</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
         <source>Shut down</source>
         <translation>关机</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
         <source>Restart</source>
         <translation>重启</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
         <source>Suspend</source>
         <translation>待机</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
         <source>Hibernate</source>
         <translation>休眠</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
         <source>Log out</source>
         <translation>注销</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
         <source>Switch account</source>
         <translation>切换帐户</translation>
     </message>
     <message>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
         <source>Power settings</source>
         <translation>电源设置</translation>
     </message>
@@ -317,10 +380,12 @@
 <context>
     <name>SoundApplet</name>
     <message>
+        <location filename="../plugins/sound/soundapplet.cpp" line="54"/>
         <source>Device</source>
         <translation>设备</translation>
     </message>
     <message>
+        <location filename="../plugins/sound/soundapplet.cpp" line="72"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
@@ -328,18 +393,22 @@
 <context>
     <name>SoundItem</name>
     <message>
+        <location filename="../plugins/sound/sounditem.cpp" line="78"/>
         <source>Unmute</source>
         <translation>取消静音</translation>
     </message>
     <message>
+        <location filename="../plugins/sound/sounditem.cpp" line="80"/>
         <source>Mute</source>
         <translation>静音</translation>
     </message>
     <message>
+        <location filename="../plugins/sound/sounditem.cpp" line="86"/>
         <source>Audio Settings</source>
         <translation>音量设置</translation>
     </message>
     <message>
+        <location filename="../plugins/sound/sounditem.cpp" line="207"/>
         <source>Current Volume %1</source>
         <translation>当前音量%1</translation>
     </message>
@@ -347,6 +416,7 @@
 <context>
     <name>SoundPlugin</name>
     <message>
+        <location filename="../plugins/sound/soundplugin.cpp" line="40"/>
         <source>Sound</source>
         <translation>声音</translation>
     </message>
@@ -354,14 +424,17 @@
 <context>
     <name>TrashPlugin</name>
     <message>
+        <location filename="../plugins/trash/trashplugin.cpp" line="52"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/trashplugin.cpp" line="90"/>
         <source>Trash - %1 file</source>
         <translation>回收站 - %1个文件</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/trashplugin.cpp" line="92"/>
         <source>Trash - %1 files</source>
         <translation>回收站 - %1个文件</translation>
     </message>
@@ -369,10 +442,12 @@
 <context>
     <name>TrashWidget</name>
     <message>
+        <location filename="../plugins/trash/trashwidget.cpp" line="70"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
+        <location filename="../plugins/trash/trashwidget.cpp" line="77"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -380,6 +455,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
+        <location filename="../plugins/tray/trayplugin.cpp" line="85"/>
         <source>System Tray</source>
         <translation>系统托盘</translation>
     </message>
@@ -387,10 +463,12 @@
 <context>
     <name>WiredItem</name>
     <message>
+        <location filename="../plugins/network/item/wireditem.cpp" line="47"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
+        <location filename="../plugins/network/item/wireditem.cpp" line="199"/>
         <source>Wired connection: %1</source>
         <translation>有线连接：%1</translation>
     </message>
@@ -398,10 +476,12 @@
 <context>
     <name>WirelessItem</name>
     <message>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="49"/>
         <source>No Network</source>
         <translation>无网络访问</translation>
     </message>
     <message>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
         <source>Wireless Connection: %1</source>
         <translation>无线连接：%1</translation>
     </message>
@@ -409,10 +489,12 @@
 <context>
     <name>WirelessList</name>
     <message>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159"/>
         <source>Wireless Network</source>
         <translation>无线网络</translation>
     </message>
     <message>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161"/>
         <source>Wireless Network %1</source>
         <translation>无线网络%1</translation>
     </message>
@@ -420,34 +502,42 @@
 <context>
     <name>pluginSettingDialog</name>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
         <source>系统监控插件设置</source>
         <translation>系统监控插件设置</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
         <source>只显示网速</source>
         <translation>只显示网速</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
         <source>只显示CPU、内存</source>
         <translation>只显示CPU、内存</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation>显示CP&amp;U、内存和网速</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
         <source>行高：</source>
         <translation>行高：</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
         <source>显示内容设置</source>
         <translation>显示内容设置</translation>
     </message>
     <message>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation type="unfinished"></translation>

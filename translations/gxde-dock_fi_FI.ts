@@ -73,22 +73,22 @@
         <translation type="vanished">Oletko varma poistaessasi %1 tiedostoa?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="91"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="98"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="98"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Delete</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="118"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
         <source>This action cannot be restored</source>
         <translation>Tätä toimenpidettä ei voi perua</translation>
     </message>
@@ -127,97 +127,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="161"/>
         <source>Fashion Mode</source>
         <translation>Keskitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Efficient Mode</source>
         <translation>Levitetty</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Top</source>
         <translation>Ylös</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Bottom</source>
         <translation>Alas</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Left</source>
         <translation>Vasen</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Right</source>
         <translation>Oikea</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Large</source>
         <translation>Suuri</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Medium</source>
         <translation>Keskikoko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Small</source>
         <translation>Pieni</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Keep Shown</source>
         <translation>Pidä näkyvänä</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Hidden</source>
         <translation>Pidä piilotettuna</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Smart Hide</source>
         <translation>Älykäs piilotus</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>System Monitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>Window Split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="217"/>
+        <location filename="../frame/util/docksettings.cpp" line="216"/>
         <source>Mode</source>
         <translation>Tila</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="226"/>
+        <location filename="../frame/util/docksettings.cpp" line="225"/>
         <source>Location</source>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="233"/>
+        <location filename="../frame/util/docksettings.cpp" line="232"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="240"/>
+        <location filename="../frame/util/docksettings.cpp" line="239"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="244"/>
+        <location filename="../frame/util/docksettings.cpp" line="243"/>
         <source>Plugins</source>
         <translation>Liitännäiset</translation>
     </message>
@@ -277,32 +277,32 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="46"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
         <source>Power</source>
         <translation>Virta</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="309"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="312"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="319"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Charged %1, Health: %2%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="330"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="333"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -319,7 +319,7 @@
         <translation type="vanished">Lataa %1</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="112"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
         <source>Power settings</source>
         <translation>Virran asetukset</translation>
     </message>
@@ -503,50 +503,42 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="129"/>
         <source>系统监控插件设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>显示内容设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>只显示网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示CPU、内存</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="136"/>
         <source>行高：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
-        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
