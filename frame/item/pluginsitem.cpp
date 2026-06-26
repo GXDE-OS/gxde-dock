@@ -31,6 +31,8 @@
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
+#include <QProcess>
+#include <QRegularExpression>
 
 #define PLUGIN_ITEM_DRAG_THRESHOLD      20
 
@@ -229,9 +231,14 @@ void PluginsItem::leaveEvent(QEvent *event)
 bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == m_centralWidget) {
-        if (event->type() == QEvent::MouseButtonRelease) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            mousePressEvent(static_cast<QMouseEvent *>(event));
+        } else if (event->type() == QEvent::MouseButtonRelease) {
             m_hover = false;
             update();
+            mouseReleaseEvent(static_cast<QMouseEvent *>(event));
+        } else if (event->type() == QEvent::MouseMove) {
+            mouseMoveEvent(static_cast<QMouseEvent *>(event));
         }
     }
 
@@ -294,11 +301,16 @@ void PluginsItem::mouseClicked()
     const QString command = m_pluginInter->itemCommand(m_itemKey);
     if (!command.isEmpty())
     {
-        QProcess *proc = new QProcess(this);
-
-        connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), proc, &QProcess::deleteLater);
-
-        proc->startDetached(command);
+        // Qt6: startDetached() with program name only has been depreciated,
+        // and it always return false, hence using program + args
+        const QStringList args = command.split(QRegularExpression("[ \t]+"), Qt::SkipEmptyParts);
+        if (!args.isEmpty()) {
+            const QString program = args.first();
+            const QStringList arguments = args.mid(1);
+            QProcess *proc = new QProcess(this);
+            connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), proc, &QProcess::deleteLater);
+            proc->startDetached(program, arguments);
+        }
         return;
     }
 
