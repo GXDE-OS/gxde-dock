@@ -1,3 +1,18 @@
+gxde-dock (6.0.0-1) UNRELEASED; urgency=medium
+
+  * 初步迁移Dock至Qt6
+  * 新增本地DEB构建脚本
+  * 初步添加Wayland支持
+  * 修复了Wayland下右键菜单位置不在任务栏上的问题
+  * 修复了Wayland下菜单缺失的问题
+  * 修复了Wayland下点击菜单外部区域无法关闭菜单的问题
+  * 集成了Qt6版本的dbusmenu
+  * 修复了Network Utils的依赖问题
+  * 修复了Qt6下翻译丢失的问题
+  * 修复了Qt6下插件点击无响应的问题
+
+ -- CharOfString <markus_verify@126.com>  Sat, 27 Jun 2026 00:59:26 +0800
+
 gxde-dock (5.0.18) UNRELEASED; urgency=medium
 
   * 修复 dock 右键启动系统监视器时主题错误的问题
