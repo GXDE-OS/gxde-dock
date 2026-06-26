@@ -38,7 +38,7 @@ OnboardPlugin::OnboardPlugin(QObject *parent)
 
 const QString OnboardPlugin::pluginName() const
 {
-    return "keyboard";
+    return "onboard";
 }
 
 const QString OnboardPlugin::pluginDisplayName() const
