@@ -21,6 +21,7 @@
  */
 
 #include "appitem.h"
+#include "util/daemon_fallback.h"
 
 #include "util/themeappicon.h"
 #include "util/imagefactory.h"
@@ -52,7 +53,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     : DockItem(parent),
       m_appNameTips(new TipsWidget(this)),
       m_appPreviewTips(nullptr),
-      m_itemEntryInter(new DockEntryInter("com.deepin.dde.daemon.Dock", entry.path(), QDBusConnection::sessionBus(), this)),
+      m_itemEntryInter(new DockEntryInter(GXDEDockFallback::dockServiceName(), entry.path(), QDBusConnection::sessionBus(), this)),
 
       m_swingEffectView(nullptr),
       m_itemAnimation(nullptr),

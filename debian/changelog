@@ -10,6 +10,7 @@ gxde-dock (6.0.0-1) UNRELEASED; urgency=medium
   * 修复了Network Utils的依赖问题
   * 修复了Qt6下翻译丢失的问题
   * 修复了Qt6下插件点击无响应的问题
+  * 新增了一个备选守护进程，用于在DDE-Daemon无法使用的情况下代替DDE-Daemon工作
 
  -- CharOfString <markus_verify@126.com>  Sat, 27 Jun 2026 00:59:26 +0800
 

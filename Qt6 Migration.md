@@ -25,3 +25,12 @@ Install those Qt6-ported packages before you even start to complie (they're NOT 
 You MUST know that we vendored `libdbusmenu-lxqt` inside because the system libdbusmenu is built for Qt5. `dframework-dbus` is another thing that has no relation with that library except their name look similar.
 
 您亦必须知道我们集成了`libdbusmenu-lxqt`的源码，系统的libdbusmenu使用Qt5编译，在这不起作用。另外这与`dframework-dbus`完全是两码事，两个库职责不同，他们也不相干，除了名字看着很像以外。
+
+---
+
+If SIGSEGV, try:
+如果段错误，尝试：
+```bash
+$ sudo apt install liblayershellqtinterface-dev
+$ sudo ln -sf libLayerShellQtInterface.so.6 /usr/lib/x86_64-linux-gnu/libLayerShellQtInterface.so
+```

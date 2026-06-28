@@ -1,0 +1,13 @@
+[Unit]
+Description=GXDE Dock Fallback — Dock Daemon
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/libexec/gxde-dock/fallback-daemon
+ExecStart=/usr/bin/python3 -m dock
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

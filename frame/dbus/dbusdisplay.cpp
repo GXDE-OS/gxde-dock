@@ -15,8 +15,8 @@
  * Implementation of interface class DBusDisplay
  */
 
-DBusDisplay::DBusDisplay(QObject *parent)
-    : QDBusAbstractInterface(staticServiceName(), staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
+DBusDisplay::DBusDisplay(const QString &service, QObject *parent)
+    : QDBusAbstractInterface(service, staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
 {
     qDBusRegisterMetaType<BrightnessMap>();
     qDBusRegisterMetaType<DisplayRect>();

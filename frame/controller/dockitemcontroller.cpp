@@ -20,6 +20,7 @@
  */
 
 #include "dockitemcontroller.h"
+#include "util/daemon_fallback.h"
 #include "item/appitem.h"
 #include "item/stretchitem.h"
 #include "item/launcheritem.h"
@@ -216,7 +217,7 @@ void DockItemController::refreshFSTItemSpliterVisible()
 DockItemController::DockItemController(QObject *parent)
     : QObject(parent),
       m_updatePluginsOrderTimer(new QTimer(this)),
-      m_appInter(new DBusDock("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this)),
+      m_appInter(new DBusDock(GXDEDockFallback::dockServiceName(), "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this)),
       m_pluginsInter(new DockPluginsController(this)),
       m_placeholderItem(new StretchItem),
       m_containerItem(new ContainerItem)

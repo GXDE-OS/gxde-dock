@@ -53,3 +53,7 @@ debian/debhelper-build-stamp
 .codex/*
 .gemini/*
 .qwen/*
+
+# Fall back service cache
+fallback_service/display/__pycache__/*
+fallback_service/dock/__pycache__/*

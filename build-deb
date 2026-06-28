@@ -125,9 +125,9 @@ auto_install_deps() {
         cd "$CUR_SCRIPT_DIR" || exit 1
 
         # 先装基础工具链
-        sudo apt install -y build-essential devscripts debhelper cmake pkg-config
+        sudo apt install -y build-essential devscripts debhelper cmake pkg-config liblayershellqtinterface-dev
 
-        # 从 debian/control 自动安装构建依赖（推荐方式）
+        # 从 debian/control 自动安装构建依赖
         if command -v mk-build-deps &> /dev/null; then
             echo "使用 mk-build-deps 安装依赖..."
             sudo mk-build-deps --install --remove \

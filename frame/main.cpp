@@ -77,10 +77,10 @@ int main(int argc, char *argv[])
     // 现在我们支持原生Wayland以后，启动时就不需要D-XCB了
     // 等layershell设置好后再把D-XCB弄回来，这样不支持Wayland的子进程就吃D-XCB了
     const QByteArray savedDtk2XWayland = qgetenv("DTK2_XWAYLAND");
-    const bool waylandSession = qgetenv("XDG_SESSION_TYPE") == "wayland";
+    const bool waylandSession = !qgetenv("WAYLAND_DISPLAY").isEmpty();
 
     if (waylandSession) {
-        qDebug() << "Detected Wayland session!!";
+        qDebug() << "Detected Wayland session (WAYLAND_DISPLAY=" << qgetenv("WAYLAND_DISPLAY") << ")";
         qunsetenv("DTK2_XWAYLAND");
         qputenv("QT_QPA_PLATFORM", "wayland");
         LayerShellQt::Shell::useLayerShell();

@@ -79,7 +79,8 @@ public:
     { return "/com/deepin/daemon/Display"; }
 
 public:
-    explicit DBusDisplay(QObject *parent = 0);
+    explicit DBusDisplay(const QString &service = staticServiceName(),
+                         QObject *parent = 0);
 
     ~DBusDisplay();
 

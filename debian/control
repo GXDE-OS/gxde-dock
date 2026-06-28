@@ -21,14 +21,14 @@ Build-Depends: debhelper (>= 8.0.0),
  libgsettings-qt6-dev,
  cmake,
  libgxde-network-utils-dev (>= 15.11~0.1.4),
- liblayershellqtinterface-dev,
+ liblayershellqtinterface6,
  clang [mips64el]
 Standards-Version: 3.9.8
 Homepage: https://www.gxde.top/
 
 Package: gxde-dock
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland
+Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland, python3-pywayland, python3-cffi, python3-gi, python3-dbus, python3-dbus.mainloop.pyqt5 | python3-dbus.mainloop.glib, gir1.2-glib-2.0
 Recommends: gxde-dock-onboard-plugin
 Conflicts:
  dde-workspace (<< 2.90.5),
