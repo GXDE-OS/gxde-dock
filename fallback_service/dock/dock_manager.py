@@ -257,13 +257,27 @@ class DockManager(dbus.service.Object):
         """Find/create AppEntry by app_id."""
         if not app_id:
             return None
+
+        # Skip dock itself and desktop components
+        if app_id == "gxde-dock" or app_id.startswith("dde-desktop"):
+            return None
         for e in self._entries:
             if e._desktop_file and app_id in e._desktop_file:
                 return e
+
+        # Only create entries for apps that have a known desktop file
+        from .app_info import AppInfo
+        ai = AppInfo.from_id(app_id)
+        if not ai:
+            return None
         eid = f"w{self._entry_counter:x}"
         self._entry_counter += 1
         from .app_entry import AppEntry
         entry = AppEntry(self, eid, app_id, self._conn, self._bus_name)
+        entry._app_info = ai
+        entry._desktop_file = ai.get_file_name()
+        entry._name = ai.get_name()
+        entry._icon = ai.get_icon()
         self._entries.insert(entry, -1)
         return entry
 

@@ -57,6 +57,8 @@ public:
     void setDockInfo(Dock::Position dockPosition, const QRect &dockGeometry);
 
     inline ItemType itemType() const Q_DECL_OVERRIDE { return App; }
+    QSize sizeHint() const override;
+    QString getEntryPath() const { return m_entryPath; }
 
 signals:
     void requestActivateWindow(const WId wid) const;
@@ -101,6 +103,7 @@ private:
     TipsWidget *m_appNameTips;
     PreviewContainer *m_appPreviewTips;
     DockEntryInter *m_itemEntryInter;
+    QString m_entryPath;
 
     QGraphicsView *m_swingEffectView;
     QGraphicsItemAnimation *m_itemAnimation;

@@ -148,9 +148,10 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
 {
     m_displayMode = displayMode;
 
+    const auto &itemList = m_itemController->itemList();
+
     m_showDesktopItem->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic);
 
-    const auto &itemList = m_itemController->itemList();
     for (auto item : itemList)
     {
         // we need to hide container item at fashion mode.

@@ -54,6 +54,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
       m_appNameTips(new TipsWidget(this)),
       m_appPreviewTips(nullptr),
       m_itemEntryInter(new DockEntryInter(GXDEDockFallback::dockServiceName(), entry.path(), QDBusConnection::sessionBus(), this)),
+      m_entryPath(entry.path()),
 
       m_swingEffectView(nullptr),
       m_itemAnimation(nullptr),
@@ -544,6 +545,11 @@ void AppItem::updateWindowInfos(const WindowInfoMap &info)
     }
 
     update();
+}
+
+QSize AppItem::sizeHint() const {
+    const int size_gen = iconBaseSize();
+    return QSize(size_gen, size_gen);
 }
 
 void AppItem::refershIcon()

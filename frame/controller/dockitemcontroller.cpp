@@ -257,12 +257,54 @@ DockItemController::DockItemController(QObject *parent)
 
 void DockItemController::appItemAdded(const QDBusObjectPath &path, const int index)
 {
-    // the first index is launcher item
-    int insertIndex = 1;
+    AppItem *newItem = new AppItem(path);
+    const QString newName = newItem->accessibleName();
 
+    // Replace slate entry w/ same name
+    // DDE-Daemon restart will reassign those IDs, and old ones shall be invalid.
+    // Only do this if old entry is dead.
+    // But if I don't do this, users will see a lot of garbage entries
+    // on task bar if they toggle window split right between launcher icon and
+    // the first docked app.
+    for (int i = 0; i < m_itemList.size(); ++i) {
+        auto item = m_itemList[i];
+
+        // Only check app items
+        if (item->itemType() != DockItem::App) {
+            continue;
+        }
+
+        // Now we can ensure it is an AppItem, now casting is good2go.
+        auto* app = static_cast<AppItem *>(item.data());
+
+        // How do we ensure that this is a dead entry?
+        //   1. If the app name is same (while NOT empty)
+        //   2. If the app is invalid, indicating dameon restarted & entry removed
+        if (app->accessibleName() == newName && !newName.isEmpty() && !app->isValid()) {
+            // A hit! Remove the trash item.
+            emit itemRemoved(item.data());
+
+            // Create a new item to replace the slate one.
+            // So new item will be cared by the daemon.
+            m_itemList[i] = newItem;
+            item->deleteLater();
+
+            // So we have a new item, connect the new alive one to D-Bus signals.
+            connect(newItem, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
+            connect(newItem, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
+            connect(newItem, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
+
+            // Apply new item.
+            emit itemInserted(i, newItem);
+            return;
+        }
+    }
+
+    // New entry: Just append
+    int insertIndex = 1;
+    
     // -1 for append to app list end
-    if (index != -1)
-    {
+    if (index != -1) {
         insertIndex += index;
     } else {
         for (auto item : m_itemList)
@@ -270,14 +312,12 @@ void DockItemController::appItemAdded(const QDBusObjectPath &path, const int ind
                 ++insertIndex;
     }
 
-    AppItem *item = new AppItem(path);
+    connect(newItem, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
+    connect(newItem, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
+    connect(newItem, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
 
-    connect(item, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
-    connect(item, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
-    connect(item, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
-
-    m_itemList.insert(insertIndex, item);
-    emit itemInserted(insertIndex, item);
+    m_itemList.insert(insertIndex, newItem);
+    emit itemInserted(insertIndex, newItem);
 }
 
 void DockItemController::appItemRemoved(const QString &appId)
@@ -374,10 +414,13 @@ void DockItemController::pluginItemRemoved(PluginsItem *item)
 
 void DockItemController::reloadAppItems()
 {
-    // remove old item
-    for (auto item : m_itemList)
+    // remove old obselete items
+    // Iterate backward is on purpose: to avoid possible index shift.
+    for (int i = m_itemList.size() - 1; i >= 0; --i) {
+        auto item = m_itemList.at(i);
         if (item->itemType() == DockItem::App)
             appItemRemoved(static_cast<AppItem *>(item.data()));
+    }
 
     // append new item
     for (auto path : m_appInter->entries())
