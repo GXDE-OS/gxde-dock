@@ -58,6 +58,29 @@ static LayerShellQt::Window::Anchors anchorsForPosition(
     return LayerShellQt::Window::Anchors(LayerShellQt::Window::AnchorBottom);
 }
 
+static LayerShellQt::Window::Anchor exclusiveEdgeForPosition(
+        Dock::Position position) {
+    switch (position) {
+        case Dock::Top: {
+            return LayerShellQt::Window::AnchorTop;
+        }
+
+        case Dock::Bottom: {
+            return LayerShellQt::Window::AnchorBottom;
+        }
+
+        case Dock::Left: {
+            return LayerShellQt::Window::AnchorLeft;
+        }
+
+        case Dock::Right: {
+            return LayerShellQt::Window::AnchorRight;
+        }
+    }
+
+    return LayerShellQt::Window::AnchorBottom;
+}
+
 static LayerShellQt::Window* layerWindowFor(QWidget* widget) {
     widget->setAttribute(Qt::WA_NativeWindow, true);
     widget->createWinId();
@@ -112,21 +135,22 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
 
     widget->setWindowFlag(Qt::FramelessWindowHint, true);
 
-    QWindow* window = widget->windowHandle();
+    if (screen) {
+        widget->setScreen(screen);
+    }
+
     LayerShellQt::Window* layer = layerWindowFor(widget);
     if (!layer) {
         qWarning() << "(LayerShellHelper) failed to get layer window, halted!";
         return;
     }
 
-    if (screen) {
-        widget->windowHandle()->setScreen(screen);
-    }
-
+    QWindow* window = widget->windowHandle();
     layer->setScope(scope);
     layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
     layer->setLayer(LayerShellQt::Window::LayerTop);
     layer->setAnchors(anchorsForPosition(position));
+    layer->setExclusiveEdge(exclusiveEdgeForPosition(position));
     layer->setKeyboardInteractivity(
         LayerShellQt::Window::KeyboardInteractivityNone);
 
@@ -145,6 +169,7 @@ void LayerShellHelper::updateDockAnchor(QWidget* widget,
     LayerShellQt::Window* layer = layerWindowFor(widget);
     if (layer) {
         layer->setAnchors(anchorsForPosition(position));
+        layer->setExclusiveEdge(exclusiveEdgeForPosition(position));
     }
 }
 

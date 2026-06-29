@@ -750,7 +750,9 @@ void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosit
     m_mainPanel->setFixedSize(m_settings->panelSize());
     QWidget::setFixedSize(r.size());
     m_posChangeAni->setEndValue(r.topLeft());
-    QWidget::move(r.topLeft());
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        QWidget::move(r.topLeft());
+    }
 
     if (!resetPosition)
         return;

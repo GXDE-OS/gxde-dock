@@ -75,6 +75,39 @@ DBUS_SERVICE_NAME = "com.deepin.dde.daemon.Dock"  # 原始名，用于 internal 
 DATA_DIR = os.path.expanduser("~/.cache/gxde-dock/fallback")
 HOME_DIR = os.path.expanduser("~")
 
+DISPLAY_MODE_FROM_GSETTINGS = {
+    "fashion": DisplayMode.Fashion,
+    "efficient": DisplayMode.Efficient,
+    "classic": DisplayMode.Classic,
+}
+DISPLAY_MODE_TO_GSETTINGS = {
+    DisplayMode.Fashion: "fashion",
+    DisplayMode.Efficient: "efficient",
+    DisplayMode.Classic: "classic",
+}
+HIDE_MODE_FROM_GSETTINGS = {
+    "keep-showing": HideMode.KeepShowing,
+    "keep-hidden": HideMode.KeepHidden,
+    "smart-hide": HideMode.SmartHide,
+}
+HIDE_MODE_TO_GSETTINGS = {
+    HideMode.KeepShowing: "keep-showing",
+    HideMode.KeepHidden: "keep-hidden",
+    HideMode.SmartHide: "smart-hide",
+}
+POSITION_FROM_GSETTINGS = {
+    "top": Position.Top,
+    "right": Position.Right,
+    "bottom": Position.Bottom,
+    "left": Position.Left,
+}
+POSITION_TO_GSETTINGS = {
+    Position.Top: "top",
+    Position.Right: "right",
+    Position.Bottom: "bottom",
+    Position.Left: "left",
+}
+
 
 class DockManager(dbus.service.Object):
     """Go: Manager struct"""
@@ -113,9 +146,12 @@ class DockManager(dbus.service.Object):
 
         # Prop cache via GSettings
         self.icon_size = self._gs_get(KEY_ICON_SIZE, 36, "u")
-        self._display_mode = self._gs_get(KEY_DISPLAY_MODE, DisplayMode.Fashion, "i")
-        self._hide_mode = self._gs_get(KEY_HIDE_MODE, HideMode.KeepShowing, "i")
-        self._position = self._gs_get(KEY_POSITION, Position.Bottom, "i")
+        self._display_mode = self._gs_get_enum(
+            KEY_DISPLAY_MODE, DisplayMode.Fashion, DISPLAY_MODE_FROM_GSETTINGS)
+        self._hide_mode = self._gs_get_enum(
+            KEY_HIDE_MODE, HideMode.KeepShowing, HIDE_MODE_FROM_GSETTINGS)
+        self._position = self._gs_get_enum(
+            KEY_POSITION, Position.Bottom, POSITION_FROM_GSETTINGS)
         self._show_timeout = self._gs_get(KEY_SHOW_TIMEOUT, 300, "u")
         self._hide_timeout = self._gs_get(KEY_HIDE_TIMEOUT, 1000, "u")
         self._window_split = self._gs_get(KEY_WINDOW_SPLIT, False, "b")
@@ -143,6 +179,15 @@ class DockManager(dbus.service.Object):
         try:
             val = self._gs.get_value(key).unpack()
             return val
+        except Exception:
+            return default
+
+    def _gs_get_enum(self, key: str, default, table: Dict[str, Any]):
+        val = self._gs_get(key, default, "s")
+        if isinstance(val, str):
+            return table.get(val, default)
+        try:
+            return type(default)(int(val))
         except Exception:
             return default
 
@@ -349,13 +394,19 @@ class DockManager(dbus.service.Object):
         try:
             if prop == "HideMode":
                 self._hide_mode = int(value)
-                self._gs_set(KEY_HIDE_MODE, "i", int(value))
+                self._gs_set(KEY_HIDE_MODE, "s",
+                             HIDE_MODE_TO_GSETTINGS.get(
+                                 HideMode(int(value)), "keep-showing"))
             elif prop == "DisplayMode":
                 self._display_mode = int(value)
-                self._gs_set(KEY_DISPLAY_MODE, "i", int(value))
+                self._gs_set(KEY_DISPLAY_MODE, "s",
+                             DISPLAY_MODE_TO_GSETTINGS.get(
+                                 DisplayMode(int(value)), "fashion"))
             elif prop == "Position":
                 self._position = int(value)
-                self._gs_set(KEY_POSITION, "i", int(value))
+                self._gs_set(KEY_POSITION, "s",
+                             POSITION_TO_GSETTINGS.get(
+                                 Position(int(value)), "bottom"))
             elif prop == "IconSize":
                 self.icon_size = int(value)
                 self._gs_set(KEY_ICON_SIZE, "u", int(value))
