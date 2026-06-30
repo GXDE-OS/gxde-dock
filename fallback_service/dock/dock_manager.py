@@ -168,11 +168,16 @@ class DockManager(dbus.service.Object):
         self._load_docked_apps()
         self._load_client_list()
 
-        # Waylang things
-        GLib.idle_add(self._dispatch_wayland)
+        # Wayland things
         _wl.on_toplevel_created(self._on_wl_toplevel_created)
         _wl.on_toplevel_updated(self._on_wl_toplevel_updated)
         _wl.on_toplevel_closed(self._on_wl_toplevel_closed)
+        self._wayland_source = GLib.io_add_watch(
+            _wl.get_fd(),
+            GLib.PRIORITY_DEFAULT,
+            GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR,
+            self._dispatch_wayland,
+        )
 
         log.info(f"DockManager ready @{DBUS_PATH}")
 
@@ -273,8 +278,17 @@ class DockManager(dbus.service.Object):
         self.EntryRemoved(entry.id)
 
     # Wayland replacement for xevent
-    def _dispatch_wayland(self):
-        _wl.dispatch()
+    def _dispatch_wayland(self, _fd, condition):
+        if condition & (GLib.IO_HUP | GLib.IO_ERR):
+            log.error("Wayland connection closed")
+            return False
+        try:
+            # The fd is readable, so blocking dispatch reads and queues the
+            # incoming events without blocking the GLib main loop.
+            _wl.dispatch(block=True)
+        except Exception as e:
+            log.error(f"Wayland dispatch failed: {e}")
+            return False
         return True
 
     def _window_id_for_uuid(self, uuid: str) -> int:
@@ -306,6 +320,18 @@ class DockManager(dbus.service.Object):
                 win = self._window_id_for_uuid(info.uuid)
                 self._uuid_to_entry[info.uuid] = entry
                 entry.addWindow(win)
+
+        # Handle focus changes even when entry is not tracked
+        if info.is_active:
+            win = self._window_id_for_uuid(info.uuid)
+            self._active_window = win
+            if entry:
+                for e in self._entries:
+                    e.setPropIsActive(e == entry)
+            else:
+                for e in self._entries:
+                    e.setPropIsActive(False)
+
         if entry:
             from .window import WindowInfo
             win = self._window_id_for_uuid(info.uuid)
@@ -330,6 +356,9 @@ class DockManager(dbus.service.Object):
         win = self._wl_uuid_to_id.pop(uuid, None)
         if win is not None:
             self._wl_id_to_uuid.pop(win, None)
+            # Clear active window if the focused window was closed
+            if self._active_window == win:
+                self._active_window = 0
         if entry:
             entry.removeWindow(win)
 

@@ -41,13 +41,21 @@ class AppEntryInterface:
 
     @dbus.service.method(ENTRY_IFACE, in_signature="u", out_signature="")
     def Activate(self, timestamp: int):
-        log.info(f"Activate entry {self.id}")
-        self.launchApp(timestamp, [])
+        import time as _time
+        _start = _time.time()
+        log.info(f"Activate entry {self.id} windows={self._windows} current={self._current_window}")
+        if self._windows:
+            win = self._current_window or next(iter(self._windows))
+            self.manager.ActivateWindow(win)
+            log.info(f"Activate entry {self.id} -> window {win} done within {(_time.time()-_start)*1000:.0f}ms")
+        else:
+            self.launchApp(timestamp, [])
+            log.info(f"Activate entry {self.id} -> launchApp done within {(_time.time()-_start)*1000:.0f}ms")
 
     @dbus.service.method(ENTRY_IFACE, in_signature="u", out_signature="")
     def NewInstance(self, timestamp: int):
         log.info(f"NewInstance entry {self.id}")
-        self.Activate(timestamp)
+        self.launchApp(timestamp, [])
 
     @dbus.service.method(ENTRY_IFACE, in_signature="us", out_signature="")
     def HandleMenuItem(self, timestamp: int, item_id: str):

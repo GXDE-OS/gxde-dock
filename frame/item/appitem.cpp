@@ -38,6 +38,8 @@
 #include <QApplication>
 #include <QHBoxLayout>
 #include <QGraphicsScene>
+#include <QDBusInterface>
+#include <QDBusReply>
 #include <QTimeLine>
 #include <QDateTime>
 
@@ -111,6 +113,18 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     connect(m_retryObtainIconTimer, &QTimer::timeout, this, &AppItem::refershIcon, Qt::QueuedConnection);
 
     updateWindowInfos(m_itemEntryInter->windowInfos());
+
+    // In case of dframeworkdbus broke (IDK why), manually prase it.
+    // see onRawPropertiesChanged
+    // ONLY if fall back service is enabled. For this is a specific issue under WAYLAND.
+    if (GXDEDockFallback::dockServiceName() == GXDEDockFallback::FALLBACK_DOCK_SERVICE) {
+        refreshWindowInfosFromDBus();
+        QDBusConnection::sessionBus().connect(
+            GXDEDockFallback::dockServiceName(), m_entryPath,
+            "org.freedesktop.DBus.Properties", "PropertiesChanged",
+            this, SLOT(onRawPropertiesChanged(QString, QVariantMap, QStringList)));
+    }
+
     refershIcon();
 }
 
@@ -250,7 +264,7 @@ void AppItem::paintEvent(QPaintEvent *e)
     }
     else
     {
-        if (!m_windowInfos.isEmpty())
+        if (m_active || !m_windowInfos.isEmpty())
         {
             QPoint p;
             QPixmap pixmap;
@@ -584,7 +598,55 @@ void AppItem::refershIcon()
 
 void AppItem::activeChanged()
 {
-    m_active = !m_active;
+    m_active = m_itemEntryInter->isActive();
+}
+
+void AppItem::refreshWindowInfosFromDBus()
+{
+    // Get WindowInfos directly instead of GetAll, so Qt's standard
+    // demarshalling can handle a{u(bs)} → QMap<quint32,QPair<bool,QString>>
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+        GXDEDockFallback::dockServiceName(), m_entryPath,
+        "org.freedesktop.DBus.Properties", "Get");
+    msg << "com.deepin.dde.daemon.Dock.Entry" << "WindowInfos";
+    QDBusReply<QVariant> reply = QDBusConnection::sessionBus().call(msg);
+    if (!reply.isValid())
+        return;
+    parseAndApplyWindowInfos(reply.value());
+}
+
+void AppItem::onRawPropertiesChanged(const QString &iface,
+                                     const QVariantMap &changed,
+                                     const QStringList &)
+{
+    if (iface != "com.deepin.dde.daemon.Dock.Entry")
+        return;
+    auto it = changed.find("WindowInfos");
+    if (it != changed.end())
+        parseAndApplyWindowInfos(*it);
+}
+
+void AppItem::parseAndApplyWindowInfos(const QVariant &variant)
+{
+    // variant: a{u(bs)} as a QDBusArgument. ==> QMap<quint32,QPair<bool,QString>>
+    if (!variant.canConvert<QDBusArgument>()) {
+        return;
+    }
+
+    const QDBusArgument &arg = variant.value<QDBusArgument>();
+    QMap<quint32, QPair<bool, QString>> raw;
+    arg >> raw;
+    WindowInfoMap map;
+    for (auto it = raw.cbegin(); it != raw.cend(); ++it) {
+        WindowInfo info;
+        info.attention = it->first;
+        info.title = it->second;
+        map.insert(it.key(), info);
+    }
+    if (!map.isEmpty()) {
+        m_windowInfos = map;
+        update();
+    }
 }
 
 void AppItem::showPreview()
@@ -655,4 +717,3 @@ void AppItem::checkAttentionEffect()
             playSwingEffect();
     });
 }
-

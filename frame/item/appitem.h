@@ -98,6 +98,13 @@ private slots:
     void playSwingEffect();
     void stopSwingEffect();
     void checkAttentionEffect();
+    void onRawPropertiesChanged(const QString &iface,
+        const QVariantMap &changed,
+        const QStringList &invalidated);
+
+private:
+    void refreshWindowInfosFromDBus();
+    void parseAndApplyWindowInfos(const QVariant &variant);
 
 private:
     TipsWidget *m_appNameTips;

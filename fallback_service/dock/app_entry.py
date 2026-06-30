@@ -182,23 +182,37 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
 
     def _updateIsActive(self):
         """Go: updateIsActive()"""
-        self.setPropIsActive(len(self._windows) > 0)
+        # Wayland: active if this entry owns the compositor-focused window
+        active_win = self.manager._active_window
+        if active_win > 0:
+            self.setPropIsActive(active_win in self._windows)
+        else:
+            self.setPropIsActive(len(self._windows) > 0)
 
     def launchApp(self, timestamp: int, files: list):
         """Go: launchApp()"""
-        import subprocess
-        if self._app_info and self._app_info.commandline:
-            cmdline = self._app_info.commandline
-            if files:
-                cmdline += " " + " ".join(files)
-            try:
-                subprocess.Popen(
-                    cmdline, shell=True,
-                    start_new_session=True,
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                )
-            except Exception as e:
-                log.warning(f"launch app failed @ {e}")
+        if not self._desktop_file:
+            log.warning(f"launchApp: no desktop file for entry {self.id} (app_id={self.app_id})")
+            return
+
+        log.info(f"launchApp: launching {self._desktop_file} for entry {self.id}")
+        try:
+            from gi.repository import Gio
+
+            desktop_app = Gio.DesktopAppInfo.new_from_filename(self._desktop_file)
+            if desktop_app is None:
+                raise RuntimeError(f"invalid desktop file: {self._desktop_file}")
+            uris = [Gio.File.new_for_commandline_arg(path).get_uri()
+                    for path in files]
+            ctx = Gio.AppLaunchContext()
+            # Unset QT_WAYLAND_SHELL_INTEGRATION=layer-shell before launching anything
+            ctx.setenv("QT_WAYLAND_SHELL_INTEGRATION", "")
+            ctx.setenv("QT_QPA_PLATFORM", "")
+            if not desktop_app.launch_uris(uris, ctx):
+                raise RuntimeError("GIO rejected the launch request")
+            log.info(f"launchApp: {self.id} → {desktop_app.get_executable()} launched OK")
+        except Exception as e:
+            log.warning(f"launch app failed: {e}")
 
     def getMenu(self):
         """Go: getMenu()"""
@@ -232,3 +246,29 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
     def PropertiesChanged(self, iface: str, changed: Dict[str, Any],
             invalidated: list):
         pass
+
+
+def _register_interface_methods():
+    """Register AppEntryInterface D-Bus methods on AppEntry."""
+    cls = AppEntry
+    table = cls._dbus_class_table
+    cls_name = cls.__module__ + '.' + cls.__qualname__
+    cls_entry = table.setdefault(cls_name, {})
+    iface_entry = cls_entry.setdefault(ENTRY_IFACE, {})
+
+    for name in dir(AppEntryInterface):
+        if name.startswith('_'):
+            continue
+        attr = getattr(AppEntryInterface, name, None)
+        if not callable(attr):
+            continue
+        func = getattr(attr, '__func__', None)
+        if func is None:
+            func = attr
+        if not getattr(func, '_dbus_is_method', False):
+            continue
+        # Store the decorated function directly on AppEntry
+        setattr(cls, name, func)
+        iface_entry[name] = func
+
+_register_interface_methods()

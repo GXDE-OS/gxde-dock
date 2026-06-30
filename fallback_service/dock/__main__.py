@@ -31,11 +31,16 @@ from gi.repository import GLib
 
 SERVICE_NAME = "top.gxde.dock.fallback.service.Main"
 SESSION_MANAGER_SERVICE = "com.deepin.SessionManager"
+LOG_FILE = os.path.expanduser("~/.cache/gxde-dock/fallback-dock.log")
+os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 log = logging.getLogger("dock")
 log.setLevel(logging.DEBUG)
 log_header = logging.StreamHandler()
 log_header.setFormatter(logging.Formatter("(%(levelname)s) %(name)s: %(message)s"))
 log.addHandler(log_header)
+log_fh = logging.FileHandler(LOG_FILE)
+log_fh.setFormatter(logging.Formatter("%(asctime)s (%(levelname)s) %(name)s: %(message)s"))
+log.addHandler(log_fh)
 
 def main():
     from . import daemon as dock_daemon

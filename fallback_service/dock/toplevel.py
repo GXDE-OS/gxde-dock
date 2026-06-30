@@ -160,9 +160,13 @@ def init_display():
         log.warning("kywc_toplevel_manager_v1 NOT available!!")
     log.info("Wayland display OK.")
 
-def dispatch():
+def get_fd():
+    return _display.get_fd() if _display else -1
+
+
+def dispatch(block=False):
     if _display:
-        _display.dispatch(block=False)
+        _display.dispatch(block=block)
 
 # Window ops
 def _get_proxy(uuid):
