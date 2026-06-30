@@ -30,6 +30,7 @@ import dbus, dbus.mainloop.glib
 from gi.repository import GLib
 
 SERVICE_NAME = "top.gxde.dock.fallback.service.Main"
+SESSION_MANAGER_SERVICE = "com.deepin.SessionManager"
 log = logging.getLogger("dock")
 log.setLevel(logging.DEBUG)
 log_header = logging.StreamHandler()
@@ -52,6 +53,18 @@ def main():
 
     # USe GLib to exit gracefully.
     loop = GLib.MainLoop()
+
+    def on_name_owner_changed(name, old_owner, new_owner):
+        if name == SESSION_MANAGER_SERVICE and old_owner and not new_owner:
+            log.info("Desktop session ended; stopping fallback service.")
+            loop.quit()
+
+    bus.add_signal_receiver(
+        on_name_owner_changed,
+        signal_name="NameOwnerChanged",
+        dbus_interface="org.freedesktop.DBus",
+        arg0=SESSION_MANAGER_SERVICE,
+    )
     signal.signal(signal.SIGTERM, lambda *a: loop.quit())
     signal.signal(signal.SIGINT, lambda *a: loop.quit())
     try:

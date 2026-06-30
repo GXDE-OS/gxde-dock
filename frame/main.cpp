@@ -36,6 +36,7 @@
 #include <QIcon>
 #include <QSettings>
 #include <QApplication>
+#include <QDBusServiceWatcher>
 #include <QWidget>
 #include <QWindow>
 #include <QFileInfo>
@@ -246,6 +247,36 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     parser.addOption(disablePlugOption);
     parser.process(app);
+
+    // If relogined w/ X11 while dock alive, simply restart to reset Wayland settings
+    // ... and re-create windows!!
+    auto* sessionWatcher = new QDBusServiceWatcher(
+        QStringLiteral("com.deepin.SessionManager"),
+        QDBusConnection::sessionBus(),
+        QDBusServiceWatcher::WatchForUnregistration,
+        &app);
+
+    QObject::connect(sessionWatcher, &QDBusServiceWatcher::serviceUnregistered,
+        &app, &QCoreApplication::quit);
+
+    if (!waylandSession) {
+        auto* windowManagerWatcher = new QDBusServiceWatcher(
+            QStringLiteral("org.kde.KWin"),
+            QDBusConnection::sessionBus(),
+            QDBusServiceWatcher::WatchForOwnerChange,
+            &app);
+        
+        QObject::connect(
+            windowManagerWatcher,
+            &QDBusServiceWatcher::serviceOwnerChanged,
+            &app,
+            [&app](const QString &, const QString &oldOwner,
+                    const QString &newOwner) {
+                if (oldOwner != newOwner && !newOwner.isEmpty()) {
+                    QTimer::singleShot(500, &app, &QCoreApplication::quit);
+                }
+            });
+    }
 
     if (!app.setSingleInstance(QString("gxde-dock_%1").arg(getuid()))) {
         qDebug() << "set single instance failed!!!!";
