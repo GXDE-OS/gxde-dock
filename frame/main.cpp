@@ -29,6 +29,7 @@
 #include <DDBusSender>
 
 #include <QDir>
+#include <QDebug>
 #include <QCursor>
 #include <QElapsedTimer>
 #include <QEvent>
@@ -37,10 +38,16 @@
 #include <QApplication>
 #include <QWidget>
 #include <QWindow>
+#include <QFileInfo>
+#include <QProcess>
+#include <QStringList>
+#include <QStandardPaths>
 
 #include <LayerShellQt/Shell>
 
 #include <unistd.h>
+#include <vector>
+
 #include "dbus/dbusdockadaptors.h"
 DWIDGET_USE_NAMESPACE
 #ifdef DCORE_NAMESPACE
@@ -71,6 +78,60 @@ void RegisterDdeSession()
     }
 }
 
+void launchSNIServer()
+{
+    std::vector<QString> serverPossilbleELF = {
+        "/usr/bin/gxde-sni-server",
+        "/usr/local/bin/gxde-sni-server"
+    };
+    QString serverELF = serverPossilbleELF.at(0);
+    bool found = false;
+
+    for (const auto& cur : serverPossilbleELF) {
+        QFileInfo curInfo(cur);
+        if (curInfo.exists() && curInfo.isFile()) {
+            if (curInfo.isExecutable()) {
+                serverELF = cur;
+                found = true;
+                QString serverFound = "(Wayland SNI) Init: Found GXDE SNI Server at: ";
+                serverFound.append(serverELF);
+                serverFound.append(".");
+                qInfo() << serverELF << Qt::endl;
+                break;
+            }
+        }
+    }
+
+    if (!found) {
+        qWarning() << "(Wayland SNI) Init: Failed to find GXDE SNI Server."
+            << Qt::endl;
+        qWarning() << "                    Tray icons may be NOT working..."
+            << Qt::endl;
+        return;
+    }
+
+    try {
+        // No need to check if already running. GXDE-SNI server itself quits when another
+        // instance occupied the D-Bus interface. Hence this is harmless.
+        QStringList argvGen;
+        argvGen << serverELF;
+        qint64 pid;
+        QString wkDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+        bool res = QProcess::startDetached(serverELF, argvGen, wkDir, &pid);
+
+        if (res) {
+            QString finalLog = "(Wayland SNI) Init: GXDE SNI Server has been launched w/ PID #";
+            finalLog.append(QString::number(pid));
+            finalLog.append(".");
+            qInfo() << finalLog << Qt::endl;
+        }
+    } catch (...) {
+        qWarning() << "(Wayland SNI) Init: Failed to start GXDE SNI Server."
+            << Qt::endl;
+        return;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     // 以前dock不支持原生Wayland所以在Wayland下加D-XCB
@@ -83,6 +144,7 @@ int main(int argc, char *argv[])
         qDebug() << "Detected Wayland session (WAYLAND_DISPLAY=" << qgetenv("WAYLAND_DISPLAY") << ")";
         qunsetenv("DTK2_XWAYLAND");
         qputenv("QT_QPA_PLATFORM", "wayland");
+        launchSNIServer();
         LayerShellQt::Shell::useLayerShell();
     } else {
         DApplication::loadDXcbPlugin();

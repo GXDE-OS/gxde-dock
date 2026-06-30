@@ -33,7 +33,7 @@ git push, and you should be good to go.
 import os
 import logging
 from dataclasses import dataclass, field
-import pywayland
+from pywayland.client import Display
 
 from .protocols.kywc_toplevel_v1 import KywcToplevelManagerV1, KywcToplevelV1
 
@@ -126,14 +126,10 @@ def _on_global(reg, name, interface, version):
         global _manager
         protocol_ver = min(version, KywcToplevelManagerV1.version)
         _manager = reg.bind(name, KywcToplevelManagerV1, protocol_ver)
-        _manager.set_toplevel_handler(_on_toplevel)
+        _manager.dispatcher["toplevel"] = _on_toplevel
         log.info(f"Bound protocol {interface} v.{protocol_ver}.")
     else:
-        log.error(f"Protocol {interface} v.{version} is unknown to this WM.")
-
-def on_toplevel_created(cb):
-    """Callback registration: cb(ToplevelInfo)"""
-    _callbacks["created"] = cb
+        log.debug(f"Protocol {interface} v.{version} is unknown to this WM.")
 
 def on_toplevel_updated(cb):
     """Callback registration: cb(ToplevelInfo)"""
@@ -153,10 +149,11 @@ def init_display():
     if not is_wayland():
         raise RuntimeError("WAYLAND_DISPLAY NOT set!!")
 
-    _display = pywayland.Display()
+    _display = Display()
     _display.connect()
     _registry = _display.get_registry()
-    _registry.set_global_handler(_on_global)
+    _registry.dispatcher["global"] = _on_global
+    _display.roundtrip()
     _display.roundtrip()
 
     if _manager is None:

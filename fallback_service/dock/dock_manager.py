@@ -143,6 +143,10 @@ class DockManager(dbus.service.Object):
         self._hide_state = HideState.Show
         self._client_list: List[int] = []
         self._active_window = 0
+        self._next_wl_window_id = 1
+        self._wl_uuid_to_id: Dict[str, int] = {}
+        self._wl_id_to_uuid: Dict[int, str] = {}
+        self._uuid_to_entry: Dict[str, AppEntry] = {}
 
         # Prop cache via GSettings
         self.icon_size = self._gs_get(KEY_ICON_SIZE, 36, "u")
@@ -202,19 +206,20 @@ class DockManager(dbus.service.Object):
     # Go: initDockedApps
     def _load_docked_apps(self):
         docked = self._gs_get(KEY_DOCKED_APPS, [], "as")
+        log.info(f"Loading docked apps: {docked}")
         for app in docked:
-            self._request_dock_internal(app, -1)
+            self._request_dock_internal(app, -1, save=False)
 
     def _load_client_list(self):
         """Go: initClientList() Now no need"""
 
-    def _request_dock_internal(self, desktop_file: str, index: int) -> Optional[AppEntry]:
+    def _request_dock_internal(self, desktop_file: str, index: int, save: bool = True) -> Optional[AppEntry]:
         """Go: requestDock()"""
-        desktop_file = to_local_path(desktop_file)
-        search_id = unzip_desktop_path(desktop_file)
+        desktop_file = to_local_path(unzip_desktop_path(desktop_file))
 
         app_info = AppInfo.from_file(desktop_file)
         if not app_info:
+            log.warning(f"Docked app desktop file not found: {desktop_file}")
             return None
 
         entry = self._entries.GetByInnerId(app_info.inner_id)
@@ -225,11 +230,16 @@ class DockManager(dbus.service.Object):
                              self._conn, self._bus_name)
         entry._is_docked = True
         entry._app_info = app_info
+        entry.app_id = app_info.id
+        entry._desktop_file = app_info.get_file_name()
+        entry._name = app_info.get_name()
+        entry._icon = app_info.get_icon()
 
         if entry not in self._entries:
             self._entries.insert(entry, index)
 
-        self._save_docked_apps()
+        if save:
+            self._save_docked_apps()
         return entry
 
     def _save_docked_apps(self):
@@ -267,36 +277,61 @@ class DockManager(dbus.service.Object):
         _wl.dispatch()
         return True
 
-    # Wl to entry mapping
-    _uuid_to_entry = {}  # uuid (str) -> AppEntry
+    def _window_id_for_uuid(self, uuid: str) -> int:
+        win = self._wl_uuid_to_id.get(uuid)
+        if win is None:
+            win = self._next_wl_window_id
+            self._next_wl_window_id += 1
+            self._wl_uuid_to_id[uuid] = win
+            self._wl_id_to_uuid[win] = uuid
+        return win
+
+    def _window_uuid_for_id(self, win: int) -> str:
+        return self._wl_id_to_uuid.get(int(win), "")
 
     def _on_wl_toplevel_created(self, info):
         """New window: create AppEntry"""
         entry = self._find_or_create_entry_by_app_id(info.app_id)
         if entry:
+            win = self._window_id_for_uuid(info.uuid)
             self._uuid_to_entry[info.uuid] = entry
-            entry.addWindow(info.uuid)
+            entry.addWindow(win)
 
     def _on_wl_toplevel_updated(self, info):
         """Prop change -> update entry's WindowInfos"""
         entry = self._uuid_to_entry.get(info.uuid)
+        if entry is None and info.app_id:
+            entry = self._find_or_create_entry_by_app_id(info.app_id)
+            if entry:
+                win = self._window_id_for_uuid(info.uuid)
+                self._uuid_to_entry[info.uuid] = entry
+                entry.addWindow(win)
         if entry:
             from .window import WindowInfo
+            win = self._window_id_for_uuid(info.uuid)
             wi = WindowInfo(
-                win=hash(info.uuid) & 0xFFFFFFFF,
+                win=win,
                 title=info.title,
                 app_id=info.app_id,
                 pid=info.pid,
                 state=info.state,
             )
-            entry._window_infos[info.uuid] = wi
+            if info.pid > 0:
+                from .window import get_process_name
+                wi.process_name = get_process_name(info.pid)
+            entry._window_infos[win] = wi
+            entry._updateCurrentWindow()
             entry._updateIsActive()
+            entry._prop_changed("WindowInfos", entry._window_infos.to_dbus())
 
     def _on_wl_toplevel_closed(self, uuid):
         """Window closed -> remove from Entry"""
         entry = self._uuid_to_entry.pop(uuid, None)
+        win = self._wl_uuid_to_id.pop(uuid, None)
+        if win is not None:
+            self._wl_id_to_uuid.pop(win, None)
         if entry:
-            entry.removeWindow(uuid)
+            entry.removeWindow(win)
 
     def _find_or_create_entry_by_app_id(self, app_id):
         """Find/create AppEntry by app_id."""
@@ -347,8 +382,12 @@ class DockManager(dbus.service.Object):
     def _get_all_props(self, iface: str) -> Dict[str, Any]:
         if iface != DBUS_IFACE:
             return {}
-        entries = [dbus.ObjectPath(ENTRY_PATH_PREFIX + e.id)
-                   for e in self._entries]
+        entries = dbus.Array(
+            [dbus.ObjectPath(ENTRY_PATH_PREFIX + e.id) for e in self._entries],
+            signature="o")
+        docked_apps = dbus.Array(
+            [e._desktop_file for e in self._entries.FilterDocked()],
+            signature="s")
         return OrderedDict([
             ("Entries", entries),
             ("HideMode", dbus.Int32(self._hide_mode)),
@@ -358,7 +397,7 @@ class DockManager(dbus.service.Object):
             ("ShowTimeout", dbus.UInt32(self._show_timeout)),
             ("HideTimeout", dbus.UInt32(self._hide_timeout)),
             ("WindowSplit", self._window_split),
-            ("DockedApps", [e._desktop_file for e in self._entries.FilterDocked()]),
+            ("DockedApps", docked_apps),
             ("Opacity", self._gs_get_opacity()),
             ("HideState", dbus.Int32(self._hide_state.value)),
             ("FrontendWindowRect", (
@@ -498,30 +537,42 @@ class DockManager(dbus.service.Object):
     # Window management
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def ActivateWindow(self, win: int):
-        _wl.activate_window(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.activate_window(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def CloseWindow(self, win: int):
-        _wl.close_window(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.close_window(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def MaximizeWindow(self, win: int):
         self.ActivateWindow(win)
-        _wl.maximize_window(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.maximize_window(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def MinimizeWindow(self, win: int):
-        _wl.minimize_window(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.minimize_window(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def MakeWindowAbove(self, win: int):
         self.ActivateWindow(win)
-        _wl.make_window_above(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.make_window_above(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def MoveWindow(self, win: int):
         self.ActivateWindow(win)
-        _wl.move_window(str(win))
+        uuid = self._window_uuid_for_id(win)
+        if uuid:
+            _wl.move_window(uuid)
 
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def PreviewWindow(self, win: int):

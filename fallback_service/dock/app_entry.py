@@ -119,7 +119,7 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
     def setPropWindowInfos(self, val: WindowInfos) -> bool:
         if self._window_infos != val:
             self._window_infos = val
-            self._prop_changed("WindowInfos", val.to_dict())
+            self._prop_changed("WindowInfos", val.to_dbus())
             return True
         return False
 
@@ -156,6 +156,7 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
         """Go: removeWindow(win x.Window)"""
         self._windows.discard(win)
         self._window_slice.remove(win)
+        self._window_infos._data.pop(win, None)
         self._updateCurrentWindow()
         self._updateIsActive()
 
@@ -167,6 +168,7 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
             info.pid = pid
             info.process_name = get_process_name(pid)
         self._window_infos[win] = info
+        self._prop_changed("WindowInfos", self._window_infos.to_dbus())
 
     def _updateCurrentWindow(self):
         """Go: updateCurrentWindow()"""
@@ -210,7 +212,7 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
             "Icon": self._icon,
             "CurrentWindow": dbus.UInt32(self._current_window),
             "IsActive": self._is_active,
-            "WindowInfos": self._window_infos.to_dict(),
+            "WindowInfos": self._window_infos.to_dbus(),
             "DesktopFile": self._desktop_file,
             "IsDocked": self._is_docked,
             "Menu": self._menu.generate_json() if self._menu else "",

@@ -71,7 +71,7 @@ class AppEntries:
 
     def GetByInnerId(self, inner_id):
         for e in self._items:
-            if e.app_id == inner_id:
+            if e._app_info and e._app_info.inner_id == inner_id:
                 return e
         return None
 

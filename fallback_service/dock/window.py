@@ -24,6 +24,7 @@ Wayland window info management w/ windows slice sorting and retrieval.
 
 import os
 import logging
+import dbus
 from dataclasses import dataclass, field
 
 log = logging.getLogger("dock.Window")
@@ -75,6 +76,14 @@ class WindowInfos:
 
     def to_dict(self):
         return {str(k): v.to_dict() for k, v in self._data.items()}
+
+    def to_dbus(self):
+        return dbus.Dictionary({
+            dbus.UInt32(k): dbus.Struct(
+                (dbus.Boolean(v.flash), dbus.String(v.title or v.process_name)),
+                signature="bs")
+            for k, v in self._data.items()
+        }, signature="u(bs)")
 
 
 class WindowSlice:

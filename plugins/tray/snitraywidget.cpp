@@ -47,14 +47,6 @@ SNITrayWidget::SNITrayWidget(const QString &sniServicePath, QWidget *parent)
         return;
     }
 
-    if (m_sniServicePath.contains("/org/ayatana/NotificationItem/")) {
-        // fix: duplicate tray for some app
-        // some gtk apps use libayatana-appindicator create tray will create xembed and sni duplicate tray
-        // not show sni tray which path contains /org/ayatana/NotificationItem/ created by ayatana-appindicator
-        qDebug() << "SNI service path created by libayatana-appindicator, duplicate tray with legacy tray";
-        return;
-    }
-
     QPair<QString, QString> pair = serviceAndPath(m_sniServicePath);
     m_dbusService = pair.first;
     m_dbusPath = pair.second;
@@ -190,7 +182,7 @@ const QImage SNITrayWidget::trayImage()
 
 bool SNITrayWidget::isValid()
 {
-    return m_sniInter->isValid();
+    return m_sniInter && m_sniInter->isValid();
 }
 
 SNITrayWidget::ItemStatus SNITrayWidget::status()

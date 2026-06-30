@@ -23,6 +23,7 @@
 #include "trayplugin.h"
 #include "fashiontray/fashiontrayitem.h"
 #include "snitraywidget.h"
+#include "util/daemon_fallback.h"
 
 #include <QDir>
 #include <QWindow>
@@ -67,7 +68,7 @@ void TrayPlugin::init(PluginProxyInterface *proxyInter)
         return;
     }
 
-    m_trayInter = new DBusTrayManager(this);
+    m_trayInter = nullptr;
     m_sniWatcher = new StatusNotifierWatcher(SNI_WATCHER_SERVICE, SNI_WATCHER_PATH, QDBusConnection::sessionBus(), this);
     m_fashionItem = new FashionTrayItem(this);
     m_systemTraysController = new SystemTraysController(this);
@@ -88,14 +89,25 @@ void TrayPlugin::init(PluginProxyInterface *proxyInter)
     connect(m_systemTraysController, &SystemTraysController::pluginItemAdded, this, &TrayPlugin::addTrayWidget);
     connect(m_systemTraysController, &SystemTraysController::pluginItemRemoved, this, [=](const QString &itemKey) { trayRemoved(itemKey); });
 
-    m_trayInter->Manage();
+    // XEmbedTray is an old store for X11 only
+    const bool useXEmbedTray =
+        !GXDEDockFallback::isWayland()
+        && QDBusConnection::sessionBus().interface()
+        && QDBusConnection::sessionBus().interface()
+               ->isServiceRegistered(QStringLiteral("com.deepin.dde.TrayManager")).value();
+    if (useXEmbedTray) {
+        m_trayInter = new DBusTrayManager(this);
+        m_trayInter->Manage();
+    }
 
     switchToMode(displayMode());
 
     QTimer::singleShot(0, this, &TrayPlugin::loadIndicator);
     QTimer::singleShot(0, m_systemTraysController, &SystemTraysController::startLoader);
     QTimer::singleShot(0, this, &TrayPlugin::initSNI);
-    QTimer::singleShot(0, this, &TrayPlugin::initXEmbed);
+    if (m_trayInter) {
+        QTimer::singleShot(0, this, &TrayPlugin::initXEmbed);
+    }
 }
 
 bool TrayPlugin::pluginIsDisable()
@@ -313,6 +325,10 @@ QString TrayPlugin::itemKeyOfTrayWidget(AbstractTrayWidget *trayWidget)
 
 void TrayPlugin::initXEmbed()
 {
+    if (!m_trayInter) {
+        return;
+    }
+
     connect(m_refreshXEmbedItemsTimer, &QTimer::timeout, this, &TrayPlugin::xembedItemsChanged);
     connect(m_trayInter, &DBusTrayManager::TrayIconsChanged, this, [=] {m_refreshXEmbedItemsTimer->start();});
     connect(m_trayInter, &DBusTrayManager::Changed, this, &TrayPlugin::xembedItemChanged);
@@ -356,6 +372,10 @@ void TrayPlugin::sniItemsChanged()
 
 void TrayPlugin::xembedItemsChanged()
 {
+    if (!m_trayInter) {
+        return;
+    }
+
     QList<quint32> winidList = m_trayInter->trayIcons();
     QStringList trayKeyList;
 
@@ -413,15 +433,19 @@ void TrayPlugin::traySNIAdded(const QString &itemKey, const QString &sniServiceP
         return;
     }
 
-    if (sniServicePath.contains("/org/ayatana/NotificationItem/")) {
+    if (m_trayInter && sniServicePath.contains("/org/ayatana/NotificationItem/")) {
         // 参考：https://github.com/linuxdeepin/gxde-dock/commit/00d0f13c1abc2f49bda745d0cc1025a43cd1043c
         // fix: duplicate tray for some app
         // some gtk apps use libayatana-appindicator create tray will create xembed and sni duplicate tray
-        // not show sni tray which path contains /org/ayatana/NotificationItem/ created by ayatana-appindicator
+        // When XEmbed is available, hide the duplicate SNI created by ayatana-appindicator.
         return;
     }
 
     SNITrayWidget *trayWidget = new SNITrayWidget(sniServicePath);
+    if (!trayWidget->isValid()) {
+        trayWidget->deleteLater();
+        return;
+    }
     if (trayWidget->status() == SNITrayWidget::ItemStatus::Passive) {
         m_passiveSNITrayMap.insert(itemKey, trayWidget);
     } else {

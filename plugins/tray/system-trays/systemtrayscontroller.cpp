@@ -21,9 +21,50 @@
 
 #include "systemtrayscontroller.h"
 #include "pluginsiteminterface.h"
+#include "util/daemon_fallback.h"
 
+#include <QDBusConnectionInterface>
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
+#include <QProcess>
+
+namespace {
+
+// Ensure required dde-daemon is started!!
+void launchWaylandTrayDaemons()
+{
+    if (!GXDEDockFallback::isWayland()) {
+        return;
+    }
+
+    auto* bus = QDBusConnection::sessionBus().interface();
+    if (!bus || bus->isServiceRegistered(
+            QStringLiteral("com.deepin.daemon.Daemon")).value()) {
+        return;
+    }
+
+    const QString daemon = QStringLiteral(
+        "/usr/lib/deepin-daemon/dde-session-daemon");
+    if (!QFileInfo(daemon).isExecutable()) {
+        qWarning() << "Wayland tray daemon is not executable:" << daemon;
+        return;
+    }
+
+    const QStringList modules {
+        QStringLiteral("-f"),
+        QStringLiteral("enable"),
+        QStringLiteral("network"),
+        QStringLiteral("audio"),
+        QStringLiteral("sessionwatcher"),
+        QStringLiteral("power"),
+    };
+    if (!QProcess::startDetached(daemon, modules)) {
+        qWarning() << "Failed to launch Wayland tray daemons";
+    }
+}
+
+} // namespace
 
 SystemTraysController::SystemTraysController(QObject *parent)
     : AbstractPluginsController(parent)
@@ -157,6 +198,8 @@ void SystemTraysController::saveValueSystemTrayItem(const QString &itemKey, cons
 
 void SystemTraysController::startLoader()
 {
+    launchWaylandTrayDaemons();
+
     QString pluginsDir("../plugins/system-trays");
     if (!QDir(pluginsDir).exists()) {
         pluginsDir = "/usr/lib/gxde-dock/plugins/system-trays";

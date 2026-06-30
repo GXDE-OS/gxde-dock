@@ -57,7 +57,7 @@ class AppInfo:
             return None
         result = cls(path)
         result._load()
-        return result
+        return result if result._loaded else None
 
     @classmethod
     def from_id(cls, app_id: str) -> Optional["AppInfo"]:
@@ -81,7 +81,7 @@ class AppInfo:
         if self._loaded:
             return
         try:
-            cp = configparser.ConfigParser()
+            cp = configparser.ConfigParser(interpolation=None, strict=False)
             cp.read(self._file, encoding="utf-8")
             if DESKTOP_SECTION not in cp:
                 return
@@ -106,8 +106,9 @@ class AppInfo:
         self.identify_method = sec.get("X-Deepin-AppID", "")
 
         # Go: genInnerId() -> md5(commandline)
+        identity = self.commandline or self._file
         self.inner_id = DESKTOP_HASH_PREFIX + hashlib.md5(
-            self.commandline.encode("utf-8")
+            identity.encode("utf-8")
         ).hexdigest()
 
     # Some getters

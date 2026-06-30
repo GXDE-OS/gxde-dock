@@ -25,6 +25,7 @@
 #include "DNotifySender"
 
 #include <QDebug>
+#include <QDBusServiceWatcher>
 #include <QDir>
 #include <QGSettings>
 
@@ -191,18 +192,27 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
     m_pluginsMap.insert(interface, QMap<QString, QObject *>());
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();
-    if (!dbusService.isEmpty() && !m_dbusDaemonInterface->isServiceRegistered(dbusService).value()) {
+    const bool skipMissingService =
+        GXDEDockFallback::isWayland()
+        && dbusService == QStringLiteral("com.deepin.dde.TrayManager");
+    if (!dbusService.isEmpty()
+            && !skipMissingService
+            && !m_dbusDaemonInterface->isServiceRegistered(dbusService).value()) {
         qDebug() << objectName() << dbusService << "daemon has not started, waiting for signal";
-        connect(m_dbusDaemonInterface, &QDBusConnectionInterface::serviceOwnerChanged, this,
-            [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
-                Q_UNUSED(oldOwner);
-                if (name == dbusService && !newOwner.isEmpty()) {
-                    qDebug() << objectName() << dbusService << "daemon started, init plugin and disconnect";
-                    initPlugin(interface);
-                    disconnect(m_dbusDaemonInterface);
-                }
-            }
-        );
+        
+        // Use watcher to wait the signal for every plugin
+        // So we coule wait async for each one.
+        auto* watcher = new QDBusServiceWatcher(
+            dbusService,
+            QDBusConnection::sessionBus(),
+            QDBusServiceWatcher::WatchForRegistration,
+            this);
+        connect(watcher, &QDBusServiceWatcher::serviceRegistered, this,
+            [=](const QString &) {
+                qDebug() << objectName() << dbusService << "daemon started, init plugin";
+                watcher->deleteLater();
+                initPlugin(interface);
+            });
         return;
     }
 

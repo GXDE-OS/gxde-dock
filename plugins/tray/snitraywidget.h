@@ -91,7 +91,7 @@ private:
     QPixmap newIconPixmap(IconType iconType);
 
 private:
-    StatusNotifierItem *m_sniInter;
+    StatusNotifierItem *m_sniInter = nullptr;
 
     DBusMenuImporter *m_dbusMenuImporter;
 

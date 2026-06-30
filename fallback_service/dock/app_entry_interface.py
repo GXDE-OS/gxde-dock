@@ -80,6 +80,5 @@ class AppEntryInterface:
 
     @dbus.service.method(ENTRY_IFACE, in_signature="", out_signature="")
     def ForceQuit(self):
-        from .toplevel import close_window
         for win in self._windows:
-            close_window(win, get_current_timestamp())
+            self.manager.CloseWindow(win)
