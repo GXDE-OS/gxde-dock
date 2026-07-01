@@ -73,6 +73,8 @@ signals:
 private:
     void moveEvent(QMoveEvent *e);
     void resizeEvent(QResizeEvent *e);
+    void paintEvent(QPaintEvent *e) override;
+    void showEvent(QShowEvent *e) override;
     void dragEnterEvent(QDragEnterEvent *e);
     void dragMoveEvent(QDragMoveEvent *e);
     void dragLeaveEvent(QDragLeaveEvent *e);

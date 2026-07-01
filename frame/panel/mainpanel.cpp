@@ -22,12 +22,14 @@
 
 #include "mainpanel.h"
 #include "item/appitem.h"
+#include "wayland/layershellhelper.h"
 
 #include <QBoxLayout>
 #include <QDragEnterEvent>
 #include <QApplication>
 #include <QScreen>
 #include <QGraphicsView>
+#include <QPainter>
 
 #include <window/mainwindow.h>
 
@@ -59,6 +61,11 @@ MainPanel::MainPanel(QWidget *parent)
     setBlurRectXRadius(0);
     setBlurRectYRadius(0);
     setBlendMode(BehindWindowBlend);
+
+    if (Wayland::LayerShellHelper::isWayland()) {
+        setBlurRectXRadius(5);
+        setBlurRectYRadius(5);
+    }
 
     setAcceptDrops(true);
     setAccessibleName("dock-mainpanel");
@@ -188,14 +195,47 @@ int MainPanel::position() const
 
 void MainPanel::setEffectEnabled(const bool enabled)
 {
-    if (enabled)
+    if (enabled) {
         setMaskColor(DarkColor);
-    else
+        if (Wayland::LayerShellHelper::isWayland()) {
+            // Set blur mask color
+            setMaskColor(QColor(0, 0, 0, DockSettings::Instance().Opacity()));
+        }
+    } else {
         setMaskColor(QColor(55, 63, 71));
+    }
 
     setMaskAlpha(DockSettings::Instance().Opacity());
 
     m_itemAdjustTimer->start();
+}
+
+void MainPanel::paintEvent(QPaintEvent *e)
+{
+    if (Wayland::LayerShellHelper::isWayland()) {
+        QPainter p(this);
+        p.setRenderHint(QPainter::Antialiasing);
+
+        const int r = 5;
+        QPainterPath path;
+        path.moveTo(rect().bottomLeft());
+        path.lineTo(rect().topLeft().x(), rect().topLeft().y() + r);
+        path.quadTo(rect().topLeft(), rect().topLeft() + QPoint(r, 0));
+        path.lineTo(rect().topRight() - QPoint(r, 0));
+        path.quadTo(rect().topRight(), rect().topRight() + QPoint(0, r));
+        path.lineTo(rect().bottomRight());
+        path.closeSubpath();
+        p.setClipPath(path);
+
+        p.fillRect(rect(), QColor(0, 0, 0, DockSettings::Instance().Opacity()));
+        return;
+    }
+    DBlurEffectWidget::paintEvent(e);
+}
+
+void MainPanel::showEvent(QShowEvent *e)
+{
+    DBlurEffectWidget::showEvent(e);
 }
 
 bool MainPanel::eventFilter(QObject *watched, QEvent *event)

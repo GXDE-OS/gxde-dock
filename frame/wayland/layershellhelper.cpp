@@ -27,6 +27,7 @@
 #include <dplatformwindowhandle.h>
 
 #include "layershellhelper.h"
+#include "layershell_styler.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -158,6 +159,9 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
     if (window) {
         DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
     }
+
+    // Apply rounded corners and blur via dde_shell / org_kde_kwin_blur
+    LayerShellStyler::apply(window, 5, true);
 }
 
 void LayerShellHelper::updateDockAnchor(QWidget* widget,

@@ -5,7 +5,7 @@ set(TRANS_DIR "${CMAKE_CURRENT_DIR}/translate")
 configure_file(environments.h.in environments.h @ONLY)
 
 # Sources files
-file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../widgets/*.h" "../widgets/*.cpp")
+file(GLOB_RECURSE SRCS "*.h" "*.cpp" "*.c" "../widgets/*.h" "../widgets/*.cpp")
 
 # Find the library
 find_package(PkgConfig REQUIRED)
@@ -41,6 +41,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${QGSettings_LIBRARIES}
     DFrameworkdbusQt6::DFrameworkdbusQt6
     LayerShellQt::Interface
+    wayland-client
 )
 
 if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "sw_64")

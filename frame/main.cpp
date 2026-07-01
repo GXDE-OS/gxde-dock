@@ -50,9 +50,6 @@
 #include <vector>
 
 #include "dbus/dbusdockadaptors.h"
-
-#include <types/windowinfomap.h>
-
 DWIDGET_USE_NAMESPACE
 #ifdef DCORE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -288,10 +285,6 @@ int main(int argc, char *argv[])
 
     qDBusRegisterMetaType<QMap<QString, QString>>();
     qDBusRegisterMetaType<QMap<QString, QString>>();
-    registerWindowInfoMetaType();
-    registerWindowInfoMapMetaType();
-    qDBusRegisterMetaType<WindowInfoMap>();
-    qDBusRegisterMetaType<WindowInfo>();
     qDebug() << "\n\ngxde-dock startup";
     RegisterDdeSession();
 

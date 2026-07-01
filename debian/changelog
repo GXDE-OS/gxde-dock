@@ -13,6 +13,7 @@ gxde-dock (6.0.0-1) UNRELEASED; urgency=medium
   * 新增了一个备选守护进程，用于在DDE-Daemon无法使用的情况下代替DDE-Daemon工作
   * 修复了折叠托盘在Wayland下消失的问题
   * 修复了在Wayland下应用图标/指示器/app启动不工作的问题
+  * Wayland下新增模糊支持
 
  -- CharOfString <markus_verify@126.com>  Sat, 27 Jun 2026 00:59:26 +0800
 
