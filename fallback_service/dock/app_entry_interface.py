@@ -73,10 +73,12 @@ class AppEntryInterface:
     @dbus.service.method(ENTRY_IFACE, in_signature="", out_signature="")
     def RequestDock(self):
         self.setPropIsDocked(True)
+        self.refreshMenu()
 
     @dbus.service.method(ENTRY_IFACE, in_signature="", out_signature="")
     def RequestUndock(self):
         self.setPropIsDocked(False)
+        self.refreshMenu()
 
     @dbus.service.method(ENTRY_IFACE, in_signature="", out_signature="")
     def Check(self):
@@ -88,5 +90,5 @@ class AppEntryInterface:
 
     @dbus.service.method(ENTRY_IFACE, in_signature="", out_signature="")
     def ForceQuit(self):
-        for win in self._windows:
+        for win in list(self._windows):
             self.manager.CloseWindow(win)

@@ -69,6 +69,11 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
         self._service = bus_name
 
         self._init_from_app_id()
+        self.initMenu()
+
+    def refreshMenu(self):
+        self.initMenu()
+        self._prop_changed("Menu", self._menu.generate_json())
 
     # Setters
     def _prop_changed(self, name: str, value: Any):
@@ -151,14 +156,18 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
         self._updateWindowInfo(win)
         self._updateCurrentWindow()
         self._updateIsActive()
+        self.refreshMenu()
 
     def removeWindow(self, win: int):
         """Go: removeWindow(win x.Window)"""
         self._windows.discard(win)
         self._window_slice.remove(win)
-        self._window_infos._data.pop(win, None)
+        removed = self._window_infos._data.pop(win, None)
         self._updateCurrentWindow()
         self._updateIsActive()
+        self.refreshMenu()
+        if removed is not None:
+            self._prop_changed("WindowInfos", self._window_infos.to_dbus())
 
     def _updateWindowInfo(self, win: int):
         """Go: updateWindowInfo(win x.Window)"""
@@ -213,6 +222,29 @@ class AppEntry(AppEntryInterface, AppEntryMenu, dbus.service.Object):
             log.info(f"launchApp: {self.id} → {desktop_app.get_executable()} launched OK")
         except Exception as e:
             log.warning(f"launch app failed: {e}")
+
+    def launchDesktopAction(self, action: str, timestamp: int):
+        """Prase desktop actions from .desktop file."""
+        if not self._desktop_file:
+            return
+        try:
+            from gi.repository import Gio
+
+            desktop_app = Gio.DesktopAppInfo.new_from_filename(
+                self._desktop_file)
+            if desktop_app is not None and action in desktop_app.list_actions():
+                context = Gio.AppLaunchContext()
+                context.setenv("QT_WAYLAND_SHELL_INTEGRATION", "")
+                context.setenv("QT_QPA_PLATFORM", "")
+                desktop_app.launch_action(action, context)
+                return
+            raise RuntimeError(f"unknown desktop action: {action}")
+        except Exception as error:
+            log.warning(f"launch desktop action {action!r} failed: {error}")
+
+    def desktopActions(self):
+        """Return (action id, display name) pairs for the dock menu."""
+        return self._app_info.get_actions() if self._app_info else []
 
     def getMenu(self):
         """Go: getMenu()"""

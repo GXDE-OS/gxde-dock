@@ -42,6 +42,7 @@
 #include <QDBusReply>
 #include <QTimeLine>
 #include <QDateTime>
+#include <QCursor>
 
 // QX11Info is NOT avaliable in Qt6, using own helper...
 #include "../util/x11helper.h"
@@ -434,6 +435,14 @@ void AppItem::leaveEvent(QEvent *e)
 
     if (m_appPreviewTips) {
         if (m_appPreviewTips->isVisible()) {
+            // Creating an overlay layer surface can make Treeland send a
+            // synthetic leave to the dock surface even while the pointer is
+            // still over this icon. Do not start the preview's hide timer for
+            // that transition.
+            if (GXDEDockFallback::isWayland()
+                    && QRect(topleftPoint(), size()).contains(QCursor::pos())) {
+                return;
+            }
             m_appPreviewTips->prepareHide();
         }
     }
@@ -643,10 +652,8 @@ void AppItem::parseAndApplyWindowInfos(const QVariant &variant)
         info.title = it->second;
         map.insert(it.key(), info);
     }
-    if (!map.isEmpty()) {
-        m_windowInfos = map;
-        update();
-    }
+    // An empty map is meaningful: the application's last window was closed.
+    updateWindowInfos(map);
 }
 
 void AppItem::showPreview()

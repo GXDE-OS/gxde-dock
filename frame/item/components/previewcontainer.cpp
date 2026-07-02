@@ -24,10 +24,18 @@
 #include <QScreen>
 #include <QApplication>
 #include <QDragEnterEvent>
+#include <QGuiApplication>
 
 #define SPACING           0
 #define MARGIN            0
 #define SNAP_HEIGHT_WITHOUT_COMPOSITE       30
+
+static bool windowPreviewsAvailable(DWindowManagerHelper *helper)
+{
+    return helper->hasComposite()
+        || QGuiApplication::platformName().contains(
+            "wayland", Qt::CaseInsensitive);
+}
 
 PreviewContainer::PreviewContainer(QWidget *parent)
     : QWidget(parent),
@@ -82,9 +90,10 @@ void PreviewContainer::setWindowInfos(const WindowInfoMap &infos, const WindowLi
         m_snapshots[key]->setCloseAble(allowClose.contains(key));
     }
 
-    if (m_snapshots.isEmpty())
+    if (m_snapshots.isEmpty()) {
         emit requestCancelPreviewWindow();
         emit requestHidePopup();
+    }
 
     adjustSize();
 }
@@ -97,7 +106,8 @@ void PreviewContainer::updateSnapshots()
 
 void PreviewContainer::updateLayoutDirection(const Dock::Position dockPos)
 {
-    if (m_wmHelper->hasComposite() && (dockPos == Dock::Top || dockPos == Dock::Bottom))
+    if (windowPreviewsAvailable(m_wmHelper)
+            && (dockPos == Dock::Top || dockPos == Dock::Bottom))
         m_windowListLayout->setDirection(QBoxLayout::LeftToRight);
     else
         m_windowListLayout->setDirection(QBoxLayout::TopToBottom);
@@ -114,7 +124,7 @@ void PreviewContainer::checkMouseLeave()
 
     m_floatingPreview->setVisible(false);
 
-    if (m_wmHelper->hasComposite()) {
+    if (windowPreviewsAvailable(m_wmHelper)) {
         if (m_needActivate) {
             m_needActivate = false;
             emit requestActivateWindow(m_floatingPreview->trackedWid());
@@ -134,7 +144,7 @@ void PreviewContainer::prepareHide()
 void PreviewContainer::adjustSize()
 {
     const int count = m_snapshots.size();
-    const bool composite = m_wmHelper->hasComposite();
+    const bool composite = windowPreviewsAvailable(m_wmHelper);
     if (!composite)
     {
         const int h = SNAP_HEIGHT_WITHOUT_COMPOSITE * count + MARGIN * 2 + SPACING * (count - 1);
@@ -186,7 +196,7 @@ void PreviewContainer::enterEvent(QEnterEvent *e)
     m_needActivate = false;
     m_mouseLeaveTimer->stop();
 
-    if (m_wmHelper->hasComposite()) {
+    if (windowPreviewsAvailable(m_wmHelper)) {
         m_waitForShowPreviewTimer->start();
     }
 }
@@ -201,7 +211,7 @@ void PreviewContainer::leaveEvent(QEvent *e)
 
 void PreviewContainer::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (!m_wmHelper->hasComposite())
+    if (!windowPreviewsAvailable(m_wmHelper))
         return;
 
     e->accept();
@@ -220,18 +230,20 @@ void PreviewContainer::dragLeaveEvent(QDragLeaveEvent *e)
 
 void PreviewContainer::onSnapshotClicked(const WId wid)
 {
-    if (!m_wmHelper->hasComposite()) {
+    const bool nativeWayland = QGuiApplication::platformName().contains(
+        "wayland", Qt::CaseInsensitive);
+    if (nativeWayland || !windowPreviewsAvailable(m_wmHelper)) {
         emit requestActivateWindow(wid);
     }
 
-    m_needActivate = true;
+    m_needActivate = !nativeWayland;
     // the leaveEvent of this widget will be called after this signal
     Q_EMIT requestHidePopup();
 }
 
 void PreviewContainer::previewEntered(const WId wid)
 {
-    if (!m_wmHelper->hasComposite())
+    if (!windowPreviewsAvailable(m_wmHelper))
         return;
 
     AppSnapshot *snap = static_cast<AppSnapshot *>(sender());

@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QScreen>
 #include <QApplication>
+#include <QGuiApplication>
 
 DWIDGET_USE_NAMESPACE
 
@@ -42,9 +43,15 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
 
     compositeChanged();
 
-    setBackgroundColor(DBlurEffectWidget::DarkColor);
+    if (QGuiApplication::platformName().contains("wayland", Qt::CaseInsensitive)) {
+        // Manually set mask color on Wayland
+        setBackgroundColor(QColor(36, 36, 36, 220));
+    } else {
+        setBackgroundColor(DBlurEffectWidget::DarkColor);
+    }
     setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
     setAttribute(Qt::WA_InputMethodEnabled, false);
+    setProperty("_d_dock_popup", true);
 
     connect(m_acceptDelayTimer, &QTimer::timeout, this, &DockPopupWindow::accept);
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &DockPopupWindow::compositeChanged);
@@ -79,11 +86,13 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
 
     show(pos.x(), pos.y());
 
-    if (m_regionInter->registered()) {
+    const bool nativeWayland = QGuiApplication::platformName().contains(
+        "wayland", Qt::CaseInsensitive);
+    if (!nativeWayland && m_regionInter->registered()) {
         m_regionInter->unregisterRegion();
     }
 
-    if (m_model) {
+    if (!nativeWayland && m_model) {
         m_regionInter->registerRegion();
     }
 }
@@ -92,12 +101,33 @@ void DockPopupWindow::show(const int x, const int y)
 {
     m_lastPoint = QPoint(x, y);
 
+    // Replace Qt::move() on Wayland by manually calculating position.
+    const QSize popupSize = getFixedSize();
+    QPoint topLeft;
+    switch (arrowDirection()) {
+    case ArrowTop:
+        topLeft = QPoint(x - popupSize.width() / 2, y);
+        break;
+    case ArrowBottom:
+        topLeft = QPoint(x - popupSize.width() / 2, y - popupSize.height());
+        break;
+    case ArrowLeft:
+        topLeft = QPoint(x, y - popupSize.height() / 2);
+        break;
+    case ArrowRight:
+        topLeft = QPoint(x - popupSize.width(), y - popupSize.height() / 2);
+        break;
+    }
+    setProperty("_d_dock_popup_position", topLeft);
+
     DArrowRectangle::show(x, y);
 }
 
 void DockPopupWindow::hide()
 {
-    if (m_regionInter->registered())
+    const bool nativeWayland = QGuiApplication::platformName().contains(
+        "wayland", Qt::CaseInsensitive);
+    if (!nativeWayland && m_regionInter->registered())
         m_regionInter->unregisterRegion();
 
     DArrowRectangle::hide();

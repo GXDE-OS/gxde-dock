@@ -24,6 +24,8 @@
 
 #include <QProcess>
 #include <QDebug>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include <xcb/xproto.h>
 
@@ -258,6 +260,46 @@ const QPoint SystemTrayItem::popupMarkPoint() const
 // 获取在最外层的窗口(MainWindow)中的位置
 const QPoint SystemTrayItem::topleftPoint() const
 {
+    if (QGuiApplication::platformName().contains("wayland",
+            Qt::CaseInsensitive)) {
+        QWidget* topLevel = window();
+        QScreen* screen = topLevel->screen();
+        if (!screen) {
+            screen = qApp->primaryScreen();
+        }
+
+        if (screen) {
+            const QRect screenRect = screen->geometry();
+            const QSize dockSize = topLevel->size();
+            QPoint dockOrigin;
+
+            switch (DockPosition) {
+                case Dock::Position::Top:
+                    dockOrigin = QPoint(
+                        screenRect.left() + (screenRect.width() - dockSize.width()) / 2,
+                        screenRect.top());
+                    break;
+                case Dock::Position::Bottom:
+                    dockOrigin = QPoint(
+                        screenRect.left() + (screenRect.width() - dockSize.width()) / 2,
+                        screenRect.bottom() - dockSize.height() + 1);
+                    break;
+                case Dock::Position::Left:
+                    dockOrigin = QPoint(
+                        screenRect.left(),
+                        screenRect.top() + (screenRect.height() - dockSize.height()) / 2);
+                    break;
+                case Dock::Position::Right:
+                    dockOrigin = QPoint(
+                        screenRect.right() - dockSize.width() + 1,
+                        screenRect.top() + (screenRect.height() - dockSize.height()) / 2);
+                    break;
+            }
+
+            return dockOrigin + mapTo(topLevel, QPoint());
+        }
+    }
+
     QPoint p;
     const QWidget *w = this;
     do {
@@ -348,9 +390,12 @@ void SystemTrayItem::showHoverTips()
         return;
 
     // if not in geometry area
-    const QRect r(topleftPoint(), size());
-    if (!r.contains(QCursor::pos()))
-        return;
+    if (!QGuiApplication::platformName().contains("wayland",
+            Qt::CaseInsensitive)) {
+        const QRect r(topleftPoint(), size());
+        if (!r.contains(QCursor::pos()))
+            return;
+    }
 
     QWidget * const content = trayTipsWidget();
     if (!content)

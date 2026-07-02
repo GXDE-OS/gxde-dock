@@ -239,6 +239,7 @@ class DockManager(dbus.service.Object):
         entry._desktop_file = app_info.get_file_name()
         entry._name = app_info.get_name()
         entry._icon = app_info.get_icon()
+        entry.initMenu()
 
         if entry not in self._entries:
             self._entries.insert(entry, index)
@@ -361,6 +362,9 @@ class DockManager(dbus.service.Object):
                 self._active_window = 0
         if entry:
             entry.removeWindow(win)
+            # A docked entry remains as a launcher.
+            if not entry._windows and not entry._is_docked:
+                self._entries.remove(entry)
 
     def _find_or_create_entry_by_app_id(self, app_id):
         """Find/create AppEntry by app_id."""
@@ -606,6 +610,15 @@ class DockManager(dbus.service.Object):
     @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="")
     def PreviewWindow(self, win: int):
         log.info(f"PreviewWindow({win}) — no WM integration")
+
+    @dbus.service.method(DBUS_IFACE, in_signature="u", out_signature="ayuuuu")
+    def GetWindowSnapshot(self, win: int):
+        uuid = self._window_uuid_for_id(win)
+        if not uuid:
+            return dbus.ByteArray(), 0, 0, 0, 0
+        pixels, pixel_format, width, height, stride = _wl.capture_toplevel(uuid)
+        return (dbus.ByteArray(pixels), dbus.UInt32(pixel_format),
+                dbus.UInt32(width), dbus.UInt32(height), dbus.UInt32(stride))
 
     @dbus.service.method(DBUS_IFACE, in_signature="", out_signature="")
     def CancelPreviewWindow(self):

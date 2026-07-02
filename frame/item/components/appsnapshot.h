@@ -69,6 +69,7 @@ public slots:
     void setWindowInfo(const WindowInfo &info);
 
 private:
+    bool fetchWaylandSnapshot();
     void dragEnterEvent(QDragEnterEvent *e);
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);

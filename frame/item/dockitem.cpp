@@ -55,9 +55,15 @@ DockItem::DockItem(QWidget *parent)
     if (PopupWindow.isNull())
     {
         DockPopupWindow *arrowRectangle = new DockPopupWindow(nullptr);
-        arrowRectangle->setShadowBlurRadius(20);
+        // Manually overriding tooltip padding on Wayland.
+        if (Wayland::LayerShellHelper::isWayland()) {
+            arrowRectangle->setShadowBlurRadius(0);
+            arrowRectangle->setShadowYOffset(0);
+        } else {
+            arrowRectangle->setShadowBlurRadius(20);
+            arrowRectangle->setShadowYOffset(2);
+        }
         arrowRectangle->setRadius(6);
-        arrowRectangle->setShadowYOffset(2);
         arrowRectangle->setShadowXOffset(0);
         arrowRectangle->setArrowWidth(18);
         arrowRectangle->setArrowHeight(10);
@@ -305,9 +311,11 @@ void DockItem::showHoverTips()
         return;
 
     // if not in geometry area
-    const QRect r(topleftPoint(), size());
-    if (!r.contains(QCursor::pos()))
-        return;
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        const QRect r(topleftPoint(), size());
+        if (!r.contains(QCursor::pos()))
+            return;
+    }
 
     QWidget * const content = popupTips();
     if (!content)
@@ -414,6 +422,12 @@ const QPoint DockItem::popupMarkPoint() const
 
 const QPoint DockItem::topleftPoint() const
 {
+    if (Wayland::LayerShellHelper::isWayland()) {
+        // Manually calculate global position on Wayland.
+        return DockSettings::Instance().windowRect(DockPosition).topLeft()
+            + mapTo(window(), QPoint());
+    }
+
     QPoint p;
     const QWidget *w = this;
     do {

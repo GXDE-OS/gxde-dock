@@ -200,14 +200,15 @@ void LayerShellHelper::updateOutput(QWidget* widget, QScreen* screen) {
     }
 }
 
-void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
+static QWindow* configurePopupLayerShell(QWidget* popup,
+        bool allowKeyboardFocus) {
     if (popup == nullptr) {
-        qWarning() << "(LayerShellHelper) fixPopupLayerShell got a null popup!";
-        return;
+        qWarning() << "(LayerShellHelper) configurePopupLayerShell got a null popup!";
+        return nullptr;
     }
 
-    if (!isWayland()) {
-        return;
+    if (!LayerShellHelper::isWayland()) {
+        return nullptr;
     }
 
     popup->createWinId();
@@ -215,17 +216,21 @@ void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
     QWindow* window = popup->windowHandle();
     if (!window) {
         qWarning() << "(LayerShellHelper) invalid popup window handle, halted!";
-        return;
+        return nullptr;
     }
 
     LayerShellQt::Window* layer = LayerShellQt::Window::get(window);
     if (!layer) {
-        return;
+        return nullptr;
     }
 
     // 不设anchor的话Treeland会把弹窗摆到屏幕中间，有时候还会糊屏幕上
     // 改为锚定左上角，再用margin偏移到弹出位置 (popup->pos())
-    const QPoint pos = popup->pos();
+    const QVariant requestedPosition =
+        popup->property("_d_dock_popup_position");
+    const QPoint pos = requestedPosition.isValid()
+        ? requestedPosition.toPoint()
+        : popup->pos();
     LayerShellQt::Window::Anchors anchors;
     anchors |= LayerShellQt::Window::AnchorTop;
     anchors |= LayerShellQt::Window::AnchorLeft;
@@ -237,12 +242,38 @@ void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
     // 子菜单 (如「位置/大小」展开项) 不要键盘交互
     // 否则它会requestActive抢走激活态，Treeland 把父菜单设为非激活
     // 然后整个菜单就被关了
-    const bool isSubMenu = window->transientParent() != nullptr;
+    const bool acceptsKeyboard = allowKeyboardFocus
+        && window->transientParent() == nullptr;
     layer->setKeyboardInteractivity(
-        isSubMenu ? LayerShellQt::Window::KeyboardInteractivityNone
-            : LayerShellQt::Window::KeyboardInteractivityOnDemand);
+        acceptsKeyboard ? LayerShellQt::Window::KeyboardInteractivityOnDemand
+            : LayerShellQt::Window::KeyboardInteractivityNone);
 
     DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
+
+    return window;
+}
+
+void LayerShellHelper::fixPopupLayerShell(QWidget* popup) {
+    configurePopupLayerShell(popup, true);
+}
+
+void LayerShellHelper::fixDockPopupLayerShell(QWidget* popup) {
+    configurePopupLayerShell(popup, false);
+}
+
+void LayerShellHelper::styleDockPopupLayerShell(QWidget* popup) {
+    if (!popup || !isWayland()) {
+        return;
+    }
+
+    QWindow* window = popup->windowHandle();
+    if (!window || window->property("_d_dock_popup_styled").toBool()) {
+        return;
+    }
+
+    // Apply compositor side corner radius/blur on Wayland.
+    LayerShellStyler::apply(window, 6, true);
+    window->setProperty("_d_dock_popup_styled", true);
 }
 
 // 全屏Mask的layer-shell属性

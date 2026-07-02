@@ -41,8 +41,10 @@
 #include <QWindow>
 #include <QFileInfo>
 #include <QProcess>
+#include <QPointer>
 #include <QStringList>
 #include <QStandardPaths>
+#include <QTimer>
 
 #include <LayerShellQt/Shell>
 
@@ -133,6 +135,60 @@ void launchSNIServer()
     }
 }
 
+void launchDeepinMenu()
+{
+    std::vector<QString> menuPossilbleELF = {
+        "/usr/bin/deepin-menu",
+        "/usr/local/bin/deepin-menu"
+    };
+    QString menuELF = menuPossilbleELF.at(0);
+    bool found = false;
+
+    for (const auto& cur : menuPossilbleELF) {
+        QFileInfo curInfo(cur);
+        if (curInfo.exists() && curInfo.isFile()) {
+            if (curInfo.isExecutable()) {
+                menuELF = cur;
+                found = true;
+                QString serverFound = "(Deepin Menu) Init: Found Deepin Menu Server at: ";
+                serverFound.append(menuELF);
+                serverFound.append(".");
+                qInfo() << menuELF << Qt::endl;
+                break;
+            }
+        }
+    }
+
+    if (!found) {
+        qWarning() << "(Deepin Menu) Init: Failed to find Deepin Menu Server."
+            << Qt::endl;
+        qWarning() << "                    Blurred menu may be NOT working..."
+            << Qt::endl;
+        return;
+    }
+
+    try {
+        // No need to check if already running. GXDE-SNI server itself quits when another
+        // instance occupied the D-Bus interface. Hence this is harmless.
+        QStringList argvGen;
+        argvGen << menuELF;
+        qint64 pid;
+        QString wkDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+        bool res = QProcess::startDetached(menuELF, argvGen, wkDir, &pid);
+
+        if (res) {
+            QString finalLog = "(Deepin Menu) Init: Deepin Menu has been launched w/ PID #";
+            finalLog.append(QString::number(pid));
+            finalLog.append(".");
+            qInfo() << finalLog << Qt::endl;
+        }
+    } catch (...) {
+        qWarning() << "(Deepin Menu) Init: Failed to start Deepin Menu."
+            << Qt::endl;
+        return;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     // 以前dock不支持原生Wayland所以在Wayland下加D-XCB
@@ -146,6 +202,7 @@ int main(int argc, char *argv[])
         qunsetenv("DTK2_XWAYLAND");
         qputenv("QT_QPA_PLATFORM", "wayland");
         launchSNIServer();
+        launchDeepinMenu();
         LayerShellQt::Shell::useLayerShell();
     } else {
         DApplication::loadDXcbPlugin();
@@ -187,7 +244,29 @@ int main(int argc, char *argv[])
         protected:
             bool eventFilter(QObject* object, QEvent* event) override {
                 QWidget* target = qobject_cast<QWidget*>(object);
-                if (target && target->windowType() == Qt::Popup) {
+                const bool isDockPopup = target
+                    && target->property("_d_dock_popup").toBool();
+                const bool dockPopupPositionChanged = isDockPopup
+                    && event->type() == QEvent::DynamicPropertyChange
+                    && static_cast<QDynamicPropertyChangeEvent*>(event)
+                           ->propertyName() == "_d_dock_popup_position";
+
+                if (isDockPopup && (event->type() == QEvent::Show
+                                    || (dockPopupPositionChanged
+                                        && target->isVisible()))) {
+                    // DockPopupWindow is a plain Qt::Window, layershell MUST handle manually.
+                    Wayland::LayerShellHelper::fixDockPopupLayerShell(target);
+
+                    if (event->type() == QEvent::Show) {
+                        QPointer<QWidget> popup(target);
+                        QTimer::singleShot(30, target, [popup] {
+                            if (popup && popup->isVisible()) {
+                                Wayland::LayerShellHelper::styleDockPopupLayerShell(
+                                    popup.data());
+                            }
+                        });
+                    }
+                } else if (target && target->windowType() == Qt::Popup) {
                     QWindow* wh = target->windowHandle();
                     const bool isSubMenu = wh && wh->transientParent();
 

@@ -14,6 +14,10 @@ gxde-dock (6.0.0-1) UNRELEASED; urgency=medium
   * 修复了折叠托盘在Wayland下消失的问题
   * 修复了在Wayland下应用图标/指示器/app启动不工作的问题
   * Wayland下新增模糊支持
+  * Wayland下新增系统dock程序名称tooltip
+  * Wayland下新增对hover程序图标后预览对应程序所有窗口缩略图的支持
+  * Wayland下新增对程序自定义菜单的支持
+  * Wayland下支持尝试在已安装但未启动时自动拉起Deepin-Menu与GXDE-SNI-Server
 
  -- CharOfString <markus_verify@126.com>  Sat, 27 Jun 2026 00:59:26 +0800
 

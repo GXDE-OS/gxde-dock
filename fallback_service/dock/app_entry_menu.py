@@ -21,7 +21,15 @@ Translation of app_entry_menu.go to Python 3
 AppEntry right click menu's initialization.
 """
 
+import gettext
+
 from .menu import Menu, MenuItem
+from .locale_utils import ui_locale_fallbacks
+
+
+_translate = gettext.translation(
+    "dde-daemon", localedir="/usr/share/locale",
+    languages=ui_locale_fallbacks() or None, fallback=True).gettext
 
 class AppEntryMenu:
     """Go: app_entry_menu.go/initMenu()"""
@@ -31,12 +39,39 @@ class AppEntryMenu:
         self._menu = Menu()
         m = self._menu
 
-        m.append_item(MenuItem.new("Open", lambda ts: self.Activate(ts), True))
-        m.append_item(MenuItem.new("All Windows",
+        m.append_item(MenuItem.new(
+            _translate("_Open"), lambda ts: self.Activate(ts), True))
+
+        # Docked app icon: Open and undock
+        # Opened app: Window actions, dock/undock, close all, force kill...
+        if not self._windows:
+            if self._is_docked:
+                m.append_item(MenuItem.new(
+                    _translate("_Undock"),
+                    lambda ts: self.RequestUndock(), True))
+            else:
+                m.append_item(MenuItem.new(
+                    _translate("_Dock"),
+                    lambda ts: self.RequestDock(), True))
+            return
+
+        m.append_item(MenuItem.new(
+            _translate("_All windows"),
             lambda ts: self.PresentWindows(), True))
 
+        for action, name in self.desktopActions():
+            m.append_item(MenuItem.new(
+                name,
+                lambda ts, action_id=action:
+                    self.launchDesktopAction(action_id, ts),
+                True))
+
         if not self._is_docked:
-            m.append_item(MenuItem.new("Dock", lambda ts: self.RequestDock(), True))
+            m.append_item(MenuItem.new(
+                _translate("_Dock"), lambda ts: self.RequestDock(), True))
         else:
-            m.append_item(MenuItem.new("Undock",
+            m.append_item(MenuItem.new(_translate("_Undock"),
                 lambda ts: self.RequestUndock(), True))
+
+        m.append_item(MenuItem.new(
+            _translate("_Force Quit"), lambda ts: self.ForceQuit(), True))

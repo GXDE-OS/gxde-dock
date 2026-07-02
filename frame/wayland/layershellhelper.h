@@ -35,6 +35,8 @@ public:
     static void updateExclusiveZone(QWidget* widget, int zone);
     static void updateOutput(QWidget* widget, QScreen* screen);
     static void fixPopupLayerShell(QWidget* popup);
+    static void fixDockPopupLayerShell(QWidget* popup);
+    static void styleDockPopupLayerShell(QWidget* popup);
     static void setMenuMaskRole(QWidget* widget);
 };
 

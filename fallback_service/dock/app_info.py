@@ -28,9 +28,18 @@ import configparser
 from typing import Optional
 
 from .util import add_desktop_ext
+from .locale_utils import ui_locale_fallbacks
 
 DESKTOP_HASH_PREFIX = "d:"
 DESKTOP_SECTION = "Desktop Entry"
+
+
+def _localized_value(section, key: str) -> str:
+    for suffix in ui_locale_fallbacks():
+        value = section.get(f"{key}[{suffix}]", "")
+        if value:
+            return value
+    return section.get(key, "")
 
 
 class AppInfo:
@@ -43,6 +52,7 @@ class AppInfo:
         self.icon = ""
         self.id = ""
         self.commandline = ""
+        self.actions = []
         self.inner_id = ""
         self.identify_method = ""
         self._loaded = False
@@ -94,9 +104,10 @@ class AppInfo:
 
         x_vendor = sec.get("X-Deepin-Vendor", "")
         if x_vendor == "deepin":
-            self.name = sec.get("GenericName", "") or sec.get("Name", "")
+            self.name = (_localized_value(sec, "GenericName")
+                         or _localized_value(sec, "Name"))
         else:
-            self.name = sec.get("Name", "")
+            self.name = _localized_value(sec, "Name")
 
         self.icon = sec.get("Icon", "")
         try:
@@ -104,6 +115,18 @@ class AppInfo:
         except Exception:
             self.commandline = ""
         self.identify_method = sec.get("X-Deepin-AppID", "")
+
+        # Desktop Entry Format: [Desktop Action <ID>]
+        for action_id in sec.get("Actions", "").split(";"):
+            action_id = action_id.strip()
+            if not action_id:
+                continue
+            section_name = f"Desktop Action {action_id}"
+            if section_name not in cp:
+                continue
+            action_name = _localized_value(cp[section_name], "Name")
+            if action_name:
+                self.actions.append((action_id, action_name))
 
         # Go: genInnerId() -> md5(commandline)
         identity = self.commandline or self._file
@@ -127,6 +150,9 @@ class AppInfo:
 
     def get_commandline(self) -> str:
         return self.commandline
+
+    def get_actions(self):
+        return list(self.actions)
 
     def is_installed(self) -> bool:
         """Go: IsInstalled()"""

@@ -30,12 +30,14 @@ If you want to update the protocols, manually run rescan_protocols.sh in locally
 git push, and you should be good to go.
 """
 
+import mmap
 import os
 import logging
 from dataclasses import dataclass, field
 from pywayland.client import Display
 
 from .protocols.kywc_toplevel_v1 import KywcToplevelManagerV1, KywcToplevelV1
+from .protocols.kywc_capture_v1 import KywcCaptureManagerV1
 
 log = logging.getLogger("dock.TopLevel")
 
@@ -60,6 +62,7 @@ class ToplevelInfo:
 _display = None
 _registry = None
 _manager = None
+_capture_manager = None
 _toplevels = {}    # uuid (str) -> (ToplevelInfo, KywcToplevelV1 proxy)
 _callbacks = {
     "created": None,
@@ -100,7 +103,7 @@ def _on_closed(uuid):
     log.debug(f"Toplevel {uuid} closed")
 
 def _on_toplevel(toplevel_manager, toplevel_proxy, uuid):
-    """新窗口出现——存储并通知 daemon"""
+    """New window: store info and notify daemon"""
     info = ToplevelInfo(uuid=uuid)
     _toplevels[uuid] = (info, toplevel_proxy)
 
@@ -122,11 +125,16 @@ def _on_toplevel(toplevel_manager, toplevel_proxy, uuid):
     log.debug(f"Toplevel {uuid}: app_id={info.app_id} pid={info.pid}")
 
 def _on_global(reg, name, interface, version):
+    global _capture_manager
     if interface == KywcToplevelManagerV1.name:
         global _manager
         protocol_ver = min(version, KywcToplevelManagerV1.version)
         _manager = reg.bind(name, KywcToplevelManagerV1, protocol_ver)
         _manager.dispatcher["toplevel"] = _on_toplevel
+        log.info(f"Bound protocol {interface} v.{protocol_ver}.")
+    elif interface == KywcCaptureManagerV1.name:
+        protocol_ver = min(version, KywcCaptureManagerV1.version)
+        _capture_manager = reg.bind(name, KywcCaptureManagerV1, protocol_ver)
         log.info(f"Bound protocol {interface} v.{protocol_ver}.")
     else:
         log.debug(f"Protocol {interface} v.{version} is unknown to this WM.")
@@ -177,21 +185,25 @@ def activate_window(uuid):
     p = _get_proxy(uuid)
     if p:
         p.activate()
+        _display.flush()
 
 def close_window(uuid, timestamp=0):
     p = _get_proxy(uuid)
     if p:
         p.close()
+        _display.flush()
 
 def minimize_window(uuid):
     p = _get_proxy(uuid)
     if p:
         p.set_minimized()
+        _display.flush()
 
 def maximize_window(uuid):
     p = _get_proxy(uuid)
     if p:
         p.set_maximized(None)
+        _display.flush()
 
 def make_window_above(uuid):
     pass
@@ -200,6 +212,7 @@ def move_window(uuid):
     p = _get_proxy(uuid)
     if p:
         p.set_position(0, 0)
+        _display.flush()
 
 def get_toplevel_info(uuid):
     entry = _toplevels.get(uuid)
@@ -207,3 +220,55 @@ def get_toplevel_info(uuid):
 
 def list_toplevels():
     return list(_toplevels.keys())
+
+
+def capture_toplevel(uuid):
+    """Return (pixels, format, width, height, stride) for a Wayland toplevel.
+
+    gxde-wlcom's protocol returns immutable DMA-BUF ID. Buffers are ARGB8888 &
+    XRGB8888, you may copy them before they are released.
+    """
+    if not _display or not _capture_manager or uuid not in _toplevels:
+        return b"", 0, 0, 0, 0
+
+    result = {}
+    frame = _capture_manager.capture_toplevel(uuid, 1)
+
+    def on_buffer(unused_frame, fd, pixel_format, width, height, offset,
+                  stride, modifier_hi, modifier_lo, flags):
+        result["buffer_received"] = True
+        modifier = (modifier_hi << 32) | modifier_lo
+        # DRM_FORMAT_MOD_LINEAR is 0
+        # We also have DRM_FORMAT_MOD_INVALID
+        if modifier not in (0, 0x00FFFFFFFFFFFFFF):
+            os.close(fd)
+            return
+
+        length = offset + stride * height
+        try:
+            mapping = mmap.mmap(fd, length, access=mmap.ACCESS_READ)
+            result["value"] = (
+                bytes(mapping[offset:offset + stride * height]),
+                pixel_format, width, height, stride)
+            mapping.close()
+        except (OSError, ValueError) as error:
+            log.warning(f"Failed to map capture buffer for {uuid}: {error}")
+        finally:
+            os.close(fd)
+
+    frame.dispatcher["buffer"] = on_buffer
+    frame.dispatcher["failed"] = lambda unused_frame: result.setdefault(
+        "value", (b"", 0, 0, 0, 0))
+    frame.dispatcher["cancelled"] = lambda unused_frame: result.setdefault(
+        "value", (b"", 0, 0, 0, 0))
+
+    try:
+        _display.roundtrip()
+    except Exception as error:
+        log.warning(f"Failed to capture Wayland toplevel {uuid}: {error}")
+    finally:
+        if result.get("buffer_received"):
+            frame.release_buffer(0)
+        frame.destroy()
+
+    return result.get("value", (b"", 0, 0, 0, 0))

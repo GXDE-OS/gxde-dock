@@ -21,6 +21,7 @@
 
 #include "appsnapshot.h"
 #include "previewcontainer.h"
+#include "../../util/daemon_fallback.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -32,6 +33,9 @@
 #include <QVBoxLayout>
 #include <QSizeF>
 #include <QTimer>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QGuiApplication>
 
 // QX11Info is NOT avaliable in Qt6, using own helper...
 #include "../../util/x11helper.h"
@@ -52,6 +56,16 @@ struct SHMInfo
         long height;
     } rect;
 };
+
+static bool nativeWayland() {
+    return QGuiApplication::platformName().contains(
+        "wayland", Qt::CaseInsensitive);
+}
+
+static bool windowPreviewsAvailable(DWindowManagerHelper *helper)
+{
+    return nativeWayland() || helper->hasComposite();
+}
 
 AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
     : QWidget(parent)
@@ -87,6 +101,17 @@ AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
 
 void AppSnapshot::closeWindow() const
 {
+    if (nativeWayland()) {
+        QDBusMessage message = QDBusMessage::createMethodCall(
+            GXDEDockFallback::dockServiceName(),
+            QStringLiteral("/com/deepin/dde/daemon/Dock"),
+            QStringLiteral("com.deepin.dde.daemon.Dock"),
+            QStringLiteral("CloseWindow"));
+        message << quint32(m_wid);
+        QDBusConnection::sessionBus().asyncCall(message);
+        return;
+    }
+
     const auto display = x11Display();
 
     XEvent e;
@@ -105,7 +130,7 @@ void AppSnapshot::closeWindow() const
 
 void AppSnapshot::compositeChanged() const
 {
-    const bool composite = m_wmHelper->hasComposite();
+    const bool composite = windowPreviewsAvailable(m_wmHelper);
 
     m_title->setVisible(!composite);
 
@@ -123,14 +148,87 @@ void AppSnapshot::dragEnterEvent(QDragEnterEvent *e)
 {
     QWidget::dragEnterEvent(e);
 
-    if (m_wmHelper->hasComposite())
+    if (windowPreviewsAvailable(m_wmHelper))
         emit entered(m_wid);
+}
+
+bool AppSnapshot::fetchWaylandSnapshot()
+{
+    QDBusMessage message = QDBusMessage::createMethodCall(
+        GXDEDockFallback::dockServiceName(),
+        QStringLiteral("/com/deepin/dde/daemon/Dock"),
+        QStringLiteral("com.deepin.dde.daemon.Dock"),
+        QStringLiteral("GetWindowSnapshot"));
+    message << quint32(m_wid);
+
+    const QDBusMessage reply = QDBusConnection::sessionBus().call(
+        message, QDBus::Block, 2000);
+    if (reply.type() == QDBusMessage::ErrorMessage
+            || reply.arguments().size() != 5) {
+        qWarning() << "Failed to capture Wayland window" << m_wid
+                   << reply.errorMessage();
+        m_title->setVisible(true);
+        return false;
+    }
+
+    const QByteArray pixels = reply.arguments().at(0).toByteArray();
+    const quint32 pixelFormat = reply.arguments().at(1).toUInt();
+    const int width = int(reply.arguments().at(2).toUInt());
+    const int height = int(reply.arguments().at(3).toUInt());
+    const int stride = int(reply.arguments().at(4).toUInt());
+    if (pixels.isEmpty() || width <= 0 || height <= 0
+            || stride < width * 4 || pixels.size() < stride * height) {
+        m_title->setVisible(true);
+        return false;
+    }
+
+    // DRM_FORMAT_ARGB8888 / XRGB8888.
+    constexpr quint32 drmFormatArgb8888 = 0x34325241;
+    constexpr quint32 drmFormatXrgb8888 = 0x34325258;
+    QImage::Format imageFormat;
+    if (pixelFormat == drmFormatArgb8888) {
+        imageFormat = QImage::Format_ARGB32;
+    } else if (pixelFormat == drmFormatXrgb8888) {
+        imageFormat = QImage::Format_RGB32;
+    } else {
+        qWarning() << "Unsupported Wayland capture format"
+            << Qt::hex << pixelFormat;
+        m_title->setVisible(true);
+        return false;
+    }
+
+    const QImage image(reinterpret_cast<const uchar *>(pixels.constData()),
+        width, height, stride, imageFormat);
+    m_snapshot = image.copy();
+    m_snapshotSrcRect = m_snapshot.rect();
+    m_title->setVisible(false);
+    return !m_snapshot.isNull();
 }
 
 void AppSnapshot::fetchSnapshot()
 {
-    if (!m_wmHelper->hasComposite())
+    if (!windowPreviewsAvailable(m_wmHelper))
         return;
+
+    if (nativeWayland()) {
+        if (!fetchWaylandSnapshot()) {
+            return;
+        }
+
+        QSizeF size(rect().marginsRemoved(QMargins(8, 8, 8, 8)).size());
+        const auto ratio = devicePixelRatioF();
+        size = m_snapshotSrcRect.size().scaled(size * ratio,
+            Qt::KeepAspectRatio);
+        const qreal scale = qreal(size.width()) / m_snapshotSrcRect.width();
+        m_snapshot = m_snapshot.scaled(
+            qRound(m_snapshot.width() * scale),
+            qRound(m_snapshot.height() * scale), Qt::IgnoreAspectRatio,
+            Qt::SmoothTransformation);
+        m_snapshotSrcRect = QRectF(QPointF(0, 0), size);
+        m_snapshot.setDevicePixelRatio(ratio);
+        update();
+        return;
+    }
 
     QImage qimage;
     SHMInfo *info = nullptr;
@@ -200,7 +298,7 @@ void AppSnapshot::enterEvent(QEnterEvent *e)
 {
     QWidget::enterEvent(e);
 
-    if (!m_wmHelper->hasComposite()) {
+    if (!windowPreviewsAvailable(m_wmHelper)) {
         m_closeBtn2D->setVisible(true);
     }
     else {
@@ -223,7 +321,7 @@ void AppSnapshot::paintEvent(QPaintEvent *e)
 {
     QPainter painter(this);
 
-    if (!m_wmHelper->hasComposite())
+    if (!windowPreviewsAvailable(m_wmHelper))
     {
         if (underMouse())
             painter.fillRect(rect(), QColor(255, 255, 255, 255 * .2));
@@ -327,4 +425,3 @@ QRect AppSnapshot::rectRemovedShadow(const QImage &qimage, unsigned char *prop_t
         return QRect(0, 0, qimage.width(), qimage.height());
     }
 }
-
