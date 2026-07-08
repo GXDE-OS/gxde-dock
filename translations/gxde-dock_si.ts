@@ -3,7 +3,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>උදාහරණය කල ප්ලගින් %1 සිස්ටම් සමඟ සම්බන්ධතා නොවේ.</translation>
     </message>
@@ -122,97 +122,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161" />
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>උෂාව ප්‍රතිපුර්ද</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162" />
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>ප්‍රායොගික ප්‍රතිපල</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163" />
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>ඉගෙන් ගොඩක්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164" />
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>පහල</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165" />
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>ඇත්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166" />
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>තහවුත්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167" />
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>බිට් අත්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168" />
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>මාධ්‍ය</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169" />
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>කුඩා</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170" />
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>ඉදිරිපත් කරන්න</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171" />
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>අපහන් නොකරන්න</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172" />
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>සාදරණිය පෙන්වත්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216" />
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>ප්‍රධානය</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225" />
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>ලෙක්සිය</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232" />
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>ප්‍රමාණය</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239" />
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>ස්ථිති</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243" />
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>ඉල්ලුම්පද</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173" />
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation>සිස්ටම් මොනිටර්</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174" />
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation>කොටස් ගෙන ඇත</translation>
     </message>
@@ -430,7 +430,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>System Tray</translation>
     </message>

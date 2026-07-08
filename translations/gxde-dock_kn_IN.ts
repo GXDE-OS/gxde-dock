@@ -3,7 +3,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>ಪ್ಲಗಿನ್ %1 ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ.</translation>
     </message>
@@ -122,97 +122,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161" />
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>ಅಲಂಕೃತ ರೂಪ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162" />
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>ದಕ್ಷ ರೂಪ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163" />
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>ಮೇಲಿನ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164" />
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>ನೀಚು</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165" />
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>ಬಲ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166" />
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>ಸರಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167" />
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>ಬೃಹತ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168" />
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>ಮಾಧ್ಯಮ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169" />
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>ಚಿಕ್ಕ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170" />
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>ಕಾಣಿಸಲಾದವನ್ನು ಉಳಿಸು</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171" />
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>ಗೋಪ್ಯವಾಗಿ ಇರಿಸಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172" />
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>ಸ್ಮಾರ್ಟ್ ಹೈಡ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216" />
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>ಮೋಡ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225" />
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>ಸ್ಥಾನ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232" />
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>ಗಾತ್ರ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239" />
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>ಸ್ಥಿತಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243" />
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>ಪ್ಲಗ್-ಇನ್ಸ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173" />
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation>ಸಿಸ್ಟಮ್ ಮಾನಿಟರ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174" />
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation>ಕನಕಾಲು ವಿಭಜನೆ</translation>
     </message>
@@ -430,7 +430,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>ಸಿಸ್ಟಮ್ ಟ್ರೇ</translation>
     </message>

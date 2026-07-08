@@ -3,7 +3,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>התוסף %1 לא תואם למערכת.</translation>
     </message>
@@ -122,97 +122,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161" />
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>מודת אופנה</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162" />
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>מצב יעיל</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163" />
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>למעלה</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164" />
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>למטה</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165" />
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>שמאל</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166" />
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>ימין</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167" />
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>גדול</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168" />
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>בינוני</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169" />
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>קטן</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170" />
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>שמור על התצוגה</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171" />
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>שמור בסתר</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172" />
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>הסתרת חכמה</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216" />
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>מצב</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225" />
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>מקום</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232" />
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>גודל</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239" />
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>סטטוס</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243" />
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>פלאגינים</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173" />
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation>מערכת ניטור</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174" />
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation>חלון מפוצל</translation>
     </message>
@@ -434,7 +434,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>סל תוכנה</translation>
     </message>

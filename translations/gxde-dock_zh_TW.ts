@@ -3,7 +3,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>%1 外掛程式不相容此系統。</translation>
     </message>
@@ -122,97 +122,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161" />
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>流行 (Deepin) 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162" />
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>高效 (Windows) 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163" />
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>頂部</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164" />
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>底部</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165" />
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>左側</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166" />
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>右側</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167" />
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168" />
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169" />
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170" />
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>永遠顯示</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171" />
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>永遠隱藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172" />
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>智慧隱藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216" />
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225" />
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232" />
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>圖示</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239" />
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>狀態</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243" />
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>附加元件</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173" />
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation>系統監視器</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174" />
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation>合併圖標</translation>
     </message>
@@ -454,7 +454,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>系統匣</translation>
     </message>
