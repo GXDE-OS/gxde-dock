@@ -4,7 +4,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>Le plugin %1 n&apos;est pas compatible avec le système</translation>
     </message>
@@ -123,97 +123,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>Mode dock</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>Mode étendu </translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>Haut</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>Bas</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>Gauche</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>Droite</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>Grand</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>Moyen</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>Petit</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>Maintenir affiché</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>Maintenir caché</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>Masquer intelligemment</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>Mode</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>Emplacement</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>Status </translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>Extensions</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,7 +455,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85"/>
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>Zone de notification</translation>
     </message>

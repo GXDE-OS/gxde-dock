@@ -4,7 +4,7 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
         <source>The plugin %1 is not compatible with the system.</source>
         <translation>%1 প্লাগিনটি সিস্টেমের জন্যে উপযুক্ত নয়</translation>
     </message>
@@ -123,97 +123,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Fashion Mode</source>
         <translation>ফ্যাশন মোড</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Efficient Mode</source>
         <translation>দক্ষ মোড</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Top</source>
         <translation>শীর্ষ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Bottom</source>
         <translation>তলা</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>Left</source>
         <translation>বাম</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Right</source>
         <translation>ডান</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="168"/>
         <source>Large</source>
         <translation>বড়</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Medium</source>
         <translation>মধ্যম</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Small</source>
         <translation>ছোট</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Keep Shown</source>
         <translation>দেখিয়ে রাখুন</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Keep Hidden</source>
         <translation>লুকিয়ে রাখুন</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Smart Hide</source>
         <translation>স্মার্টভাবে লুকান</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
         <source>Mode</source>
         <translation>মোড</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Location</source>
         <translation>অবস্থান</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="233"/>
         <source>Size</source>
         <translation>সাইজ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="240"/>
         <source>Status</source>
         <translation>অবস্থা</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="244"/>
         <source>Plugins</source>
         <translation>প্লাগইন সমূহ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>System Monitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Window Split</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,7 +455,7 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85"/>
+        <location filename="../plugins/tray/trayplugin.cpp" line="86"/>
         <source>System Tray</source>
         <translation>সিস্টেম ট্রে</translation>
     </message>

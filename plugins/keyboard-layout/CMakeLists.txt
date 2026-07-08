@@ -10,7 +10,6 @@ find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus)
 pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 find_package(DFrameworkdbusQt6 REQUIRED)
-find_package(DFrameworkdbus REQUIRED)
 
 pkg_check_modules(QGSettings REQUIRED gsettings-qt6)
 

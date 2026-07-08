@@ -25,6 +25,7 @@
 #include <com_deepin_daemon_inputdevice_keyboard.h>
 
 using Keyboard = com::deepin::daemon::inputdevice::Keyboard;
+using KeyboardLayoutList = QMap<QString, QString>;
 
 class DBusAdaptors : public QDBusAbstractAdaptor
 {
