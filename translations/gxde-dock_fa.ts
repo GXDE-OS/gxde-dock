@@ -1,90 +1,89 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
+<?xml version='1.0' encoding='utf-8'?>
 <TS version="2.1" language="fa">
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation type="unfinished"></translation>
+        <translation>پلاگین %1 با سیستم سازگار نیست.</translation>
     </message>
 </context>
 <context>
     <name>ContainerItem</name>
     <message>
-        <location filename="../frame/item/containeritem.cpp" line="33"/>
+        <location filename="../frame/item/containeritem.cpp" line="33" />
         <source>Click to display hidden icon</source>
-        <translation type="unfinished"></translation>
+        <translation>کلیک کنید تا آیکون مخفی نمایش داده شود</translation>
     </message>
 </context>
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138" />
         <source>Add keyboard layout</source>
-        <translation type="unfinished"></translation>
+        <translation>افزودن طرح کلیدبورد</translation>
     </message>
 </context>
 <context>
     <name>DatetimePlugin</name>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43" />
         <source>Datetime</source>
-        <translation type="unfinished"></translation>
+        <translation>تاریخ و زمان</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154" />
         <source>12 Hour Time</source>
-        <translation type="unfinished"></translation>
+        <translation>۱۲ ساعت</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156" />
         <source>24 Hour Time</source>
-        <translation type="unfinished"></translation>
+        <translation>۲۴ ساعت</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162" />
         <source>Time Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیمات زمان</translation>
     </message>
 </context>
 <context>
     <name>DeviceItem</name>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="59"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="59" />
         <source>Enable network</source>
-        <translation type="unfinished"></translation>
+        <translation>فعال کردن شبکه</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="61"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="61" />
         <source>Disable network</source>
-        <translation type="unfinished"></translation>
+        <translation>شبکه را غیرفعال کنید</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="67"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="67" />
         <source>Network settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیمات شبکه</translation>
     </message>
 </context>
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90" />
         <source>Are you sure you want to empty %1 items?</source>
-        <translation type="unfinished"></translation>
+        <translation>آیا مطمئنید که می‌خواهید %1 آیتم را خالی کنید؟</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
         <source>Cancel</source>
         <translation>انصراف</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
         <source>Delete</source>
         <translation>حذف</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117" />
         <source>This action cannot be restored</source>
         <translation>این عملیات قابل بازگردانی نیست</translation>
     </message>
@@ -92,136 +91,136 @@
 <context>
     <name>DiskControlItem</name>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106"/>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106" />
         <source>Unknown device</source>
-        <translation type="unfinished"></translation>
+        <translation>جهاز ناشناخته</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112"/>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112" />
         <source>Unknown volume</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم ناشناخته</translation>
     </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40" />
         <source>Disk</source>
         <translation>دیسک</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90" />
         <source>Open</source>
         <translation>باز کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96" />
         <source>Unmount all</source>
-        <translation type="unfinished"></translation>
+        <translation>همه را از حالت متصل خارج کنید</translation>
     </message>
 </context>
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161"/>
+        <location filename="../frame/util/docksettings.cpp" line="161" />
         <source>Fashion Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>مد fashion</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="162" />
         <source>Efficient Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>حالت کارآمد</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="163" />
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>بالعلياء</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="164" />
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>پایین</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="165" />
         <source>Left</source>
         <translation>چپ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="166" />
         <source>Right</source>
         <translation>راست</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="167" />
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>بزرگ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="168" />
         <source>Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>متوسط</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="169" />
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation>کوچک</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="170" />
         <source>Keep Shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep Shown</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="171" />
         <source>Keep Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>پنهان نگه دارید</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="172" />
         <source>Smart Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>پنجره مخفی</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="216" />
         <source>Mode</source>
         <translation>حالت</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="225" />
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>مکان</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="232" />
         <source>Size</source>
         <translation>حجم</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="239" />
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="243" />
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>افزونه‌ها</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="173" />
         <source>System Monitor</source>
-        <translation type="unfinished"></translation>
+        <translation>سیستم ناظر</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="174" />
         <source>Window Split</source>
-        <translation type="unfinished"></translation>
+        <translation>پنجره تقسیم شده</translation>
     </message>
 </context>
 <context>
     <name>LauncherItem</name>
     <message>
-        <location filename="../frame/item/launcheritem.cpp" line="105"/>
+        <location filename="../frame/item/launcheritem.cpp" line="105" />
         <source>Launcher</source>
         <translation>اجرا کننده</translation>
     </message>
@@ -229,7 +228,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="49" />
         <source>Network</source>
         <translation>شبکه</translation>
     </message>
@@ -241,162 +240,162 @@
         <translation type="obsolete">منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48" />
+        <location filename="../plugins/notify/notifyplugin.cpp" line="64" />
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>آگاه سازید</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="113" />
         <source>Open Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation>مرکز کنترل باز شود</translation>
     </message>
 </context>
 <context>
     <name>OnboardPlugin</name>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="46"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="46" />
         <source>Virtual Keyboard</source>
-        <translation type="unfinished"></translation>
+        <translation>کلیدویار مجازی</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="101"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="101" />
         <source>Settings</source>
         <translation>تنظیمات</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="35" />
         <source>Onboard</source>
-        <translation type="unfinished"></translation>
+        <translation>در bordo</translation>
     </message>
 </context>
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="48" />
         <source>Power</source>
         <translation>منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="114" />
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیمات قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="311" />
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
-        <translation type="unfinished"></translation>
+        <translation>ظرفیت %1، %2 دقیقه باقی مانده، سلامت: %3٪</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="314" />
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
-        <translation type="unfinished"></translation>
+        <translation>ظرفیت %1، %2 ساعت %3 دقیقه باقی مانده، سلامت: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321" />
         <source>Charged %1, Health: %2%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 شارژ شده، سلامت: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="332" />
         <source>Charging %1, %2 min until full, health: %3%</source>
-        <translation type="unfinished"></translation>
+        <translation>شارژ %1، %2 دقیقه تا کامل، سلامت: %3%%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="335" />
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
-        <translation type="unfinished"></translation>
+        <translation>شارژ %1، %2 ساعت %3 دقیقه تا کامل شدن، سلامت: %4%%</translation>
     </message>
 </context>
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74" />
         <source>Power</source>
         <translation>منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123" />
         <source>Shut down</source>
         <translation>خاموش شدن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129" />
         <source>Restart</source>
         <translation>راه اندازی مجدد</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136" />
         <source>Suspend</source>
         <translation>معلق کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143" />
         <source>Hibernate</source>
-        <translation type="unfinished"></translation>
+        <translation>هیبرنت</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151" />
         <source>Lock</source>
         <translation>قفل کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157" />
         <source>Log out</source>
         <translation>خارج شدن از حساب کاربری</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165" />
         <source>Switch account</source>
-        <translation type="unfinished"></translation>
+        <translation>شخصیت خود را تغییر دهید</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173" />
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیمات قدرت</translation>
     </message>
 </context>
 <context>
     <name>SoundApplet</name>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="54"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="54" />
         <source>Device</source>
         <translation>دستگاه</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="72"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="72" />
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>درخواست</translation>
     </message>
 </context>
 <context>
     <name>SoundItem</name>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="78"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="78" />
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>بازگشت صدا</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="80"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="80" />
         <source>Mute</source>
         <translation>بی صدا</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="86"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="86" />
         <source>Audio Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیمات صدا</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="207"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="207" />
         <source>Current Volume %1</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم فعلی %1</translation>
     </message>
 </context>
 <context>
     <name>SoundPlugin</name>
     <message>
-        <location filename="../plugins/sound/soundplugin.cpp" line="40"/>
+        <location filename="../plugins/sound/soundplugin.cpp" line="40" />
         <source>Sound</source>
         <translation>صدا</translation>
     </message>
@@ -404,30 +403,30 @@
 <context>
     <name>TrashPlugin</name>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="52"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="52" />
         <source>Trash</source>
         <translation>زباله</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="90"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="90" />
         <source>Trash - %1 file</source>
-        <translation type="unfinished"></translation>
+        <translation>زباله - %1 فایل</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="92"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="92" />
         <source>Trash - %1 files</source>
-        <translation type="unfinished"></translation>
+        <translation>زباله - %1 فایل</translation>
     </message>
 </context>
 <context>
     <name>TrashWidget</name>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="70"/>
+        <location filename="../plugins/trash/trashwidget.cpp" line="70" />
         <source>Open</source>
         <translation>باز کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="77"/>
+        <location filename="../plugins/trash/trashwidget.cpp" line="77" />
         <source>Empty</source>
         <translation>خالی</translation>
     </message>
@@ -435,92 +434,92 @@
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85"/>
+        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>نوار سیستم</translation>
     </message>
 </context>
 <context>
     <name>WiredItem</name>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="47"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="47" />
         <source>Unknown</source>
         <translation>ناشناخته</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="199"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="199" />
         <source>Wired connection: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>اتصال سیم‌دار: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessItem</name>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="49"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="49" />
         <source>No Network</source>
-        <translation type="unfinished"></translation>
+        <translation>بدون شبکه</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="275" />
         <source>Wireless Connection: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>اتصال بی‌سیم: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessList</name>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159"/>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159" />
         <source>Wireless Network</source>
         <translation>شبکه بیسیم</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161"/>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161" />
         <source>Wireless Network %1</source>
-        <translation type="unfinished"></translation>
+        <translation>شبکه بی‌سیم %1</translation>
     </message>
 </context>
 <context>
     <name>pluginSettingDialog</name>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17" />
         <source>系统监控插件设置</source>
-        <translation type="unfinished"></translation>
+        <translation>سیستم نگرش گنجاندن تنظیمات</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41" />
         <source>只显示网速</source>
-        <translation type="unfinished"></translation>
+        <translation>نشان دادن سرعت اینترنت</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48" />
         <source>只显示CPU、内存</source>
-        <translation type="unfinished"></translation>
+        <translation>پردازنده و حافظه</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55" />
         <source>显示CP&amp;U、内存和网速</source>
-        <translation type="unfinished"></translation>
+        <translation>نمایش CP&amp;U، حافظه و سرعت اینترنت</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79" />
         <source>行高：</source>
-        <translation type="unfinished"></translation>
+        <translation>فاصله خط</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89" />
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26" />
         <source>显示内容设置</source>
-        <translation type="unfinished"></translation>
+        <translation>تنظیم نمایش محتوا</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62" />
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
-        <translation type="unfinished"></translation>
+        <translation>CPU، حافظه، سرعت شبکه، باتری و دما CPU</translation>
     </message>
 </context>
 </TS>

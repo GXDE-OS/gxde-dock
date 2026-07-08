@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
+<?xml version='1.0' encoding='utf-8'?>
 <TS version="2.1" language="kn_IN">
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="185" />
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation type="unfinished"></translation>
+        <translation>ಪ್ಲಗಿನ್ %1 ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ.</translation>
     </message>
 </context>
 <context>
     <name>ContainerItem</name>
     <message>
-        <location filename="../frame/item/containeritem.cpp" line="33"/>
+        <location filename="../frame/item/containeritem.cpp" line="33" />
         <source>Click to display hidden icon</source>
         <translation>ಗುಪ್ತ ಐಕಾನ್ಗಳನ್ನು ತೋರಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ</translation>
     </message>
@@ -20,30 +19,30 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138" />
         <source>Add keyboard layout</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕೀಬೋರ್ಡ ಲೇಔಟ್ ಸೇರಿಸಿ</translation>
     </message>
 </context>
 <context>
     <name>DatetimePlugin</name>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43" />
         <source>Datetime</source>
         <translation>ದಿನ-ಸಮಯ</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154" />
         <source>12 Hour Time</source>
         <translation>12 ಘಂಟೆ ಸಮಯ</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156" />
         <source>24 Hour Time</source>
         <translation>24 ಘಂಟೆ ಸಮಯ</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162" />
         <source>Time Settings</source>
         <translation>ಸಮಯದ ಸೆಟ್ಟಿಂಗ್ ಗಳು</translation>
     </message>
@@ -51,17 +50,17 @@
 <context>
     <name>DeviceItem</name>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="59"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="59" />
         <source>Enable network</source>
         <translation>ಜಾಲವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="61"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="61" />
         <source>Disable network</source>
         <translation>ಜಾಲವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="67"/>
+        <location filename="../plugins/network/item/deviceitem.cpp" line="67" />
         <source>Network settings</source>
         <translation>ಜಾಲ ಸೆಟ್ಟಿಂಗ್ಗಳು </translation>
     </message>
@@ -69,35 +68,35 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90" />
         <source>Are you sure you want to empty %1 items?</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೀವು %1 ವಸ್ತುಗಳನ್ನು ಖಾಲಿ ಮಾಡಲು ಖಚಿತವಾಗಿದ್ದೀರಿ?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ರದ್ದು ಮಾಡು</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ಹೆಚ್</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117" />
         <source>This action cannot be restored</source>
-        <translation type="unfinished"></translation>
+        <translation>ಈ ಕ್ರಿಯೆಯನ್ನು ಪುನಃಸ್ಥಾಪಿಸಲಾಗುವುದಿಲ್ಲ</translation>
     </message>
 </context>
 <context>
     <name>DiskControlItem</name>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106"/>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106" />
         <source>Unknown device</source>
         <translation>ಅಪರಿಚಿತ ಸಾಧನ</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112"/>
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112" />
         <source>Unknown volume</source>
         <translation>ಅಪರಿಚಿತ ಸಂಪುಟ</translation>
     </message>
@@ -105,418 +104,419 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40" />
         <source>Disk</source>
         <translation>ಡಿಸ್ಕ್</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90" />
         <source>Open</source>
         <translation>ತೆರೆಯಿರಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96"/>
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96" />
         <source>Unmount all</source>
-        <translation type="unfinished"></translation>
+        <translation>ಎಲ್ಲಾ ಅಳಿಸು</translation>
     </message>
 </context>
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161"/>
+        <location filename="../frame/util/docksettings.cpp" line="161" />
         <source>Fashion Mode</source>
         <translation>ಅಲಂಕೃತ ರೂಪ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="162" />
         <source>Efficient Mode</source>
         <translation>ದಕ್ಷ ರೂಪ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="163" />
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>ಮೇಲಿನ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="164" />
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೀಚು</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="165" />
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>ಬಲ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="166" />
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸರಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="167" />
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>ಬೃಹತ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="168" />
         <source>Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>ಮಾಧ್ಯಮ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="169" />
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation>ಚಿಕ್ಕ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="170" />
         <source>Keep Shown</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಾಣಿಸಲಾದವನ್ನು ಉಳಿಸು</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="171" />
         <source>Keep Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>ಗೋಪ್ಯವಾಗಿ ಇರಿಸಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="172" />
         <source>Smart Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸ್ಮಾರ್ಟ್ ಹೈಡ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="216" />
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ಮೋಡ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="225" />
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸ್ಥಾನ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="232" />
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ಗಾತ್ರ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="239" />
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸ್ಥಿತಿ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="243" />
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>ಪ್ಲಗ್-ಇನ್ಸ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="173" />
         <source>System Monitor</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸಿಸ್ಟಮ್ ಮಾನಿಟರ್</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="174" />
         <source>Window Split</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕನಕಾಲು ವಿಭಜನೆ</translation>
     </message>
 </context>
 <context>
     <name>LauncherItem</name>
     <message>
-        <location filename="../frame/item/launcheritem.cpp" line="105"/>
+        <location filename="../frame/item/launcheritem.cpp" line="105" />
         <source>Launcher</source>
-        <translation type="unfinished"></translation>
+        <translation>ಲಾಂಚರ್</translation>
     </message>
 </context>
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="49" />
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೆಟ್‌ವರ್ಕ್</translation>
     </message>
 </context>
 <context>
     <name>NotifyPlugin</name>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48" />
+        <location filename="../plugins/notify/notifyplugin.cpp" line="64" />
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>ಅವಕಾಶ</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="113" />
         <source>Open Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಂಟ್ರೋಲ್ ಸೆಂಟರ್ ತೆರೆದುಕೊಳ್ಳಿ</translation>
     </message>
 </context>
 <context>
     <name>OnboardPlugin</name>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="46"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="46" />
         <source>Virtual Keyboard</source>
-        <translation type="unfinished"></translation>
+        <translation>ವರ್ಚುಯಲ್ ಕೀಬೋರ್ಡ್</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="101"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="101" />
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸೆಟ್ಟಿಂಗ್ಸ್</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="35" />
         <source>Onboard</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೌಕೆಯ ಮೇಲೆ</translation>
     </message>
 </context>
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="48" />
         <source>Power</source>
-        <translation type="unfinished"></translation>
+        <translation>ಶಕ್ತಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="114" />
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ವಿದ್ಯುತ್ ಸೆಟ್ಟಿಂಗ್ಸ್</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="311" />
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕ್ಯಾಪಾಸಿಟಿ %1, %2 ನಿಮಿಷಗಳು ಉಳಿದಿವೆ, ಆರೋಗ್ಯ: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="314" />
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಪಾಸಿಟಿ %1, %2 ಗಂಟೆ %3 ನಿಮಿಷ ಉಳಿದಿದೆ, ಆರೋಗ್ಯ: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321" />
         <source>Charged %1, Health: %2%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ರೂಪಾಯಿ ಚಾರ್ಜ್, ಆರೋಗ್ಯ: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="332" />
         <source>Charging %1, %2 min until full, health: %3%</source>
-        <translation type="unfinished"></translation>
+        <translation>ಚಾರ್ಜಿಂಗ್ %1, %2 ನಿಮಿಷಗಳವರೆಗೆ ಪೂರ್ಣ, ಆರೋಗ್ಯ: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="335" />
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
-        <translation type="unfinished"></translation>
+        <translation>ಚಾರ್ಜಿಂಗ್ %1, %2 ಗಂಟೆ %3 ನಿಮಿಷಗಳು ಪೂರ್ಣವಾಗುವವರೆಗೆ, ಆರೋಗ್ಯ: %4%</translation>
     </message>
 </context>
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74" />
         <source>Power</source>
-        <translation type="unfinished"></translation>
+        <translation>ಶಕ್ತಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123" />
         <source>Shut down</source>
-        <translation type="unfinished"></translation>
+        <translation>ಬಂದುಹಾಕು</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129" />
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>ಮರುಪ್ರಾರಂಭಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136" />
         <source>Suspend</source>
-        <translation type="unfinished"></translation>
+        <translation>ನಿಲ್ಲಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143" />
         <source>Hibernate</source>
-        <translation type="unfinished"></translation>
+        <translation>ಹೈಬರ್ನೇಟ್</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151" />
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕೀಲಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157" />
         <source>Log out</source>
-        <translation type="unfinished"></translation>
+        <translation>ಲಾಗ್ ಔಟ್</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165" />
         <source>Switch account</source>
-        <translation type="unfinished"></translation>
+        <translation>ಅಕೌಂಟ್ ಬದಲಾಯಿಸಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173" />
         <source>Power settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ವಿದ್ಯುತ್ ಸೆಟ್ಟಿಂಗ್ಸ್</translation>
     </message>
 </context>
 <context>
     <name>SoundApplet</name>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="54"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="54" />
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>ಉಪಕರಣ</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="72"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="72" />
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>ಅನ್ವಯ</translation>
     </message>
 </context>
 <context>
     <name>SoundItem</name>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="78"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="78" />
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>ಅನ್ಮ್ಯೂಟ್</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="80"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="80" />
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ಮೌನ</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="86"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="86" />
         <source>Audio Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ಆಡಿಯೋ ಸೆಟ್ಟಿಂಗ್ಸ್</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="207"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="207" />
         <source>Current Volume %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ವರ್ತಮಾನದ ವಾಲ್ಯೂಮ್ %1</translation>
     </message>
 </context>
 <context>
     <name>SoundPlugin</name>
     <message>
-        <location filename="../plugins/sound/soundplugin.cpp" line="40"/>
+        <location filename="../plugins/sound/soundplugin.cpp" line="40" />
         <source>Sound</source>
-        <translation type="unfinished"></translation>
+        <translation>ಧ್ವನಿ</translation>
     </message>
 </context>
 <context>
     <name>TrashPlugin</name>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="52"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="52" />
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಚರ</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="90"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="90" />
         <source>Trash - %1 file</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಚರ - %1 ಫೈಲ್</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="92"/>
+        <location filename="../plugins/trash/trashplugin.cpp" line="92" />
         <source>Trash - %1 files</source>
-        <translation type="unfinished"></translation>
+        <translation>ಕಚರ - %1 ಫೈಲುಗಳು</translation>
     </message>
 </context>
 <context>
     <name>TrashWidget</name>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="70"/>
+        <location filename="../plugins/trash/trashwidget.cpp" line="70" />
         <source>Open</source>
         <translation>ತೆರೆಯಿರಿ</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="77"/>
+        <location filename="../plugins/trash/trashwidget.cpp" line="77" />
         <source>Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>ಖಾಲಿ</translation>
     </message>
 </context>
 <context>
     <name>TrayPlugin</name>
     <message>
-        <location filename="../plugins/tray/trayplugin.cpp" line="85"/>
+        <location filename="../plugins/tray/trayplugin.cpp" line="85" />
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸಿಸ್ಟಮ್ ಟ್ರೇ</translation>
     </message>
 </context>
 <context>
     <name>WiredItem</name>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="47"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="47" />
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>ಅಜ್ಞಾತ</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="199"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="199" />
         <source>Wired connection: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ವೈಯರ್ ಕನೆಕ್ಷನ್: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessItem</name>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="49"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="49" />
         <source>No Network</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೋ ನೆಟ್‌ವರ್ಕ್</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="275" />
         <source>Wireless Connection: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ವೈರ್ಲೆಸ್ ಸಂಪರ್ಕ: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessList</name>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159"/>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159" />
         <source>Wireless Network</source>
-        <translation type="unfinished"></translation>
+        <translation>ವೈರ್ಲೆಸ್ ನೆಟ್‌ವರ್ಕ್</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161"/>
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161" />
         <source>Wireless Network %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ವೈರ್ಲೆಸ್ ನೆಟ್‌ವರ್ಕ್ %1</translation>
     </message>
 </context>
 <context>
     <name>pluginSettingDialog</name>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17" />
         <source>系统监控插件设置</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸಿಸ್ಟಮ್ ಮಾನಿಟರಿಂಗ್ ಪ್ಲಗಿನ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41" />
         <source>只显示网速</source>
-        <translation type="unfinished"></translation>
+        <translation>ನೆಟ್ ವೇಗವನ್ನು ಮಾತ್ರ ಪ್ರದರ್ಶಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48" />
         <source>只显示CPU、内存</source>
-        <translation type="unfinished"></translation>
+        <translation>ಸಿಬ್ಬಂದಿ ಮತ್ತು ಮೆಮೊರಿ ಮಾತ್ರ ಪ್ರದರ್ಶಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55" />
         <source>显示CP&amp;U、内存和网速</source>
-        <translation type="unfinished"></translation>
+        <translation>CP&amp;U, ಮೆಮೊರಿ ಮತ್ತು ನೆಟ್‌ಸ್ಪೀಡ್‌ನ್ನು ಪ್ರದರ್ಶಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79" />
         <source>行高：</source>
-        <translation type="unfinished"></translation>
+        <translation>ರೇಖೆ ಎತ್ತರ:</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89" />
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26" />
         <source>显示内容设置</source>
-        <translation type="unfinished"></translation>
+        <translation>ವಿಷಯವನ್ನು ಪ್ರದರ್ಶಿಸು</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62" />
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
-        <translation type="unfinished"></translation>
+        <translation>CPU, ಮೆಮೊರಿ, ನೆಟ್‌ವರ್ಕ್‌ ವೇಗ,
+ಬ್ಯಾಟರಿ ಮತ್ತು CPU ತಾಪಮಾನವನ್ನು ಪ್ರದರ್ಶಿಸು</translation>
     </message>
 </context>
 </TS>

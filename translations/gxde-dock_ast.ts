@@ -1,16 +1,17 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ast" version="2.1">
+<?xml version='1.0' encoding='utf-8'?>
+<TS language="ast" version="2.1">
 <context>
     <name>AbstractPluginsController</name>
     <message>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation type="unfinished"/>
+        <translation>El plugin %1 nun ye compatible col sistema.</translation>
     </message>
 </context>
 <context>
     <name>ContainerItem</name>
     <message>
         <source>Click to display hidden icon</source>
-        <translation>Primi p&apos;amosar l&apos;iconu anubríu</translation>
+        <translation>Primi p'amosar l'iconu anubríu</translation>
     </message>
 </context>
 <context>
@@ -36,7 +37,7 @@
     </message>
     <message>
         <source>Time Settings</source>
-        <translation>Axustes d&apos;hora</translation>
+        <translation>Axustes d'hora</translation>
     </message>
 </context>
 <context>
@@ -58,7 +59,7 @@
     <name>DialogManager</name>
     <message>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>¿Tas seguru de que quier esbarcar %1 elementos?</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -188,7 +189,7 @@
     <name>OnboardPlugin</name>
     <message>
         <source>Virtual Keyboard</source>
-        <translation type="unfinished"/>
+        <translation>Tecláu virtual</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -203,7 +204,7 @@
     </message>
     <message>
         <source>Power settings</source>
-        <translation>Axustes d&apos;enerxía</translation>
+        <translation>Axustes d'enerxía</translation>
     </message>
     <message>
         <source>Charged %1</source>
@@ -211,19 +212,19 @@
     </message>
     <message>
         <source>Capacity %1, %2 min remaining</source>
-        <translation type="unfinished"/>
+        <translation>Capacidad %1, %2 min restantes</translation>
     </message>
     <message>
         <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation type="unfinished"/>
+        <translation>Capacidad %1, %2 h %3 min restantes</translation>
     </message>
     <message>
         <source>Charging %1, %2 min until full</source>
-        <translation type="unfinished"/>
+        <translation>Cargando %1, %2 min hasta completu</translation>
     </message>
     <message>
         <source>Charging %1, %2 hr %3 min until full</source>
-        <translation type="unfinished"/>
+        <translation>Cargando %1, %2 hores %3 minutos hasta completu</translation>
     </message>
 </context>
 <context>
@@ -246,7 +247,7 @@
     </message>
     <message>
         <source>Hibernate</source>
-        <translation type="unfinished"/>
+        <translation>Despertar</translation>
     </message>
     <message>
         <source>Lock</source>
@@ -262,7 +263,7 @@
     </message>
     <message>
         <source>Power settings</source>
-        <translation>Axustes d&apos;enerxía</translation>
+        <translation>Axustes d'enerxía</translation>
     </message>
 </context>
 <context>
@@ -288,7 +289,7 @@
     </message>
     <message>
         <source>Audio Settings</source>
-        <translation>Axustes d&apos;audiu</translation>
+        <translation>Axustes d'audiu</translation>
     </message>
     <message>
         <source>Current Volume %1</source>
