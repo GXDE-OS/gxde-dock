@@ -19,7 +19,7 @@ pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 find_package(DFrameworkdbusQt6 REQUIRED)
 
 pkg_check_modules(XCB_LIBS REQUIRED xcb-ewmh xcb xcb-image xcb-composite xtst xcb-icccm)
-pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils)
+pkg_check_modules(DDE-Network-Utils REQUIRED gxde-network-utils-qt6)
 pkg_check_modules(QGSettings REQUIRED gsettings-qt6)
 
 add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
