@@ -22,7 +22,7 @@ Build-Depends: debhelper (>= 8.0.0),
  cmake,
  libgxde-network-utils-qt6-dev,
  libdframeworkdbus-qt6-dev,
- liblayershellqtinterface6,
+ liblayershellqtinterface-dev,
  libwayland-dev,
  clang [mips64el]
 Standards-Version: 3.9.8
