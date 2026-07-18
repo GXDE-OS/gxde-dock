@@ -132,8 +132,7 @@ void WiredItem::reloadIcon()
             const quint64 index = QDateTime::currentMSecsSinceEpoch() / 200;
             const int num = (index % 5) + 1;
             m_icon = QIcon(QString(":/wired/resources/wired/network-wired-symbolic-connecting%1.svg").arg(num))
-                    .pixmap(iconSize * ratio, iconSize * ratio);
-            m_icon.setDevicePixelRatio(ratio);
+                    .pixmap(iconSize, iconSize);
             update();
             return;
         }
@@ -165,8 +164,7 @@ void WiredItem::reloadIcon()
     if (displayMode == Dock::Efficient)
         iconName.append("-symbolic");
 
-    m_icon = QIcon::fromTheme(iconName).pixmap(iconSize * ratio, iconSize * ratio);
-    m_icon.setDevicePixelRatio(ratio);
+    m_icon = QIcon::fromTheme(iconName).pixmap(iconSize, iconSize);
     update();
 }
 

@@ -30,10 +30,8 @@ DWIDGET_USE_NAMESPACE
 
 const QPixmap getIconFromTheme(const QString &name, const QSize &size, const qreal ratio)
 {
-    QPixmap ret = QIcon::fromTheme(name, QIcon::fromTheme("application-x-desktop")).pixmap(size * ratio);
-    ret.setDevicePixelRatio(ratio);
-
-    return ret;
+    // Qt6: QIcon::pixmap() already returns a DPR-aware pixmap
+    return QIcon::fromTheme(name, QIcon::fromTheme("application-x-desktop")).pixmap(size);
 }
 
 SinkInputWidget::SinkInputWidget(const QString &inputPath, QWidget *parent)

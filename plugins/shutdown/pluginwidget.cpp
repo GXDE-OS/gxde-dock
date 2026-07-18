@@ -61,11 +61,7 @@ void PluginWidget::paintEvent(QPaintEvent *e)
 
 const QPixmap PluginWidget::loadSvg(const QString &fileName, const QSize &size) const
 {
-    const auto ratio = devicePixelRatioF();
-
-    QPixmap pixmap;
-    pixmap = QIcon::fromTheme(fileName).pixmap(size * ratio);
-    pixmap.setDevicePixelRatio(ratio);
-
-    return pixmap;
+    // Qt6: QIcon::pixmap() already returns a DPR-aware pixmap,
+    // so we pass the logical size directly.
+    return QIcon::fromTheme(fileName).pixmap(size);
 }

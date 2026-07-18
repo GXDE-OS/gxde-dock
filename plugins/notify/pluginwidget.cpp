@@ -62,12 +62,5 @@ void PluginWidget::paintEvent(QPaintEvent *e)
 
 const QPixmap PluginWidget::loadSvg(const QString &fileName, const QSize &size) const
 {
-    const auto ratio = devicePixelRatioF();
-
-    QPixmap pixmap;
-    //pixmap = QIcon::fromTheme(fileName).pixmap(size * ratio);
-    pixmap = QIcon(fileName).pixmap(size * ratio);
-    pixmap.setDevicePixelRatio(ratio);
-
-    return pixmap;
+    return QIcon(fileName).pixmap(size);
 }

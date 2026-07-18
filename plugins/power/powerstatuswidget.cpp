@@ -65,17 +65,16 @@ void PowerStatusWidget::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
 
     const QPixmap icon = getBatteryIcon();
-    const auto ratio = devicePixelRatioF();
 
     QPainter painter(this);
     const QRectF &rf = QRectF(rect());
     const QRectF &rfp = QRectF(icon.rect());
     
     // 绘制图标，调整位置为左侧
-    QPointF iconPos = rf.center() - rfp.center() / ratio;
+    QPointF iconPos = rf.center() - rfp.center() / icon.devicePixelRatioF();
     // 使时尚模式下电量图标在中间
     if (isEfficientMode()) {
-        iconPos.setX(5 * ratio); // 左侧留出一些空间，考虑设备像素比
+        iconPos.setX(5);
     }
     painter.drawPixmap(iconPos, icon);
 
@@ -125,9 +124,5 @@ QPixmap PowerStatusWidget::getBatteryIcon()
     const QString iconStr = QString("battery-%1-%2")
                                 .arg(percentageStr)
                                 .arg(plugged ? "plugged-symbolic" : "symbolic");
-    const auto ratio = devicePixelRatioF();
-    QPixmap pix = QIcon::fromTheme(iconStr).pixmap(QSize(16, 16) * ratio);
-    pix.setDevicePixelRatio(ratio);
-
-    return pix;
+    return QIcon::fromTheme(iconStr).pixmap(QSize(16, 16));
 }
