@@ -22,6 +22,7 @@
 #include "appsnapshot.h"
 #include "../../util/waylandhelper.h"
 #include "previewcontainer.h"
+#include "../../dbus/dockdbusnames.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -35,6 +36,11 @@
 #include <QTimer>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QDir>
+#include <QFile>
+#include <QStandardPaths>
 #include <QGuiApplication>
 
 // QX11Info is NOT avaliable in Qt6, using own helper...
@@ -65,6 +71,7 @@ static bool windowPreviewsAvailable(DWindowManagerHelper *helper)
 AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
     : QWidget(parent)
     , m_wid(wid)
+    , m_waylandCapturePending(false)
     , m_title(new TipsWidget)
     , m_waitLeaveTimer(new QTimer(this))
     , m_closeBtn2D(new DImageButton)
@@ -98,9 +105,9 @@ void AppSnapshot::closeWindow() const
 {
     if (Wayland::isWaylandSession()) {
         QDBusMessage message = QDBusMessage::createMethodCall(
-            QStringLiteral("com.deepin.dde.daemon.Dock"),
-            QStringLiteral("/com/deepin/dde/daemon/Dock"),
-            QStringLiteral("com.deepin.dde.daemon.Dock"),
+            dockDBusService(),
+            dockDBusManagerPath(),
+            QString::fromLatin1(dockDBusManagerInterface()),
             QStringLiteral("CloseWindow"));
         message << quint32(m_wid);
         QDBusConnection::sessionBus().asyncCall(message);
@@ -147,57 +154,78 @@ void AppSnapshot::dragEnterEvent(QDragEnterEvent *e)
         emit entered(m_wid);
 }
 
-bool AppSnapshot::fetchWaylandSnapshot()
-{
+// Getting screenshot from KYWC/gxde-wlcom
+void AppSnapshot::fetchWaylandSnapshot() {
+    if (m_waylandCapturePending) {
+        return;
+    }
+
+    const QString dir = QStringLiteral("%1/gxde-dock")
+        .arg(QStandardPaths::writableLocation(
+            QStandardPaths::RuntimeLocation));
+    if (!QDir().mkpath(dir)) {
+        qWarning() << "(Dock) Snapshot: Failed to create preview dir" << dir;
+        m_title->setVisible(true);
+        return;
+    }
+
+    const QString path = QStringLiteral("%1/preview-%2.png").arg(dir)
+        .arg(quint32(m_wid));
+
     QDBusMessage message = QDBusMessage::createMethodCall(
-        QStringLiteral("com.deepin.dde.daemon.Dock"),
-        QStringLiteral("/com/deepin/dde/daemon/Dock"),
-        QStringLiteral("com.deepin.dde.daemon.Dock"),
-        QStringLiteral("GetWindowSnapshot"));
-    message << quint32(m_wid);
+        dockDBusService(),
+        dockDBusManagerPath(),
+        QString::fromLatin1(dockDBusManagerInterface()),
+        QStringLiteral("CaptureWindow"));
+    message << quint32(m_wid) << path;
 
-    const QDBusMessage reply = QDBusConnection::sessionBus().call(
-        message, QDBus::Block, 2000);
-    if (reply.type() == QDBusMessage::ErrorMessage
-            || reply.arguments().size() != 5) {
-        qWarning() << "Failed to capture Wayland window" << m_wid
-                   << reply.errorMessage();
-        m_title->setVisible(true);
-        return false;
-    }
+    m_waylandCapturePending = true;
 
-    const QByteArray pixels = reply.arguments().at(0).toByteArray();
-    const quint32 pixelFormat = reply.arguments().at(1).toUInt();
-    const int width = int(reply.arguments().at(2).toUInt());
-    const int height = int(reply.arguments().at(3).toUInt());
-    const int stride = int(reply.arguments().at(4).toUInt());
-    if (pixels.isEmpty() || width <= 0 || height <= 0
-            || stride < width * 4 || pixels.size() < stride * height) {
-        m_title->setVisible(true);
-        return false;
-    }
+    auto* watcher = new QDBusPendingCallWatcher(
+        QDBusConnection::sessionBus().asyncCall(message), this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this,
+            [this, path](QDBusPendingCallWatcher *w) {
+        w->deleteLater();
+        m_waylandCapturePending = false;
 
-    // DRM_FORMAT_ARGB8888 / XRGB8888.
-    constexpr quint32 drmFormatArgb8888 = 0x34325241;
-    constexpr quint32 drmFormatXrgb8888 = 0x34325258;
-    QImage::Format imageFormat;
-    if (pixelFormat == drmFormatArgb8888) {
-        imageFormat = QImage::Format_ARGB32;
-    } else if (pixelFormat == drmFormatXrgb8888) {
-        imageFormat = QImage::Format_RGB32;
-    } else {
-        qWarning() << "Unsupported Wayland capture format"
-            << Qt::hex << pixelFormat;
-        m_title->setVisible(true);
-        return false;
-    }
+        const QDBusPendingReply<bool> reply = *w;
+        if (reply.isError() || !reply.value()) {
+            qWarning() << "(Dock) Snapshot: Failed to capture Wayland window"
+                << m_wid << reply.error().message();
+            m_title->setVisible(true);
+            return;
+        }
 
-    const QImage image(reinterpret_cast<const uchar *>(pixels.constData()),
-        width, height, stride, imageFormat);
-    m_snapshot = image.copy();
+        QImage image;
+        const bool loaded = image.load(path);
+        QFile::remove(path);
+        if (!loaded || image.isNull()) {
+            qWarning() << "(Dock) Snapshot: Failed to load window capture"
+                << path;
+            m_title->setVisible(true);
+            return;
+        }
+
+        applyWaylandSnapshot(image);
+    });
+}
+
+void AppSnapshot::applyWaylandSnapshot(const QImage& image) {
+    m_snapshot = image;
     m_snapshotSrcRect = m_snapshot.rect();
     m_title->setVisible(false);
-    return !m_snapshot.isNull();
+
+    QSizeF size(rect().marginsRemoved(QMargins(8, 8, 8, 8)).size());
+    const auto ratio = devicePixelRatioF();
+    size = m_snapshotSrcRect.size().scaled(size * ratio, Qt::KeepAspectRatio);
+    const qreal scale = qreal(size.width()) / m_snapshotSrcRect.width();
+    m_snapshot = m_snapshot.scaled(
+        qRound(m_snapshot.width() * scale),
+        qRound(m_snapshot.height() * scale), Qt::IgnoreAspectRatio,
+        Qt::SmoothTransformation);
+    m_snapshotSrcRect = QRectF(QPointF(0, 0), size);
+    m_snapshot.setDevicePixelRatio(ratio);
+    update();
 }
 
 void AppSnapshot::fetchSnapshot()
@@ -206,22 +234,7 @@ void AppSnapshot::fetchSnapshot()
         return;
 
     if (Wayland::isWaylandSession()) {
-        if (!fetchWaylandSnapshot()) {
-            return;
-        }
-
-        QSizeF size(rect().marginsRemoved(QMargins(8, 8, 8, 8)).size());
-        const auto ratio = devicePixelRatioF();
-        size = m_snapshotSrcRect.size().scaled(size * ratio,
-            Qt::KeepAspectRatio);
-        const qreal scale = qreal(size.width()) / m_snapshotSrcRect.width();
-        m_snapshot = m_snapshot.scaled(
-            qRound(m_snapshot.width() * scale),
-            qRound(m_snapshot.height() * scale), Qt::IgnoreAspectRatio,
-            Qt::SmoothTransformation);
-        m_snapshotSrcRect = QRectF(QPointF(0, 0), size);
-        m_snapshot.setDevicePixelRatio(ratio);
-        update();
+        fetchWaylandSnapshot();
         return;
     }
 

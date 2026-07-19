@@ -33,9 +33,9 @@
 #include <QGraphicsItem>
 #include <QGraphicsItemAnimation>
 
-#include <com_deepin_dde_daemon_dock_entry.h>
+#include "dbus/dockentryinterface.h"
 
-using DockEntryInter = com::deepin::dde::daemon::dock::Entry;
+using DockEntryInter = DockEntryInterface;
 
 class AppItem : public DockItem
 {

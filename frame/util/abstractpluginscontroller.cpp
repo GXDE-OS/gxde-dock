@@ -24,6 +24,7 @@
 #include "DNotifySender"
 
 #include "waylandhelper.h"
+#include "dbus/dockdbusnames.h"
 #include <QDebug>
 #include <QDBusServiceWatcher>
 #include <QDir>
@@ -38,7 +39,7 @@ static const QStringList CompatiblePluginApiList {
 AbstractPluginsController::AbstractPluginsController(QObject *parent)
     : QObject(parent)
     , m_dbusDaemonInterface(QDBusConnection::sessionBus().interface())
-    , m_dockDaemonInter(new DockDaemonInter("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
+    , m_dockDaemonInter(new DockDaemonInter(dockDBusService(), dockDBusManagerPath(), QDBusConnection::sessionBus(), this))
 {
     qApp->installEventFilter(this);
 

@@ -22,6 +22,8 @@
 #ifndef DOCKITEMCONTROLLER_H
 #define DOCKITEMCONTROLLER_H
 
+#include <QObject>
+
 #include "dockpluginscontroller.h"
 #include "pluginsiteminterface.h"
 #include "item/dockitem.h"
@@ -29,12 +31,9 @@
 #include "item/appitem.h"
 #include "item/placeholderitem.h"
 #include "item/containeritem.h"
+#include "dbus/dockdaemoninterface.h"
 
-#include <com_deepin_dde_daemon_dock.h>
-
-#include <QObject>
-
-using DBusDock = com::deepin::dde::daemon::Dock;
+using DBusDock = DockDaemonInterface;
 
 class DockItemController : public QObject
 {

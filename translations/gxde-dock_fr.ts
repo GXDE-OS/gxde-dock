@@ -1,17 +1,18 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
 <TS version="2.1" language="fr">
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="188"/>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation>Le plugin %1 n'est pas compatible avec le système</translation>
+        <translation>Le plugin %1 n&apos;est pas compatible avec le système</translation>
     </message>
 </context>
 <context>
     <name>ContainerItem</name>
     <message>
-        <location filename="../frame/item/containeritem.cpp" line="33" />
+        <location filename="../frame/item/containeritem.cpp" line="33"/>
         <source>Click to display hidden icon</source>
         <translation>Cliquer pour afficher les icônes cachés</translation>
     </message>
@@ -19,7 +20,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138" />
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
         <source>Add keyboard layout</source>
         <translation>Ajouter une disposition de clavier</translation>
     </message>
@@ -27,40 +28,40 @@
 <context>
     <name>DatetimePlugin</name>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43" />
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="43"/>
         <source>Datetime</source>
         <translation>Date et heure</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154" />
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154"/>
         <source>12 Hour Time</source>
         <translation>12 Heures</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156" />
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156"/>
         <source>24 Hour Time</source>
         <translation>24 Heures</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162" />
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162"/>
         <source>Time Settings</source>
-        <translation>Réglages de l'heure</translation>
+        <translation>Réglages de l&apos;heure</translation>
     </message>
 </context>
 <context>
     <name>DeviceItem</name>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="59" />
+        <location filename="../plugins/network/item/deviceitem.cpp" line="59"/>
         <source>Enable network</source>
         <translation>Activer le réseau</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="61" />
+        <location filename="../plugins/network/item/deviceitem.cpp" line="61"/>
         <source>Disable network</source>
         <translation>Désactiver le réseau</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/deviceitem.cpp" line="67" />
+        <location filename="../plugins/network/item/deviceitem.cpp" line="67"/>
         <source>Network settings</source>
         <translation>Paramètres du réseau</translation>
     </message>
@@ -68,22 +69,22 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90" />
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Êtes-vous sûr de vouloir vider %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97" />
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117" />
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
         <source>This action cannot be restored</source>
         <translation>Cette action ne peut être restaurée</translation>
     </message>
@@ -91,12 +92,12 @@
 <context>
     <name>DiskControlItem</name>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106" />
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="106"/>
         <source>Unknown device</source>
         <translation>Périphérique inconnu</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112" />
+        <location filename="../plugins/disk-mount/diskcontrolitem.cpp" line="112"/>
         <source>Unknown volume</source>
         <translation>Partition inconnue</translation>
     </message>
@@ -104,17 +105,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40" />
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="40"/>
         <source>Disk</source>
         <translation>Disque</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90" />
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="90"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96" />
+        <location filename="../plugins/disk-mount/diskmountplugin.cpp" line="96"/>
         <source>Unmount all</source>
         <translation>Tout démonter </translation>
     </message>
@@ -182,27 +183,27 @@
         <translation>Masquer intelligemment</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="217"/>
+        <location filename="../frame/util/docksettings.cpp" line="216"/>
         <source>Mode</source>
         <translation>Mode</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="226"/>
+        <location filename="../frame/util/docksettings.cpp" line="225"/>
         <source>Location</source>
         <translation>Emplacement</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="233"/>
+        <location filename="../frame/util/docksettings.cpp" line="232"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="240"/>
+        <location filename="../frame/util/docksettings.cpp" line="239"/>
         <source>Status</source>
         <translation>Status </translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="244"/>
+        <location filename="../frame/util/docksettings.cpp" line="243"/>
         <source>Plugins</source>
         <translation>Extensions</translation>
     </message>
@@ -220,7 +221,7 @@
 <context>
     <name>LauncherItem</name>
     <message>
-        <location filename="../frame/item/launcheritem.cpp" line="105" />
+        <location filename="../frame/item/launcheritem.cpp" line="105"/>
         <source>Launcher</source>
         <translation>Lanceur</translation>
     </message>
@@ -228,7 +229,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49" />
+        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
         <source>Network</source>
         <translation>Réseau</translation>
     </message>
@@ -240,13 +241,13 @@
         <translation type="obsolete">Alimentation</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48" />
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64" />
+        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
         <source>Notify</source>
         <translation>Aviser</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113" />
+        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
         <source>Open Control Center</source>
         <translation>Ouvrir le Centre de contrôle</translation>
     </message>
@@ -254,17 +255,17 @@
 <context>
     <name>OnboardPlugin</name>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="46" />
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="46"/>
         <source>Virtual Keyboard</source>
         <translation>Clavier virtuel</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="101" />
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="101"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../plugins/onboard/onboardplugin.cpp" line="35" />
+        <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
         <source>Onboard</source>
         <translation>À bord</translation>
     </message>
@@ -272,14 +273,14 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48" />
+        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
         <source>Power</source>
         <translation>Alimentation</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114" />
+        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
         <source>Power settings</source>
-        <translation>Options d'alimentation</translation>
+        <translation>Options d&apos;alimentation</translation>
     </message>
     <message>
         <source>Charged %1</source>
@@ -302,89 +303,89 @@
         <translation type="vanished">En charge (%1), %2 heures et %3 minutes avant la charge complète</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311" />
+        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>Capacité %1, %2 min restants, État : %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314" />
+        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>Capacité %1, %2 h %3 min restantes, Santé : %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321" />
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Charged %1, Health: %2%</source>
         <translation>%1 chargé, Santé : %2 %</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332" />
+        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
-        <translation>Chargement %1, %2 min jusqu'à pleine charge, santé : %3%</translation>
+        <translation>Chargement %1, %2 min jusqu&apos;à pleine charge, santé : %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335" />
+        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
-        <translation>Chargement %1, %2 h %3 min jusqu'à pleine charge, santé : %4%</translation>
+        <translation>Chargement %1, %2 h %3 min jusqu&apos;à pleine charge, santé : %4%</translation>
     </message>
 </context>
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58" />
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
         <source>Power</source>
         <translation>Alimentation</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
         <source>Shut down</source>
         <translation>Arrêter</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
         <source>Restart</source>
         <translation>Redémarrer</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
         <source>Suspend</source>
         <translation>Mettre en veille </translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
         <source>Hibernate</source>
         <translation>Hiberner</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
         <source>Lock</source>
         <translation>Verrouiller</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
         <source>Log out</source>
         <translation>Déconnexion</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
         <source>Switch account</source>
         <translation>Changer de compte</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173" />
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
         <source>Power settings</source>
-        <translation>Options d'alimentation</translation>
+        <translation>Options d&apos;alimentation</translation>
     </message>
 </context>
 <context>
     <name>SoundApplet</name>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="54" />
+        <location filename="../plugins/sound/soundapplet.cpp" line="54"/>
         <source>Device</source>
         <translation>Périphérique</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="72" />
+        <location filename="../plugins/sound/soundapplet.cpp" line="72"/>
         <source>Application</source>
         <translation>Applications</translation>
     </message>
@@ -392,22 +393,22 @@
 <context>
     <name>SoundItem</name>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="78" />
+        <location filename="../plugins/sound/sounditem.cpp" line="78"/>
         <source>Unmute</source>
         <translation>Réactiver le son</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="80" />
+        <location filename="../plugins/sound/sounditem.cpp" line="80"/>
         <source>Mute</source>
         <translation>Muet</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="86" />
+        <location filename="../plugins/sound/sounditem.cpp" line="86"/>
         <source>Audio Settings</source>
         <translation>Paramètres audio</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="207" />
+        <location filename="../plugins/sound/sounditem.cpp" line="205"/>
         <source>Current Volume %1</source>
         <translation>Volume actuel %1</translation>
     </message>
@@ -415,7 +416,7 @@
 <context>
     <name>SoundPlugin</name>
     <message>
-        <location filename="../plugins/sound/soundplugin.cpp" line="40" />
+        <location filename="../plugins/sound/soundplugin.cpp" line="40"/>
         <source>Sound</source>
         <translation>Son</translation>
     </message>
@@ -423,17 +424,17 @@
 <context>
     <name>TrashPlugin</name>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="52" />
+        <location filename="../plugins/trash/trashplugin.cpp" line="52"/>
         <source>Trash</source>
         <translation>Corbeille</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="90" />
+        <location filename="../plugins/trash/trashplugin.cpp" line="90"/>
         <source>Trash - %1 file</source>
         <translation>Corbeille - %1 fichier</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashplugin.cpp" line="92" />
+        <location filename="../plugins/trash/trashplugin.cpp" line="92"/>
         <source>Trash - %1 files</source>
         <translation>Corbeille - %1 fichiers</translation>
     </message>
@@ -441,12 +442,12 @@
 <context>
     <name>TrashWidget</name>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="70" />
+        <location filename="../plugins/trash/trashwidget.cpp" line="70"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/trashwidget.cpp" line="77" />
+        <location filename="../plugins/trash/trashwidget.cpp" line="77"/>
         <source>Empty</source>
         <translation>Vider</translation>
     </message>
@@ -462,38 +463,38 @@
 <context>
     <name>WiredItem</name>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="47" />
+        <location filename="../plugins/network/item/wireditem.cpp" line="47"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="199" />
+        <location filename="../plugins/network/item/wireditem.cpp" line="197"/>
         <source>Wired connection: %1</source>
-        <translation>Connexion filaire : %1</translation>
+        <translation>Connexion filaire&#xa0;: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessItem</name>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="49" />
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="49"/>
         <source>No Network</source>
         <translation>Pas de réseau</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="275" />
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
         <source>Wireless Connection: %1</source>
-        <translation>Connexion sans fil : %1</translation>
+        <translation>Connexion sans fil&#xa0;: %1</translation>
     </message>
 </context>
 <context>
     <name>WirelessList</name>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159" />
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="159"/>
         <source>Wireless Network</source>
         <translation>Réseau sans fil</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161" />
+        <location filename="../plugins/network/item/applet/wirelesslist.cpp" line="161"/>
         <source>Wireless Network %1</source>
         <translation>Réseau sans fil %1</translation>
     </message>
@@ -501,42 +502,42 @@
 <context>
     <name>pluginSettingDialog</name>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
         <source>系统监控插件设置</source>
         <translation>Plugin de configuration de surveillance du système</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
         <source>只显示网速</source>
         <translation>Afficher uniquement la vitesse du réseau</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
         <source>只显示CPU、内存</source>
         <translation>Afficher uniquement le CPU, la mémoire</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation>Afficher CP&amp;U, mémoire et vitesse du réseau</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
         <source>行高：</source>
         <translation>Hauteur de ligne :</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
         <source>显示内容设置</source>
         <translation>Afficher les paramètres de contenu</translation>
     </message>
     <message>
-        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62" />
+        <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation>Afficher le CPU, la mémoire, la vitesse du réseau,

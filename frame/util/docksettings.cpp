@@ -21,6 +21,7 @@
 
 #include "docksettings.h"
 #include "panel/mainpanel.h"
+#include "dbus/dockdbusnames.h"
 #include "item/appitem.h"
 #include "util/utils.h"
 #include "wayland/layershellhelper.h"
@@ -173,11 +174,10 @@ DockSettings::DockSettings(QWidget *parent)
     , m_systemMonitor(tr("System Monitor"), this)
     , m_windowSplit(tr("Window Split"), this)
     , m_displayInter(new DBusDisplay(DBusDisplay::staticServiceName(), this))
-    , m_dockInter(new DBusDock("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
+    , m_dockInter(new DBusDock(dockDBusService(), dockDBusManagerPath(), QDBusConnection::sessionBus(), this))
     , m_itemController(DockItemController::instance(this))
 {
-    m_daemonAvailable = QDBusConnection::sessionBus().interface()
-        ->isServiceRegistered("com.deepin.dde.daemon.Dock").value();
+    m_daemonAvailable = dockDBusDaemonAvailable();
     m_dockGsettings = new QGSettings(DOCK_GSETTINGS_SCHEMA,
         DOCK_GSETTINGS_PATH, this);
     m_appearanceGsettings = new QGSettings(APPEARANCE_GSETTINGS_SCHEMA,

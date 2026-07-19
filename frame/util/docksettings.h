@@ -27,7 +27,7 @@
 #include "dbus/dbusdisplay.h"
 #include "controller/dockitemcontroller.h"
 
-#include <com_deepin_dde_daemon_dock.h>
+#include "dbus/dockdaemoninterface.h"
 
 #include <QAction>
 #include <QMenu>
@@ -42,7 +42,7 @@ DWIDGET_USE_NAMESPACE
 class QGSettings;
 
 using namespace Dock;
-using DBusDock = com::deepin::dde::daemon::Dock;
+using DBusDock = DockDaemonInterface;
 
 class WhiteMenu : public QMenu
 {

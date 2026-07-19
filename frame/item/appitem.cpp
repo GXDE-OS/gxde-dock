@@ -27,6 +27,7 @@
 #include "xcb/xcb_misc.h"
 #include "components/appswingeffectbuilder.h"
 #include "components/appspreviewprovider.h"
+#include "dbus/dockdbusnames.h"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -56,7 +57,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     : DockItem(parent),
       m_appNameTips(new TipsWidget(this)),
       m_appPreviewTips(nullptr),
-      m_itemEntryInter(new DockEntryInter("com.deepin.dde.daemon.Dock", entry.path(), QDBusConnection::sessionBus(), this)),
+      m_itemEntryInter(new DockEntryInter(dockDBusService(), entry.path(), QDBusConnection::sessionBus(), this)),
       m_entryPath(entry.path()),
 
       m_swingEffectView(nullptr),

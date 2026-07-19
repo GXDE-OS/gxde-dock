@@ -69,7 +69,8 @@ public slots:
     void setWindowInfo(const WindowInfo &info);
 
 private:
-    bool fetchWaylandSnapshot();
+    void fetchWaylandSnapshot();
+    void applyWaylandSnapshot(const QImage &image);
     void dragEnterEvent(QDragEnterEvent *e);
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
@@ -88,6 +89,7 @@ private:
 
     QImage m_snapshot;
     QRectF m_snapshotSrcRect;
+    bool m_waylandCapturePending;
 
     TipsWidget *m_title;
     QTimer *m_waitLeaveTimer;
