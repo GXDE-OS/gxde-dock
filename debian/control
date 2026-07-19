@@ -30,7 +30,7 @@ Homepage: https://www.gxde.top/
 
 Package: gxde-dock
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland, python3-pywayland, python3-cffi, python3-gi, python3-dbus, python3-dbus.mainloop.pyqt5 | python3-dbus.mainloop.glib, gir1.2-glib-2.0
+Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland
 Recommends: gxde-dock-onboard-plugin
 Conflicts:
  dde-workspace (<< 2.90.5),

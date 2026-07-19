@@ -20,8 +20,8 @@
  */
 
 #include "appsnapshot.h"
+#include "../../util/waylandhelper.h"
 #include "previewcontainer.h"
-#include "../../util/daemon_fallback.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -57,14 +57,9 @@ struct SHMInfo
     } rect;
 };
 
-static bool nativeWayland() {
-    return QGuiApplication::platformName().contains(
-        "wayland", Qt::CaseInsensitive);
-}
-
 static bool windowPreviewsAvailable(DWindowManagerHelper *helper)
 {
-    return nativeWayland() || helper->hasComposite();
+    return Wayland::isWaylandSession() || helper->hasComposite();
 }
 
 AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
@@ -101,9 +96,9 @@ AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
 
 void AppSnapshot::closeWindow() const
 {
-    if (nativeWayland()) {
+    if (Wayland::isWaylandSession()) {
         QDBusMessage message = QDBusMessage::createMethodCall(
-            GXDEDockFallback::dockServiceName(),
+            QStringLiteral("com.deepin.dde.daemon.Dock"),
             QStringLiteral("/com/deepin/dde/daemon/Dock"),
             QStringLiteral("com.deepin.dde.daemon.Dock"),
             QStringLiteral("CloseWindow"));
@@ -155,7 +150,7 @@ void AppSnapshot::dragEnterEvent(QDragEnterEvent *e)
 bool AppSnapshot::fetchWaylandSnapshot()
 {
     QDBusMessage message = QDBusMessage::createMethodCall(
-        GXDEDockFallback::dockServiceName(),
+        QStringLiteral("com.deepin.dde.daemon.Dock"),
         QStringLiteral("/com/deepin/dde/daemon/Dock"),
         QStringLiteral("com.deepin.dde.daemon.Dock"),
         QStringLiteral("GetWindowSnapshot"));
@@ -210,7 +205,7 @@ void AppSnapshot::fetchSnapshot()
     if (!windowPreviewsAvailable(m_wmHelper))
         return;
 
-    if (nativeWayland()) {
+    if (Wayland::isWaylandSession()) {
         if (!fetchWaylandSnapshot()) {
             return;
         }

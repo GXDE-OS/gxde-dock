@@ -23,8 +23,8 @@
 #include "trayplugin.h"
 #include "fashiontray/fashiontrayitem.h"
 #include "snitraywidget.h"
-#include "util/daemon_fallback.h"
 
+#include "util/waylandhelper.h"
 #include <QDir>
 #include <QWindow>
 #include <QWidget>
@@ -91,7 +91,7 @@ void TrayPlugin::init(PluginProxyInterface *proxyInter)
 
     // XEmbedTray is an old store for X11 only
     const bool useXEmbedTray =
-        !GXDEDockFallback::isWayland()
+        !Wayland::isWaylandSession()
         && QDBusConnection::sessionBus().interface()
         && QDBusConnection::sessionBus().interface()
                ->isServiceRegistered(QStringLiteral("com.deepin.dde.TrayManager")).value();

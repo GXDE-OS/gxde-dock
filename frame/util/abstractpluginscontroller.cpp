@@ -20,10 +20,10 @@
  */
 
 #include "abstractpluginscontroller.h"
-#include "daemon_fallback.h"
 #include "pluginsiteminterface.h"
 #include "DNotifySender"
 
+#include "waylandhelper.h"
 #include <QDebug>
 #include <QDBusServiceWatcher>
 #include <QDir>
@@ -38,7 +38,7 @@ static const QStringList CompatiblePluginApiList {
 AbstractPluginsController::AbstractPluginsController(QObject *parent)
     : QObject(parent)
     , m_dbusDaemonInterface(QDBusConnection::sessionBus().interface())
-    , m_dockDaemonInter(new DockDaemonInter(GXDEDockFallback::dockServiceName(), "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
+    , m_dockDaemonInter(new DockDaemonInter("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", QDBusConnection::sessionBus(), this))
 {
     qApp->installEventFilter(this);
 
@@ -193,7 +193,7 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();
     const bool skipMissingService =
-        GXDEDockFallback::isWayland()
+        Wayland::isWaylandSession()
         && dbusService == QStringLiteral("com.deepin.dde.TrayManager");
     if (!dbusService.isEmpty()
             && !skipMissingService

@@ -1,8 +1,5 @@
 usr/share
 usr/bin
-usr/libexec/gxde-dock/fallback-daemon
-usr/lib/systemd/user/gxde-dock-fallback-dock.service
-usr/lib/systemd/user/gxde-dock-fallback-display.service
 usr/lib/gxde-dock/plugins/libdatetime.so
 usr/lib/gxde-dock/plugins/libkeyboard-layout.so
 usr/lib/gxde-dock/plugins/libshutdown.so

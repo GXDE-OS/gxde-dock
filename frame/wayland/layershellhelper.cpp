@@ -26,6 +26,7 @@
 #include <LayerShellQt/Window>
 #include <dplatformwindowhandle.h>
 
+#include "../util/waylandhelper.h"
 #include "layershellhelper.h"
 #include "layershell_styler.h"
 
@@ -96,11 +97,7 @@ static LayerShellQt::Window* layerWindowFor(QWidget* widget) {
 }
 
 bool LayerShellHelper::isWayland() {
-    if (!qGuiApp) {
-        return false;
-    }
-
-    return QGuiApplication::platformName().toLower().contains("wayland");
+    return isWaylandSession();
 }
 
 // Treeland会话检测

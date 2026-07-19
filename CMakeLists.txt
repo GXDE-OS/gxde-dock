@@ -69,11 +69,3 @@ install(FILES "cmake/DdeDock/DdeDockConfig.cmake"
 ## services files
 install(FILES frame/com.deepin.dde.Dock.service
         DESTINATION /usr/share/dbus-1/services)
-
-## fallback services (Python3)
-install(DIRECTORY fallback_service/
-        DESTINATION /usr/libexec/gxde-dock/fallback-daemon
-        FILES_MATCHING PATTERN "*.py")
-install(FILES fallback_service/gxde-dock-fallback-dock.service
-              fallback_service/gxde-dock-fallback-display.service
-        DESTINATION /usr/lib/systemd/user)

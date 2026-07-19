@@ -55,6 +55,4 @@ debian/debhelper-build-stamp
 .qwen/*
 
 # Fall back service cache
-fallback_service/display/__pycache__/*
-fallback_service/dock/__pycache__/*
 *.pyc

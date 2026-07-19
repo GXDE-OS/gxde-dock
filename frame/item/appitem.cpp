@@ -21,7 +21,6 @@
  */
 
 #include "appitem.h"
-#include "util/daemon_fallback.h"
 
 #include "util/themeappicon.h"
 #include "util/imagefactory.h"
@@ -46,6 +45,7 @@
 
 // QX11Info is NOT avaliable in Qt6, using own helper...
 #include "../util/x11helper.h"
+#include "../util/waylandhelper.h"
 
 #define APP_DRAG_THRESHOLD      20
 
@@ -56,7 +56,7 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     : DockItem(parent),
       m_appNameTips(new TipsWidget(this)),
       m_appPreviewTips(nullptr),
-      m_itemEntryInter(new DockEntryInter(GXDEDockFallback::dockServiceName(), entry.path(), QDBusConnection::sessionBus(), this)),
+      m_itemEntryInter(new DockEntryInter("com.deepin.dde.daemon.Dock", entry.path(), QDBusConnection::sessionBus(), this)),
       m_entryPath(entry.path()),
 
       m_swingEffectView(nullptr),
@@ -114,17 +114,6 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     connect(m_retryObtainIconTimer, &QTimer::timeout, this, &AppItem::refershIcon, Qt::QueuedConnection);
 
     updateWindowInfos(m_itemEntryInter->windowInfos());
-
-    // In case of dframeworkdbus broke (IDK why), manually prase it.
-    // see onRawPropertiesChanged
-    // ONLY if fall back service is enabled. For this is a specific issue under WAYLAND.
-    if (GXDEDockFallback::dockServiceName() == GXDEDockFallback::FALLBACK_DOCK_SERVICE) {
-        refreshWindowInfosFromDBus();
-        QDBusConnection::sessionBus().connect(
-            GXDEDockFallback::dockServiceName(), m_entryPath,
-            "org.freedesktop.DBus.Properties", "PropertiesChanged",
-            this, SLOT(onRawPropertiesChanged(QString, QVariantMap, QStringList)));
-    }
 
     refershIcon();
 }
@@ -439,7 +428,7 @@ void AppItem::leaveEvent(QEvent *e)
             // synthetic leave to the dock surface even while the pointer is
             // still over this icon. Do not start the preview's hide timer for
             // that transition.
-            if (GXDEDockFallback::isWayland()
+            if (Wayland::isWaylandSession()
                     && QRect(topleftPoint(), size()).contains(QCursor::pos())) {
                 return;
             }
@@ -608,52 +597,6 @@ void AppItem::refershIcon()
 void AppItem::activeChanged()
 {
     m_active = m_itemEntryInter->isActive();
-}
-
-void AppItem::refreshWindowInfosFromDBus()
-{
-    // Get WindowInfos directly instead of GetAll, so Qt's standard
-    // demarshalling can handle a{u(bs)} → QMap<quint32,QPair<bool,QString>>
-    QDBusMessage msg = QDBusMessage::createMethodCall(
-        GXDEDockFallback::dockServiceName(), m_entryPath,
-        "org.freedesktop.DBus.Properties", "Get");
-    msg << "com.deepin.dde.daemon.Dock.Entry" << "WindowInfos";
-    QDBusReply<QVariant> reply = QDBusConnection::sessionBus().call(msg);
-    if (!reply.isValid())
-        return;
-    parseAndApplyWindowInfos(reply.value());
-}
-
-void AppItem::onRawPropertiesChanged(const QString &iface,
-                                     const QVariantMap &changed,
-                                     const QStringList &)
-{
-    if (iface != "com.deepin.dde.daemon.Dock.Entry")
-        return;
-    auto it = changed.find("WindowInfos");
-    if (it != changed.end())
-        parseAndApplyWindowInfos(*it);
-}
-
-void AppItem::parseAndApplyWindowInfos(const QVariant &variant)
-{
-    // variant: a{u(bs)} as a QDBusArgument. ==> QMap<quint32,QPair<bool,QString>>
-    if (!variant.canConvert<QDBusArgument>()) {
-        return;
-    }
-
-    const QDBusArgument &arg = variant.value<QDBusArgument>();
-    QMap<quint32, QPair<bool, QString>> raw;
-    arg >> raw;
-    WindowInfoMap map;
-    for (auto it = raw.cbegin(); it != raw.cend(); ++it) {
-        WindowInfo info;
-        info.attention = it->first;
-        info.title = it->second;
-        map.insert(it.key(), info);
-    }
-    // An empty map is meaningful: the application's last window was closed.
-    updateWindowInfos(map);
 }
 
 void AppItem::showPreview()
