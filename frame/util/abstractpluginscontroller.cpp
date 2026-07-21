@@ -273,17 +273,6 @@ void AbstractPluginsController::refreshPluginSettings()
         pluginInter->pluginSettingsChanged();
     }
 
-    // reload all plugin items for sort order or container
-    QMap<PluginsItemInterface *, QMap<QString, QObject *>> pluginsMapTemp = m_pluginsMap;
-    for (auto it = pluginsMapTemp.constBegin(); it != pluginsMapTemp.constEnd(); ++it) {
-        const QList<QString> &itemKeyList = it.value().keys();
-        for (auto key : itemKeyList) {
-            itemRemoved(it.key(), key);
-        }
-        for (auto key : itemKeyList) {
-            itemAdded(it.key(), key);
-        }
-    }
 }
 
 bool AbstractPluginsController::eventFilter(QObject *o, QEvent *e)
