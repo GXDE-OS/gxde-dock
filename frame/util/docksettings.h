@@ -37,6 +37,8 @@
 
 #include <QStyleFactory>
 
+#include <dregionmonitor.h>
+
 DWIDGET_USE_NAMESPACE
 
 class QGSettings;
@@ -181,6 +183,7 @@ private:
     QGSettings *m_dockGsettings;
     QGSettings *m_appearanceGsettings;
     bool m_daemonAvailable;
+    DRegionMonitor *m_menuRegionMonitor = nullptr;
 };
 
 #endif // DOCKSETTINGS_H

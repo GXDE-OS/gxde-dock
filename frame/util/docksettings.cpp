@@ -134,7 +134,8 @@ QString hideModeToString(const HideMode m) {
     }
 }
 
-// 透明遮罩: 点菜单以外的地方落到它身上触发菜单关闭
+// 透明遮罩: 处理跨应用点击关闭菜单的辅助类。在X11下通过DRegionMonitor
+// 监听全局鼠标按钮按下事件，点击菜单外部时关闭菜单
 class MenuDismissMask : public QWidget {
 public:
     explicit MenuDismissMask(QMenu* menu) : m_menu(menu) {}
@@ -264,6 +265,15 @@ DockSettings::DockSettings(QWidget *parent)
     connect(m_dockInter, &DBusDock::ServiceRestarted, this, &DockSettings::resetFrontendGeometry);
     connect(m_dockInter, &DBusDock::OpacityChanged, this, &DockSettings::onOpacityChanged);
 
+    // WindowSplit 变更后需要重启dock才能生效
+    // deepin-daemon 在 WindowSplit 变更后重启自身进程使dock被SM重新拉起
+    // gxde-daemon 不重启自身，因此前端需要自行重启
+    connect(m_dockInter, &DBusDock::WindowSplitChanged, this, [this](bool) {
+        qInfo() << "(Dock) WindowSplit changed, restarting dock...";
+        QProcess::startDetached(QStringLiteral("/usr/bin/gxde-dock"), QStringList());
+        qApp->quit();
+    });
+
     connect(m_itemController, &DockItemController::itemInserted, this, &DockSettings::dockItemCountChanged, Qt::QueuedConnection);
     connect(m_itemController, &DockItemController::itemRemoved, this, &DockSettings::dockItemCountChanged, Qt::QueuedConnection);
     connect(m_itemController, &DockItemController::fashionTraySizeChanged, this, &DockSettings::onFashionTraySizeChanged, Qt::QueuedConnection);
@@ -271,6 +281,25 @@ DockSettings::DockSettings(QWidget *parent)
     connect(m_displayInter, &DBusDisplay::PrimaryRectChanged, this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
     connect(m_displayInter, &DBusDisplay::ScreenHeightChanged, this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
     connect(m_displayInter, &DBusDisplay::ScreenWidthChanged, this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
+
+    // 监听QScreen几何变化，当com.deepin.daemon.Display不可用(如使用gxde-daemon)时
+    // 也能正确响应屏幕分辨率变化
+    connect(qGuiApp, &QGuiApplication::primaryScreenChanged,
+            this, [this](QScreen *newScreen) {
+        if (newScreen) {
+            connect(newScreen, &QScreen::geometryChanged,
+                    this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
+        }
+        QMetaObject::invokeMethod(this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
+    });
+    if (qApp->primaryScreen()) {
+        connect(qApp->primaryScreen(), &QScreen::geometryChanged,
+                this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
+        connect(qApp->primaryScreen(), &QScreen::geometryChanged,
+                this, [this](const QRect &) {
+            qInfo() << "(Dock) Screen geometry changed via QScreen";
+        });
+    }
 
     connect(&m_systemMonitor, &QAction::triggered, this, &DockSettings::openSystemMonitor);
 
@@ -294,6 +323,24 @@ DockSettings::DockSettings(QWidget *parent)
     calculateWindowConfig();
     updateForbidPostions();
     resetFrontendGeometry();
+
+    // X11下使用 DRegionMonitor 监听全局鼠标点击，用于右键菜单点击外部关闭
+    // Qt6的QMenu::exec在dock的特殊窗口标志(Qt::Tool | Qt::WindowDoesNotAcceptFocus)下
+    // 无法检测来自其他应用的点击事件
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        m_menuRegionMonitor = new DRegionMonitor(this);
+        connect(m_menuRegionMonitor, &DRegionMonitor::buttonPress,
+                this, [this](const QPoint &mousePos, const int flag) {
+            if (!m_menuRegionMonitor->registered())
+                return;
+            if (flag != DRegionMonitor::Button_Left && flag != DRegionMonitor::Button_Right)
+                return;
+            const QRect menuRect = QRect(m_settingsMenu.pos(), m_settingsMenu.size());
+            if (!menuRect.contains(mousePos)) {
+                m_settingsMenu.close();
+            }
+        });
+    }
 
     QTimer::singleShot(0, this, [=] {onOpacityChanged(currentOpacity());});
 }
@@ -323,11 +370,11 @@ void DockSettings::openSystemMonitor()
     process.startDetached();
 }
 
-// 新的ScreenSize获取逻辑: X11仍然走原逻辑(com.deepin.daemon.Display)
-// Wayland下使用Qt屏幕几何以解决popup位置不正确的问题
+// 使用Qt QScreen获取屏幕尺寸作为通用方案，同时保留DBus作为辅助
+// 当com.deepin.daemon.Display不可用(如使用gxde-daemon)时，QScreen是唯一可靠来源
 void DockSettings::updateScreenSize() {
-    if (Wayland::LayerShellHelper::isWayland() && qApp->primaryScreen()) {
-        const QScreen* s = qApp->primaryScreen();
+    QScreen* s = qApp->primaryScreen();
+    if (s) {
         const qreal dpr = s->devicePixelRatio();
         const QRect g = s->geometry();
 
@@ -335,11 +382,6 @@ void DockSettings::updateScreenSize() {
             QSize(qRound(g.width() * dpr), qRound(g.height() * dpr)));
         m_screenRawWidth = m_primaryRawRect.width();
         m_screenRawHeight = m_primaryRawRect.height();
-    } else {
-        // X11: 保留原逻辑
-        m_primaryRawRect = m_displayInter->primaryRawRect();
-        m_screenRawHeight = m_displayInter->screenRawHeight();
-        m_screenRawWidth = m_displayInter->screenRawWidth();
     }
 }
 
@@ -455,6 +497,9 @@ void DockSettings::showDockSettingsMenu()
     // 直接 exec 会让菜单乱飘，所以为Wayland计算全局坐标
     const QPoint menuPos = wlAdjustMenuPos(m_settingsMenu.sizeHint());
 
+    // x11和Wayland都需要处理点击外部关闭菜单的逻辑
+    // X11下Qt6的QMenu::exec()在dock特殊窗口标志下无法检测跨应用点击
+    // Wayland下需要MenuDismissMask辅助
     if (Wayland::LayerShellHelper::isWayland()) {
         if (!m_menuMask) {
             m_menuMask = new MenuDismissMask(&m_settingsMenu);
@@ -463,7 +508,17 @@ void DockSettings::showDockSettingsMenu()
         m_menuMask->show();
     }
 
+    // X11下注册全局鼠标监听，使点击菜单外部时能关闭菜单
+    if (m_menuRegionMonitor && !m_menuRegionMonitor->registered()) {
+        m_menuRegionMonitor->registerRegion();
+    }
+
     m_settingsMenu.exec(menuPos);
+
+    // 菜单关闭后取消全局鼠标监听
+    if (m_menuRegionMonitor && m_menuRegionMonitor->registered()) {
+        m_menuRegionMonitor->unregisterRegion();
+    }
 
     if (m_menuMask) {
         m_menuMask->hide();
