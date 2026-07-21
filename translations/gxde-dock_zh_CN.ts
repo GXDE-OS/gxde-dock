@@ -4,9 +4,14 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="188"/>
-        <source>The plugin %1 is not compatible with the system.</source>
-        <translation>插件%1和系统版本不兼容。</translation>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <source>The incompatible plugin %1 was skipped.</source>
+        <translation>已跳过不兼容的插件 %1。</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <source>The plugin %1 failed to load and was skipped.</source>
+        <translation>插件 %1 加载失败，已跳过。</translation>
     </message>
 </context>
 <context>

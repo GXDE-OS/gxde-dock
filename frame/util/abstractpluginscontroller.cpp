@@ -54,12 +54,16 @@ void AbstractPluginsController::saveValue(PluginsItemInterface *const itemInter,
 
     // save to local cache
     QJsonObject localObject = m_pluginSettingsObject.value(itemInter->pluginName()).toObject();
-    localObject.insert(key, QJsonValue::fromVariant(value)); //Note: QVariant::toJsonValue() not work in Qt 5.7
+    const QJsonValue jsonValue = QJsonValue::fromVariant(value);
+    if (localObject.contains(key) && localObject.value(key) == jsonValue) {
+        return;
+    }
+    localObject.insert(key, jsonValue); //Note: QVariant::toJsonValue() not work in Qt 5.7
     m_pluginSettingsObject.insert(itemInter->pluginName(), localObject);
 
     // save to daemon
     QJsonObject remoteObject, remoteObjectInter;
-    remoteObjectInter.insert(key, QJsonValue::fromVariant(value)); //Note: QVariant::toJsonValue() not work in Qt 5.7
+    remoteObjectInter.insert(key, jsonValue); //Note: QVariant::toJsonValue() not work in Qt 5.7
     remoteObject.insert(itemInter->pluginName(), remoteObjectInter);
     m_dockDaemonInter->MergePluginSettings(QJsonDocument(remoteObject).toJson(QJsonDocument::JsonFormat::Compact));
 }
@@ -162,7 +166,6 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
     QPluginLoader *pluginLoader = new QPluginLoader(pluginFile);
     const QJsonObject &meta = pluginLoader->metaData().value("MetaData").toObject();
     const QString &pluginApi = meta.value("api").toString();
-    bool pluginIsValid = true;
     if (pluginApi.isEmpty() || !CompatiblePluginApiList.contains(pluginApi))
     {
         qWarning() << objectName()
@@ -170,7 +173,10 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
                    << ", got version:" << pluginApi
                    << ", the plugin file is:" << pluginFile;
 
-        pluginIsValid = false;
+        QString notifyMessage(tr("The incompatible plugin %1 was skipped."));
+        Dtk::Core::DUtil::DNotifySender(notifyMessage.arg(QFileInfo(pluginFile).fileName())).appIcon("dialog-warning").call();
+        pluginLoader->deleteLater();
+        return;
     }
 
     PluginsItemInterface *interface = qobject_cast<PluginsItemInterface *>(pluginLoader->instance());
@@ -178,19 +184,12 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
     {
         qWarning() << objectName() << "load plugin failed!!!" << pluginLoader->errorString() << pluginFile;
 
+        QString notifyMessage(tr("The plugin %1 failed to load and was skipped."));
+        Dtk::Core::DUtil::DNotifySender(notifyMessage.arg(QFileInfo(pluginFile).fileName())).appIcon("dialog-warning").call();
         pluginLoader->unload();
         pluginLoader->deleteLater();
-
-        pluginIsValid = false;
-    }
-
-    if (!pluginIsValid) {
-        QString notifyMessage(tr("The plugin %1 is not compatible with the system."));
-        Dtk::Core::DUtil::DNotifySender(notifyMessage.arg(QFileInfo(pluginFile).fileName())).appIcon("dialog-warning").call();
         return;
     }
-
-    m_pluginsMap.insert(interface, QMap<QString, QObject *>());
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();
     const bool skipMissingService =
@@ -226,6 +225,10 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
 }
 
 void AbstractPluginsController::initPlugin(PluginsItemInterface *interface) {
+    // Do not expose a plugin through pluginsMap() before init().  Consumers
+    // such as the settings menu may call methods which require m_proxyInter,
+    // while plugins waiting for a D-Bus dependency are still uninitialized.
+    m_pluginsMap.insert(interface, QMap<QString, QObject *>());
     qDebug() << objectName() << "init plugin: " << interface->pluginName();
     interface->init(this);
     qDebug() << objectName() << "init plugin finished: " << interface->pluginName();

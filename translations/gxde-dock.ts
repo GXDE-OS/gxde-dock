@@ -3,8 +3,12 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <source>The plugin %1 is not compatible with the system.</source>
-        <translation>The plugin %1 is not compatible with the system.</translation>
+        <source>The incompatible plugin %1 was skipped.</source>
+        <translation>The incompatible plugin %1 was skipped.</translation>
+    </message>
+    <message>
+        <source>The plugin %1 failed to load and was skipped.</source>
+        <translation>The plugin %1 failed to load and was skipped.</translation>
     </message>
 </context>
 <context>
