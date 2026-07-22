@@ -473,12 +473,12 @@ void TrayPlugin::trayIndicatorAdded(const QString &itemKey, const QString &indic
     connect(indicatorTray, &IndicatorTray::delayLoaded,
     indicatorTray, [ = ]() {
         addTrayWidget(itemKey, indicatorTray->widget());
-    }, Qt::UniqueConnection);
+    });
 
     connect(indicatorTray, &IndicatorTray::removed, this, [=] {
         trayRemoved(itemKey);
         indicatorTray->removeWidget();
-    }, Qt::UniqueConnection);
+    });
 }
 
 void TrayPlugin::trayRemoved(const QString &itemKey, const bool deleteObject)
