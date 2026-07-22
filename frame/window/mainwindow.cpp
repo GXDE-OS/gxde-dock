@@ -195,7 +195,9 @@ void MainWindow::showEvent(QShowEvent *e)
         m_platformWindowHandle.setShadowRadius(0);
     }
 
-    connect(qGuiApp, &QGuiApplication::primaryScreenChanged,
+    if (m_screenChangeConn)
+        QObject::disconnect(m_screenChangeConn);
+    m_screenChangeConn = connect(qGuiApp, &QGuiApplication::primaryScreenChanged,
             windowHandle(), [this] (QScreen *new_screen) {
         if (Wayland::LayerShellHelper::isWayland()) {
             Wayland::LayerShellHelper::updateOutput(this, new_screen);
@@ -215,7 +217,7 @@ void MainWindow::showEvent(QShowEvent *e)
         const QSize size = this->size() * scale;
 
         windowHandle()->handle()->setGeometry(QRect(pos, size));
-    }, Qt::UniqueConnection);
+    });
 
     windowHandle()->setScreen(qGuiApp->primaryScreen());
 }

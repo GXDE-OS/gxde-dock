@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2011 ~ 2018 Deepin Technology Co., Ltd.
  *
  * Author:     sbw <sbw@sbw.so>
@@ -229,9 +229,9 @@ void WirelessList::updateAPList()
 
                 connect(apw, &AccessPointWidget::requestActiveAP, this, &WirelessList::activateAP);
                 connect(apw, &AccessPointWidget::requestDeactiveAP, this, &WirelessList::deactiveAP);
-                connect(apw, &AccessPointWidget::requestActiveAP, this, [=] {
+                connect(apw, &AccessPointWidget::requestActiveAP, this, [this, apw] {
                     m_clickedAPW = apw;
-                }, Qt::UniqueConnection);
+                });
             }
         } else if (m_apList.size() < m_apwList.size()) {
             if (!m_apwList.isEmpty()) {

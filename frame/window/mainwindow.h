@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2011 ~ 2018 Deepin Technology Co., Ltd.
  *
  * Author:     sbw <sbw@sbw.so>
@@ -112,6 +112,7 @@ private:
 
     XcbMisc *m_xcbMisc;
     DockSettings *m_settings;
+    QMetaObject::Connection m_screenChangeConn;
 
     QDBusConnectionInterface *m_dbusDaemonInterface;
     org::kde::StatusNotifierWatcher *m_sniWatcher;

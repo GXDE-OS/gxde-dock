@@ -329,6 +329,7 @@ DockSettings::DockSettings(QWidget *parent)
     // 无法检测来自其他应用的点击事件
     if (!Wayland::LayerShellHelper::isWayland()) {
         m_menuRegionMonitor = new DRegionMonitor(this);
+        m_menuRegionMonitor->setCoordinateType(DRegionMonitor::Original);
         connect(m_menuRegionMonitor, &DRegionMonitor::buttonPress,
                 this, [this](const QPoint &mousePos, const int flag) {
             if (!m_menuRegionMonitor->registered())
@@ -337,7 +338,10 @@ DockSettings::DockSettings(QWidget *parent)
                 return;
             const QRect menuRect = QRect(m_settingsMenu.pos(), m_settingsMenu.size());
             if (!menuRect.contains(mousePos)) {
-                m_settingsMenu.close();
+                m_menuRegionMonitor->unregisterRegion();
+                QTimer::singleShot(0, this, [this]() {
+                    m_settingsMenu.hide();
+                });
             }
         });
     }
@@ -510,6 +514,8 @@ void DockSettings::showDockSettingsMenu()
 
     // X11下注册全局鼠标监听，使点击菜单外部时能关闭菜单
     if (m_menuRegionMonitor && !m_menuRegionMonitor->registered()) {
+        const QRect screen = primaryRect();
+        m_menuRegionMonitor->setWatchedRegion(QRegion(screen));
         m_menuRegionMonitor->registerRegion();
     }
 
