@@ -100,6 +100,8 @@ void WirelessItem::paintEvent(QPaintEvent *e)
 
     const auto ratio = devicePixelRatioF();
     const int iconSize = displayMode == Dock::Fashion ? std::min(width(), height()) * 0.8 : 16;
+    // 修复在高 DPI 屏幕下无线网络插件图标与其他插件图标不等大的问题
+    // QPixmap pixmap = iconPix(displayMode, iconSize * ratio);
     QPixmap pixmap = iconPix(displayMode, iconSize * ratio);
     pixmap.setDevicePixelRatio(ratio);
 
