@@ -28,7 +28,8 @@ void AbstractContainer::addWrapper(FashionTrayWidgetWrapper *wrapper)
         return;
     }
 
-    const int index = whereToInsert(wrapper);
+    const int requestedIndex = whereToInsert(wrapper);
+    const int index = qBound(0, requestedIndex, m_wrapperList.size());
     m_wrapperLayout->insertWidget(index, wrapper);
     m_wrapperList.insert(index, wrapper);
 

@@ -4,9 +4,18 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="188"/>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation>Թողարկչի %1 լրացուցիչ ծրագիրը համատեղելի չէ համակարգի հետ։</translation>
+        <translation type="vanished">Թողարկչի %1 լրացուցիչ ծրագիրը համատեղելի չէ համակարգի հետ։</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <source>The incompatible plugin %1 was skipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <source>The plugin %1 failed to load and was skipped.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

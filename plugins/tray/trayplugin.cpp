@@ -264,8 +264,6 @@ void TrayPlugin::pluginSettingsChanged()
 
     if (displayMode() == Dock::DisplayMode::Fashion) {
         m_fashionItem->onPluginSettingsChanged();
-        m_fashionItem->clearTrayWidgets();
-        m_fashionItem->setTrayWidgets(m_trayMap);
     }
 }
 

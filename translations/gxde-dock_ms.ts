@@ -4,9 +4,18 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="188"/>
         <source>The plugin %1 is not compatible with the system.</source>
-        <translation>Pemalam %1 tidak sepenuhnya serasi dengan sistem.</translation>
+        <translation type="vanished">Pemalam %1 tidak sepenuhnya serasi dengan sistem.</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <source>The incompatible plugin %1 was skipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <source>The plugin %1 failed to load and was skipped.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
