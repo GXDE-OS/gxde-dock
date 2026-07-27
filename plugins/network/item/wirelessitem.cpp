@@ -102,13 +102,12 @@ void WirelessItem::paintEvent(QPaintEvent *e)
     const int iconSize = displayMode == Dock::Fashion ? std::min(width(), height()) * 0.8 : 16;
     // 修复在高 DPI 屏幕下无线网络插件图标与其他插件图标不等大的问题
     // QPixmap pixmap = iconPix(displayMode, iconSize * ratio);
-    QPixmap pixmap = iconPix(displayMode, iconSize * ratio);
-    pixmap.setDevicePixelRatio(ratio);
+    QPixmap pixmap = iconPix(displayMode, iconSize);
 
     QPainter painter(this);
     if (displayMode == Dock::Fashion)
     {
-        QPixmap pixmap = backgroundPix(iconSize * ratio);
+        QPixmap pixmap = backgroundPix(iconSize);
         pixmap.setDevicePixelRatio(ratio);
         painter.drawPixmap(rect().center() - pixmap.rect().center() / ratio, pixmap);
     }
