@@ -207,12 +207,14 @@ void SysMonitorPlugin::init(PluginProxyInterface *proxyInter)
     //读取显示配置
     readConfig(&settings);
 
+    // 修复dock重启后监视器插件无法保持禁用状态的问题
+    m_isInited = true;
+
     // 如果插件没有被禁用则在初始化插件时才添加主控件到面板上
     if (!pluginIsDisable()) {
         m_proxyInter->itemAdded(this, pluginName());
     }
 
-    m_isInited = true;
 }
 
 QWidget *SysMonitorPlugin::itemWidget(const QString &itemKey)
