@@ -55,11 +55,15 @@ void SysMonitorPlugin::refreshInfo()
 		else if(!strcmp(devname,"SwapFree:"))freeswap=tmp;
 	}while(strcmp(devname,"SwapFree:"));
     fclose(fp);
-	memPercent = qRound((totalmem - availablemem) * 100.0 / totalmem);
+    if (totalmem) {
+        memPercent = qRound((totalmem - availablemem) * 100.0 / totalmem);
+    }
     if(memPercent<=9)info.mem=QString(" %1\%").arg(memPercent);
     else info.mem=QString("%1\%").arg(memPercent);
-	
-    swapPercent = qRound((totalswap - freeswap) * 100.0 / totalswap);
+
+    if (totalswap) {
+        swapPercent = qRound((totalswap - freeswap) * 100.0 / totalswap);
+    }
 	if(swapPercent<=9)strswap=QString(" %1\%").arg(swapPercent);
 	else strswap=QString("%1\%").arg(swapPercent);
 	
