@@ -20,8 +20,8 @@
  */
 
 #include "dockpopupwindow.h"
-#include "waylandhelper.h"
 
+#include <DApplication> 
 #include <QTimer>
 #include <QScreen>
 #include <QApplication>
@@ -57,7 +57,7 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
     connect(m_acceptDelayTimer, &QTimer::timeout, this, &DockPopupWindow::accept);
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &DockPopupWindow::compositeChanged);
     // 修复插件（如音量调节）的左键窗口在 Wayland 下无法关闭的问题
-    if (Wayland::isWaylandSession()) {
+    if (DApplication::isWayland()) {
             qApp->installEventFilter(this);
     }
     connect(m_regionInter, &DRegionMonitor::buttonPress, this, &DockPopupWindow::onGlobMouseRelease);
@@ -156,7 +156,7 @@ bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 {
     if (o != getContent() || e->type() != QEvent::Resize) {
         // Wayland 下处理全局鼠标按下事件
-        if (Wayland::isWaylandSession() && m_model && isVisible() && e->type() == QEvent::MouseButtonPress) {
+        if (DApplication::isWayland() && m_model && isVisible() && e->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
             const QRect rect = QRect(pos(), size());
             if (!rect.contains(mouseEvent->globalPosition().toPoint())) {
