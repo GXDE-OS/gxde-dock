@@ -97,7 +97,7 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
         m_regionInter->unregisterRegion();
     }
 
-    if (!nativeWayland && m_model) {
+    if (!nativeWayland) {
         m_regionInter->registerRegion();
     }
 }
@@ -181,20 +181,20 @@ bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 
 void DockPopupWindow::onGlobMouseRelease(const QPoint &mousePos, const int flag)
 {
-    Q_ASSERT(m_model);
 
     if (!((flag == DRegionMonitor::WatchedFlags::Button_Left) ||
           (flag == DRegionMonitor::WatchedFlags::Button_Right))) {
         return;
     }
 
-    const QRect rect = QRect(pos(), size());
-    if (rect.contains(mousePos))
+    if (this->frameGeometry().contains(mousePos))
         return;
 
     emit accept();
 
-    m_regionInter->unregisterRegion();
+    if (m_regionInter->registered()) {
+        m_regionInter->unregisterRegion();
+    }
 }
 
 void DockPopupWindow::compositeChanged()
