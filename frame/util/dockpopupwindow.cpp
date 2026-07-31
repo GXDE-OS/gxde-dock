@@ -157,24 +157,15 @@ bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 {
     if (o != getContent() || e->type() != QEvent::Resize) {
         if (e->type() == QEvent::MouseButtonPress) {
-            bool isInside = false;
-            
-            if (o == this) {
-                isInside = true;
-            } 
-            else if (o->isWidgetType()) {
-                if (static_cast<QWidget*>(o)->window() == this) {
-                    isInside = true;
-                }
+            // 统一使用屏幕全局坐标系进行命中测试
+            if (this->frameGeometry().contains(QCursor::pos())) {
+                return false; // 点击在 Popup 自身区域内，放行事件
             }
-
-            if (!isInside) {
-                accept();
-                return true; // 拦截事件，防止穿透给 Dock
-            }
-            
-            return false;
+            // 点击在窗口外部，触发关闭并拦截事件向下传递
+            accept();
+            return true;
         }
+        return false;
     }
     // FIXME: ensure position move after global mouse release event
     if (isVisible())
