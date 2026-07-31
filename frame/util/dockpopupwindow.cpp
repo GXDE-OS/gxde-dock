@@ -93,11 +93,12 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
 
     const bool nativeWayland = QGuiApplication::platformName().contains(
         "wayland", Qt::CaseInsensitive);
-    if (!nativeWayland && m_regionInter->registered()) {
+    if (m_regionInter->registered()) {
         m_regionInter->unregisterRegion();
     }
 
-    if (!nativeWayland && m_model) {
+    // 修复在 x11 和 Wayland 下点击 dock 外面的位置，插件（如音量调节）的左键窗口不关闭的问题
+    if (!nativeWayland) {
         m_regionInter->registerRegion();
     }
 }
@@ -155,14 +156,14 @@ void DockPopupWindow::enterEvent(QEnterEvent *e)
 bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 {
     if (o != getContent() || e->type() != QEvent::Resize) {
-        // Wayland 下处理全局鼠标按下事件
-        if (DApplication::isWayland() && m_model && isVisible() && e->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
-            const QRect rect = QRect(pos(), size());
-            if (!rect.contains(mouseEvent->globalPosition().toPoint())) {
-                emit accept();
-                m_regionInter->unregisterRegion();  // 清理状态
+        if (e->type() == QEvent::MouseButtonPress) {
+            // 统一使用屏幕全局坐标系进行命中测试
+            if (this->frameGeometry().contains(QCursor::pos())) {
+                return false; // 点击在 Popup 自身区域内，放行事件
             }
+            // 点击在窗口外部，触发关闭并拦截事件向下传递
+            accept();
+            return true;
         }
         return false;
     }
@@ -181,20 +182,19 @@ bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 
 void DockPopupWindow::onGlobMouseRelease(const QPoint &mousePos, const int flag)
 {
-    Q_ASSERT(m_model);
-
     if (!((flag == DRegionMonitor::WatchedFlags::Button_Left) ||
           (flag == DRegionMonitor::WatchedFlags::Button_Right))) {
         return;
     }
 
-    const QRect rect = QRect(pos(), size());
-    if (rect.contains(mousePos))
+    if (this->frameGeometry().contains(mousePos))
         return;
 
     emit accept();
-
-    m_regionInter->unregisterRegion();
+    
+    if (m_regionInter->registered()) {
+        m_regionInter->unregisterRegion();
+    }
 }
 
 void DockPopupWindow::compositeChanged()
