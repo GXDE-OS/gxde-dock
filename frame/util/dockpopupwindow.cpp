@@ -35,7 +35,9 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
 
       m_acceptDelayTimer(new QTimer(this)),
 
-      m_regionInter(new DRegionMonitor(this))
+      m_regionInter(new DRegionMonitor(this)),
+
+      m_maskWindow(new DockPopupMask(this, nullptr))
 {
     m_acceptDelayTimer->setSingleShot(true);
     m_acceptDelayTimer->setInterval(100);
@@ -51,22 +53,12 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
         setBackgroundColor(DBlurEffectWidget::DarkColor);
     }
 
-    if (DApplication::isWayland()) {
-        // Wayland 下使用 Qt::Popup 让合成器自动处理点击外部关闭
-        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Popup);
-    }else{
-        setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
-    }
-    
+    setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
     setAttribute(Qt::WA_InputMethodEnabled, false);
     setProperty("_d_dock_popup", true);
 
     connect(m_acceptDelayTimer, &QTimer::timeout, this, &DockPopupWindow::accept);
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &DockPopupWindow::compositeChanged);
-    // 修复插件（如音量调节）的左键窗口在 Wayland 下无法关闭的问题
-    if (DApplication::isWayland()) {
-            qApp->installEventFilter(this);
-    }
     connect(m_regionInter, &DRegionMonitor::buttonPress, this, &DockPopupWindow::onGlobMouseRelease);
 }
 
@@ -106,6 +98,11 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
 
     if (!nativeWayland) {
         m_regionInter->registerRegion();
+    }else{
+        // Wayland 下显示遮罩窗口
+        QScreen *screen = QGuiApplication::screenAt(pos);
+        if (!screen) screen = QGuiApplication::primaryScreen();
+        m_maskWindow->showMask(screen);
     }
 }
 
@@ -142,6 +139,10 @@ void DockPopupWindow::hide()
     if (!nativeWayland && m_regionInter->registered())
         m_regionInter->unregisterRegion();
 
+    if (nativeWayland) {
+        m_maskWindow->hideMask();
+    }
+
     DArrowRectangle::hide();
 }
 
@@ -162,15 +163,6 @@ void DockPopupWindow::enterEvent(QEnterEvent *e)
 bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
 {
     if (o != getContent() || e->type() != QEvent::Resize) {
-        // Wayland 下处理全局鼠标按下事件
-        if (DApplication::isWayland() && m_model && isVisible() && e->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
-            const QRect rect = QRect(pos(), size());
-            if (!rect.contains(mouseEvent->globalPosition().toPoint())) {
-                emit accept();
-                m_regionInter->unregisterRegion();  // 清理状态
-            }
-        }
         return false;
     }
     // FIXME: ensure position move after global mouse release event
@@ -216,4 +208,39 @@ void DockPopupWindow::ensureRaised()
 {
     if (isVisible())
         raise();
+}
+
+
+DockPopupMask::DockPopupMask(DockPopupWindow *popup, QWidget *parent)
+    : QWidget(parent), m_popup(popup)
+{
+    setAttribute(Qt::WA_TranslucentBackground);
+    // Window flags 由 setMenuMaskRole 统一设置
+}
+
+void DockPopupMask::showMask(QScreen *screen)
+{
+    if (!screen) screen = QGuiApplication::primaryScreen();
+    
+    // 先配置 LayerShell，再显示
+    Wayland::LayerShellHelper::setMenuMaskRole(this);
+    
+    setGeometry(screen->geometry());
+    show();
+    raise();
+}
+
+void DockPopupMask::hideMask()
+{
+    hide();
+}
+
+void DockPopupMask::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    if (m_popup && m_popup->isVisible()) {
+        m_popup->hide();
+        emit m_popup->accept();
+    }
+    hideMask();
 }

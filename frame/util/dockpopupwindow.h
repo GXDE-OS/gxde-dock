@@ -72,6 +72,23 @@ private:
 
     DRegionMonitor *m_regionInter;
     DWindowManagerHelper *m_wmHelper;
+
+    DockPopupMask *m_maskWindow;
+};
+
+class DockPopupMask : public QWidget 
+{
+    Q_OBJECT
+public:
+    explicit DockPopupMask(DockPopupWindow *popup, QWidget *parent = nullptr);
+    void showMask(QScreen *screen);
+    void hideMask();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+private:
+    DockPopupWindow *m_popup;
 };
 
 #endif // DOCKPOPUPWINDOW_H
