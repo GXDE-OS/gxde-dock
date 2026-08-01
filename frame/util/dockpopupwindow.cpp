@@ -20,7 +20,6 @@
  */
 
 #include "dockpopupwindow.h"
-#include "../wayland/layershellhelper.h"
 
 #include <DApplication> 
 #include <QTimer>
@@ -103,7 +102,9 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
         // Wayland 下显示遮罩窗口
         QScreen *screen = QGuiApplication::screenAt(pos);
         if (!screen) screen = QGuiApplication::primaryScreen();
+        
         m_maskWindow->showMask(screen);
+        this->raise(); 
     }
 }
 
@@ -223,12 +224,15 @@ void DockPopupMask::showMask(QScreen *screen)
 {
     if (!screen) screen = QGuiApplication::primaryScreen();
     
-    // 先配置 LayerShell，再显示
-    Wayland::LayerShellHelper::setMenuMaskRole(this);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     
+    setAttribute(Qt::WA_TranslucentBackground, true);         
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);     
+    setAttribute(Qt::WA_ShowWithoutActivating, true);       
+    setAttribute(Qt::WA_X11DoNotAcceptFocus, true);            
+
     setGeometry(screen->geometry());
     show();
-    raise();
 }
 
 void DockPopupMask::hideMask()
