@@ -50,7 +50,14 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
     } else {
         setBackgroundColor(DBlurEffectWidget::DarkColor);
     }
-    setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
+
+    if (DApplication::isWayland()) {
+        // Wayland 下使用 Qt::Popup 让合成器自动处理点击外部关闭
+        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Popup);
+    }else{
+        setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
+    }
+    
     setAttribute(Qt::WA_InputMethodEnabled, false);
     setProperty("_d_dock_popup", true);
 
