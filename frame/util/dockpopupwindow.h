@@ -25,6 +25,12 @@
 #include <darrowrectangle.h>
 #include <dregionmonitor.h>
 #include <DWindowManagerHelper>
+#include <QWidget>
+#include <QMouseEvent>
+#include <QScreen>
+#include <QTimer>
+
+class DockPopupMask;
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE

@@ -20,6 +20,7 @@
  */
 
 #include "dockpopupwindow.h"
+#include "../wayland/layershellhelper.h"
 
 #include <DApplication> 
 #include <QTimer>
