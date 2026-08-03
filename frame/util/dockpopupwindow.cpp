@@ -20,6 +20,7 @@
  */
 
 #include "dockpopupwindow.h"
+#include "wayland/layershellhelper.h"
 
 #include <DApplication> 
 #include <QTimer>
@@ -224,15 +225,23 @@ void DockPopupMask::showMask(QScreen *screen)
 {
     if (!screen) screen = QGuiApplication::primaryScreen();
     
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-    
-    setAttribute(Qt::WA_TranslucentBackground, true);         
-    setAttribute(Qt::WA_TransparentForMouseEvents, false);     
-    setAttribute(Qt::WA_ShowWithoutActivating, true);       
-    setAttribute(Qt::WA_X11DoNotAcceptFocus, true);            
+    if (Wayland::LayerShellHelper::isWayland()) {
+        // Wayland: 使用 layer shell 确保遮罩渲染在 dock 的 layer shell 窗口之上，
+        // 这样才能拦截 dock 区域内的点击事件。
+        setScreen(screen);
+        Wayland::LayerShellHelper::setMenuMaskRole(this);
+        show();
+    } else {
+        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+        
+        setAttribute(Qt::WA_TranslucentBackground, true);
+        setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        setAttribute(Qt::WA_ShowWithoutActivating, true);
+        setAttribute(Qt::WA_X11DoNotAcceptFocus, true);
 
-    setGeometry(screen->geometry());
-    show();
+        setGeometry(screen->geometry());
+        show();
+    }
 }
 
 void DockPopupMask::hideMask()

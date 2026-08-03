@@ -1,3 +1,9 @@
+gxde-dock (6.0.4) UNRELEASED; urgency=medium
+
+  * 修复 Wayland 下点击 dock 内部非菜单区域时右键菜单无法消失的问题
+
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 03 Aug 2026 20:23:32 +0800
+
 gxde-dock (6.0.3) UNRELEASED; urgency=medium
 
   [ CharOfString ]
