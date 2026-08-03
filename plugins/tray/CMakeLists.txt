@@ -13,7 +13,8 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
     "../../frame/dbus/dockdbusnames.h" "../../frame/dbus/dockdbusnames.cpp"
     "../../frame/dbus/sni/*.h" "../../frame/dbus/sni/*.cpp"
     "../../frame/dbus/dbusmenu.h" "../../frame/dbus/dbusmenu.cpp"
-    "../../frame/dbus/dbusmenumanager.h" "../../frame/dbus/dbusmenumanager.cpp")
+    "../../frame/dbus/dbusmenumanager.h" "../../frame/dbus/dbusmenumanager.cpp"
+    "../../frame/wayland/layershellhelper.cpp" "../../frame/wayland/layershellhelper.h")
 
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus Gui)
