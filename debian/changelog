@@ -1,9 +1,10 @@
-gxde-dock (6.0.5) UNRELEASED; urgency=medium
+gxde-dock (6.0.6) UNRELEASED; urgency=medium
 
   * 修复 Wayland 下点击 dock 内部非菜单区域时右键菜单无法消失的问题
   * 修复托盘爆炸的问题
+  * 修复点击一次回收站插件却弹出两个回收站窗口的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 08 Aug 2026 12:20:19 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Tue, 11 Aug 2026 07:50:23 +0800
 
 gxde-dock (6.0.3) UNRELEASED; urgency=medium
 
