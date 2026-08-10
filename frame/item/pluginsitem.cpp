@@ -233,12 +233,15 @@ bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_centralWidget) {
         if (event->type() == QEvent::MouseButtonPress) {
             mousePressEvent(static_cast<QMouseEvent *>(event));
+            return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_hover = false;
             update();
             mouseReleaseEvent(static_cast<QMouseEvent *>(event));
+            return true;
         } else if (event->type() == QEvent::MouseMove) {
             mouseMoveEvent(static_cast<QMouseEvent *>(event));
+            return true;
         }
     }
 
