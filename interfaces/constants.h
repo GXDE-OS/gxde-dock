@@ -65,6 +65,7 @@ enum DisplayMode {
 enum HideMode {
     KeepShowing     = 0,
     KeepHidden      = 1,
+    AutoHide        = 2,
     SmartHide       = 3,
 };
 

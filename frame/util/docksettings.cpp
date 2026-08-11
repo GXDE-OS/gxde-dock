@@ -109,6 +109,8 @@ HideMode hideModeFromString(const QString& s) {
         return KeepHidden;
     } else if (s == "smart-hide") {
         return SmartHide;
+    } else if (s == "auto-hide") {
+        return AutoHide;
     } else {
         return KeepShowing;
     }
@@ -122,6 +124,10 @@ QString hideModeToString(const HideMode m) {
 
         case SmartHide: {
             return "smart-hide";
+        }
+
+        case AutoHide: {
+            return "auto-hide";
         }
 
         case KeepShowing: {
