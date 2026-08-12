@@ -246,9 +246,6 @@ void MainWindow::enterEvent(QEnterEvent *e)
     QWidget::enterEvent(e);
 
     m_leaveDelayTimer->stop();
-    // 一直隐藏模式下不响应鼠标悬停自动展开，只能通过右键菜单切换状态唤出
-    if (m_settings->hideMode() == KeepHidden)
-        return;
     if (m_settings->hideState() != Show && m_panelShowAni->state() != QPropertyAnimation::Running)
         m_expandDelayTimer->start();
 }
@@ -265,8 +262,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
     QWidget::dragEnterEvent(e);
 
-    if (m_settings->hideMode() == KeepHidden)
-        return;
     if (m_settings->hideState() != Show) {
         m_expandDelayTimer->start();
     }
@@ -739,6 +734,8 @@ void MainWindow::narrow(const Position prevPos)
     m_panelHideAni->setEndValue(finishPos);
     m_panelHideAni->start();
     m_platformWindowHandle.setShadowRadius(0);
+
+    resetPanelEnvironment(false);
 }
 
 void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosition)
