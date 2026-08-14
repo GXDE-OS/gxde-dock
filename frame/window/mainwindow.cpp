@@ -269,12 +269,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 
 void MainWindow::setFixedSize(const QSize &size)
 {
-    if (Wayland::LayerShellHelper::isWayland()) {
-        m_sizeChangeAni->stop();
-        QWidget::setFixedSize(size);
-        return;
-    }
-
     const QPropertyAnimation::State state = m_sizeChangeAni->state();
 
     if (state == QPropertyAnimation::Stopped && this->size() == size)
@@ -345,7 +339,10 @@ void MainWindow::initComponents()
 
 void MainWindow::compositeChanged()
 {
-    const bool composite = m_wmHelper->hasComposite();
+    // Wayland 下始终有合成器；DTK 的 hasComposite() 依赖 X11 的
+    // _NET_WM_CM_S0 选区，在 Wayland 上会误报 false，导致所有动画时长被置 0。
+    // 因此在 Wayland 下强制视为有合成器，恢复启动/尺寸变化动画。
+    const bool composite = Wayland::LayerShellHelper::isWayland() ? true : m_wmHelper->hasComposite();
 
 // NOTE(justforlxz): On the sw platform, there is an unstable
 // display position error, disable animation solution
