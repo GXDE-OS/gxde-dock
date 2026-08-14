@@ -1,3 +1,12 @@
+gxde-dock (6.0.7) UNRELEASED; urgency=medium
+
+  * 修复了Wayland HDPI下dock图标错位的问题
+  * 修复了Wayland HDPI下dock图标模糊的问题
+  * 新增Wayland/X11多屏幕支持
+  * 修复Wayland下窗口缩略图预览截不到缩略图的问题
+
+ -- CharOfString <root@charofstring.cc>  Fri, 14 Aug 2026 23:08:00 +0800
+
 gxde-dock (6.0.6) UNRELEASED; urgency=medium
 
   * 修复 Wayland 下点击 dock 内部非菜单区域时右键菜单无法消失的问题
