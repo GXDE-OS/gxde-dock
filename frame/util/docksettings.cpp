@@ -415,6 +415,21 @@ const QSize DockSettings::panelSize() const
     return m_mainWindowSize;
 }
 
+const QRect DockSettings::frontendWindowRect(QScreen *screen) const
+{
+    if (!screen)
+        screen = qApp->primaryScreen();
+    if (!screen)
+        return QRect();
+
+    const QRect logical = windowRect(m_position, false, screen);
+    const qreal ratio = screen->devicePixelRatio();
+    const QPoint rawTopLeft = rawXPosition(logical.topLeft());
+    const QSize rawSize(qRound(logical.width() * ratio),
+                        qRound(logical.height() * ratio));
+    return QRect(rawTopLeft, rawSize);
+}
+
 const QRect DockSettings::windowRect(const Position position, const bool hide) const
 {
     return windowRect(position, hide, qApp->primaryScreen());
@@ -774,14 +789,11 @@ void DockSettings::primaryScreenChanged()
 
 void DockSettings::resetFrontendGeometry()
 {
-    const QRect r = windowRect(m_position);
-    const qreal ratio = dockRatio();
-    const QPoint p = rawXPosition(r.topLeft());
-    const uint w = r.width() * ratio;
-    const uint h = r.height() * ratio;
-
-    m_frontendRect = QRect(p.x(), p.y(), w, h);
-    m_dockInter->SetFrontendWindowRect(p.x(), p.y(), w, h);
+    m_frontendRect = frontendWindowRect(qApp->primaryScreen());
+    m_dockInter->SetFrontendWindowRect(
+        m_frontendRect.x(), m_frontendRect.y(),
+        static_cast<uint>(m_frontendRect.width()),
+        static_cast<uint>(m_frontendRect.height()));
 }
 
 bool DockSettings::test(const Position pos, const QList<QRect> &otherScreens) const

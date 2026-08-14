@@ -234,7 +234,7 @@
 <context>
     <name>LauncherItem</name>
     <message>
-        <location filename="../frame/item/launcheritem.cpp" line="105"/>
+        <location filename="../frame/item/launcheritem.cpp" line="141"/>
         <source>Launcher</source>
         <translation>Käynnistin</translation>
     </message>

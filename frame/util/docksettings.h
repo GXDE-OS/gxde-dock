@@ -79,6 +79,7 @@ public:
     const QRect primaryRect() const;
     inline const QRect primaryRawRect() const { return m_primaryRawRect; }
     inline const QRect frontendWindowRect() const { return m_frontendRect; }
+    const QRect frontendWindowRect(QScreen *screen) const;
     inline const QSize windowSize() const { return m_mainWindowSize; }
     inline const quint8 Opacity() const { return m_opacity * 255; }
     inline const QSize fashionTraySize() const { return m_fashionTraySize; }

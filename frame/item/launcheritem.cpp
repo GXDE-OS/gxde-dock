@@ -20,6 +20,7 @@
  */
 
 #include "launcheritem.h"
+#include "util/docksettings.h"
 #include "util/themeappicon.h"
 #include "util/imagefactory.h"
 
@@ -28,6 +29,10 @@
 #include <QMouseEvent>
 #include <DDBusSender>
 #include <QApplication>
+#include <QDBusPendingCallWatcher>
+#include <QDebug>
+#include <QScreen>
+#include <QWindow>
 
 DCORE_USE_NAMESPACE
 
@@ -96,7 +101,38 @@ void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
         return;
 
     if (!m_launcherInter->IsVisible()) {
-        m_launcherInter->Show();
+        QScreen *screen = nullptr;
+        if (QWidget *topLevel = window()) {
+            if (QWindow *handle = topLevel->windowHandle())
+                screen = handle->screen();
+            if (!screen)
+                screen = topLevel->screen();
+        }
+        if (!screen)
+            screen = qApp->primaryScreen();
+
+        if (!screen) {
+            m_launcherInter->Show();
+            return;
+        }
+
+        const QRect dockGeometry =
+            DockSettings::Instance().frontendWindowRect(screen);
+        QDBusPendingCall call = m_launcherInter->asyncCall(
+            QStringLiteral("ShowOnScreen"),
+            screen->name(), dockGeometry.x(), dockGeometry.y(),
+            static_cast<uint>(dockGeometry.width()),
+            static_cast<uint>(dockGeometry.height()));
+        auto *watcher = new QDBusPendingCallWatcher(call, this);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this,
+                [this, watcher] {
+            if (watcher->isError()) {
+                qInfo() << "Launcher.ShowOnScreen unavailable, falling back to Show:"
+                        << watcher->error().name();
+                m_launcherInter->Show();
+            }
+            watcher->deleteLater();
+        });
     }
 }
 
