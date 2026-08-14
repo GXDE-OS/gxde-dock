@@ -109,11 +109,12 @@ void WirelessItem::paintEvent(QPaintEvent *e)
     {
         QPixmap pixmap = backgroundPix(iconSize);
         pixmap.setDevicePixelRatio(ratio);
-        painter.drawPixmap(rect().center() - pixmap.rect().center() / ratio, pixmap);
+        painter.drawPixmap(rect().center() - pixmap.rect().center() / pixmap.devicePixelRatioF(), pixmap);
     }
     const QRectF &rf = QRectF(rect());
     const QRectF &rfp = QRectF(pixmap.rect());
-    painter.drawPixmap(rf.center() - rfp.center() / ratio, pixmap);
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    painter.drawPixmap(rf.center() - rfp.center() / pixmap.devicePixelRatioF(), pixmap);
 
     if (m_reloadIcon)
         m_reloadIcon = false;
@@ -211,7 +212,8 @@ const QPixmap WirelessItem::backgroundPix(const int size)
 const QPixmap WirelessItem::cachedPix(const QString &key, const int size)
 {
     if (m_reloadIcon || !m_icons.contains(key)) {
-        m_icons.insert(key, QIcon::fromTheme(key, QIcon(":/wireless/resources/wireless/" + key + ".svg")).pixmap(size));
+        // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+        m_icons.insert(key, QIcon::fromTheme(key, QIcon(":/wireless/resources/wireless/" + key + ".svg")).pixmap(QSize(size, size), devicePixelRatioF()));
     }
 
     return m_icons.value(key);

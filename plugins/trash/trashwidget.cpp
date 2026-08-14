@@ -171,7 +171,8 @@ void TrashWidget::paintEvent(QPaintEvent *e)
 
     updateIcon();
 
-    painter.drawPixmap(rect().center() - m_icon.rect().center() / devicePixelRatioF(), m_icon);
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    painter.drawPixmap(rect().center() - m_icon.rect().center() / m_icon.devicePixelRatioF(), m_icon);
 }
 
 void TrashWidget::resizeEvent(QResizeEvent *e)
@@ -203,7 +204,8 @@ void TrashWidget::updateIcon()
     const int size = std::min(width(), height()) ;
     QIcon icon = QIcon::fromTheme(iconString);
 
-    m_icon = icon.pixmap(size, size);
+    // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+    m_icon = icon.pixmap(QSize(size, size), devicePixelRatioF());
 }
 
 void TrashWidget::updateIconAndRefresh()

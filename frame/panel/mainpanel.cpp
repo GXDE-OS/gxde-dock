@@ -445,7 +445,7 @@ void MainPanel::adjustItemSize()
     // ensure all item is update, whatever layout is changed
     QTimer::singleShot(1, this, static_cast<void (MainPanel::*)()>(&MainPanel::update));
 
-    const auto ratio = devicePixelRatioF();
+    const auto ratio = DockSettings::Instance().dockRatio();
 
     QSize itemSize;
     switch (m_position)
@@ -533,6 +533,7 @@ void MainPanel::adjustItemSize()
                     item->setFixedSize(size);
                     totalWidth += size.width();
                     totalHeight += size.height();
+                    ++totalAppItemCount;
                 }
                 else {
                     item->setFixedSize(itemSize);
@@ -654,12 +655,12 @@ void MainPanel::adjustItemSize()
         switch (m_position) {
         case Dock::Top:
         case Dock::Bottom:
-            item->setFixedWidth(item->width() - decrease - bool(extraDecrease));
+            item->setFixedWidth(qMax(1, item->width() - int(decrease) - bool(extraDecrease)));
             break;
 
         case Dock::Left:
         case Dock::Right:
-            item->setFixedHeight(item->height() - decrease - bool(extraDecrease));
+            item->setFixedHeight(qMax(1, item->height() - int(decrease) - bool(extraDecrease)));
             break;
         }
 

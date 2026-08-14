@@ -57,10 +57,12 @@ void PluginWidget::paintEvent(QPaintEvent *e)
     pixmap = loadSvg(iconName, QSize(iconSize, iconSize));
 
     QPainter painter(this);
-    painter.drawPixmap(rect().center() - pixmap.rect().center() / devicePixelRatioF(), pixmap);
+    // 居中偏移必须用 pixmap 自身的 DPR（与 shutdown 等插件同理，修复 HDPI 下图标偏左上）
+    painter.drawPixmap(rect().center() - pixmap.rect().center() / pixmap.devicePixelRatioF(), pixmap);
 }
 
 const QPixmap PluginWidget::loadSvg(const QString &fileName, const QSize &size) const
 {
-    return QIcon::fromTheme(fileName).pixmap(size);
+    // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+    return QIcon::fromTheme(fileName).pixmap(size, devicePixelRatioF());
 }

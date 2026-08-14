@@ -533,11 +533,11 @@ bool AppItem::hasAttention() const
 
 QPoint AppItem::appIconPosition() const
 {
-    const auto ratio = devicePixelRatioF();
     const QRectF itemRect = rect();
     const QRectF iconRect = m_appIcon.rect();
-    const qreal iconX = itemRect.center().x() - iconRect.center().x() / ratio;
-    const qreal iconY = itemRect.center().y() - iconRect.center().y() / ratio;
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    const qreal iconX = itemRect.center().x() - iconRect.center().x() / m_appIcon.devicePixelRatioF();
+    const qreal iconY = itemRect.center().y() - iconRect.center().y() / m_appIcon.devicePixelRatioF();
 
     return QPoint(iconX, iconY);
 }

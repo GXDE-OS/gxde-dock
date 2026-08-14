@@ -98,15 +98,16 @@ static QPair<QGraphicsView *, QGraphicsItemAnimation *> SwingEffect(
 
     QGraphicsPixmapItem *item = itemScene->addPixmap(icon);
     item->setTransformationMode(Qt::SmoothTransformation);
-    item->setPos(QPointF(rect.center()) - QPointF(icon.rect().center()) / devicePixelRatio);
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    item->setPos(QPointF(rect.center()) - QPointF(icon.rect().center()) / icon.devicePixelRatioF());
 
     itemAnimation->setItem(item);
     itemScene->setSceneRect(rect);
     swingEffectView->setSceneRect(rect);
     swingEffectView->setFixedSize(rect.size());
 
-    const int px = qreal(-icon.rect().center().x()) / devicePixelRatio;
-    const int py = qreal(-icon.rect().center().y()) / devicePixelRatio - 18.;
+    const int px = qreal(-icon.rect().center().x()) / icon.devicePixelRatioF();
+    const int py = qreal(-icon.rect().center().y()) / icon.devicePixelRatioF() - 18.;
     const QPoint pos = rect.center() + QPoint(0, 18);
     for (int i(0); i != 60; ++i)
     {

@@ -295,6 +295,8 @@ DockSettings::DockSettings(QWidget *parent)
         if (newScreen) {
             connect(newScreen, &QScreen::geometryChanged,
                     this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
+            connect(newScreen, &QScreen::logicalDotsPerInchChanged,
+                    this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
         }
         QMetaObject::invokeMethod(this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
     });
@@ -305,6 +307,8 @@ DockSettings::DockSettings(QWidget *parent)
                 this, [this](const QRect &) {
             qInfo() << "(Dock) Screen geometry changed via QScreen";
         });
+        connect(qApp->primaryScreen(), &QScreen::logicalDotsPerInchChanged,
+                this, &DockSettings::primaryScreenChanged, Qt::QueuedConnection);
     }
 
     connect(&m_systemMonitor, &QAction::triggered, this, &DockSettings::openSystemMonitor);
@@ -844,6 +848,10 @@ void DockSettings::onFashionTraySizeChanged(const QSize &traySize)
 void DockSettings::calculateWindowConfig()
 {
     const auto ratio = dockRatio();
+    // 每次重算窗口配置时都用当前 ratio 刷新 IconBaseSize，
+    // 避免 Wayland 启动阶段 DPR 从 2.0 修正到 1.25 后 IconBaseSize 仍是旧值，
+    // 导致 adjustItemSize 里 itemSize 被算成负数/超大，图标乱飞、贴左上角。
+    AppItem::setIconBaseSize(m_iconSize * ratio);
     const int defaultHeight = std::round(AppItem::itemBaseHeight() / ratio);
     const int defaultWidth = std::round(AppItem::itemBaseWidth() / ratio);
 

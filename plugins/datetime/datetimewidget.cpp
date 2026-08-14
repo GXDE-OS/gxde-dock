@@ -125,7 +125,8 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
 
         // draw background
         QPixmap background = loadSvg(":/icons/resources/icons/background.svg", QSize(perfectIconSize, perfectIconSize));
-        const QPoint backgroundOffset = r.center() - background.rect().center() / ratio;
+        // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+        const QPoint backgroundOffset = r.center() - background.rect().center() / background.devicePixelRatioF();
         p.drawPixmap(backgroundOffset, background);
 
         const int bigNumHeight = perfectIconSize / 2.5;
@@ -187,7 +188,8 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     }
 
     // draw cached fashion mode time item
-    painter.drawPixmap(rect().center() - m_cachedIcon.rect().center() / ratio, m_cachedIcon);
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    painter.drawPixmap(rect().center() - m_cachedIcon.rect().center() / m_cachedIcon.devicePixelRatioF(), m_cachedIcon);
 }
 
 const QPixmap DatetimeWidget::loadSvg(const QString &fileName, const QSize size)

@@ -69,9 +69,9 @@ void LauncherItem::paintEvent(QPaintEvent *e)
 
     const QPixmap pixmap = DockDisplayMode == Fashion ? m_largeIcon : m_smallIcon;
 
-    const auto ratio = devicePixelRatioF();
-    const int iconX = rect().center().x() - pixmap.rect().center().x() / ratio;
-    const int iconY = rect().center().y() - pixmap.rect().center().y() / ratio;
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
+    const int iconX = rect().center().x() - pixmap.rect().center().x() / pixmap.devicePixelRatioF();
+    const int iconY = rect().center().y() - pixmap.rect().center().y() / pixmap.devicePixelRatioF();
 
     painter.drawPixmap(iconX, iconY, pixmap);
 }

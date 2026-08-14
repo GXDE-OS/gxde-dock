@@ -124,5 +124,6 @@ QPixmap PowerStatusWidget::getBatteryIcon()
     const QString iconStr = QString("battery-%1-%2")
                                 .arg(percentageStr)
                                 .arg(plugged ? "plugged-symbolic" : "symbolic");
-    return QIcon::fromTheme(iconStr).pixmap(QSize(16, 16));
+    // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+    return QIcon::fromTheme(iconStr).pixmap(QSize(16, 16), devicePixelRatioF());
 }

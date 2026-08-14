@@ -465,18 +465,20 @@ void TrayPlugin::trayIndicatorAdded(const QString &itemKey, const QString &indic
         m_indicatorMap[indicatorName] = indicatorTray;
     }
     else {
-        indicatorTray = m_indicatorMap[itemKey];
+        indicatorTray = m_indicatorMap[indicatorName];
     }
 
+    // NOTE: Qt6 forbids Qt::UniqueConnection with a lambda (asserts at runtime),
+    // and this slot is connected exactly once per newly created IndicatorTray.
     connect(indicatorTray, &IndicatorTray::delayLoaded,
     indicatorTray, [ = ]() {
         addTrayWidget(itemKey, indicatorTray->widget());
-    }, Qt::UniqueConnection);
+    });
 
     connect(indicatorTray, &IndicatorTray::removed, this, [=] {
         trayRemoved(itemKey);
         indicatorTray->removeWidget();
-    }, Qt::UniqueConnection);
+    });
 }
 
 void TrayPlugin::trayRemoved(const QString &itemKey, const bool deleteObject)

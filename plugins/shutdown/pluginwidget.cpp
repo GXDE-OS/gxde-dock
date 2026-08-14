@@ -56,12 +56,14 @@ void PluginWidget::paintEvent(QPaintEvent *e)
     pixmap = loadSvg(iconName, QSize(iconSize, iconSize));
 
     QPainter painter(this);
-    painter.drawPixmap(rect().center() - pixmap.rect().center() / devicePixelRatioF(), pixmap);
+    // 用 pixmap 自身的 devicePixelRatio 计算居中偏移，而非控件的 devicePixelRatioF()：
+    // Wayland HDPI 下两者在启动阶段会不一致(控件 1.25 vs pixmap 烘焙时的 2.0)，
+    // 混用会导致图标整体偏向左上角。
+    painter.drawPixmap(rect().center() - pixmap.rect().center() / pixmap.devicePixelRatioF(), pixmap);
 }
 
 const QPixmap PluginWidget::loadSvg(const QString &fileName, const QSize &size) const
 {
-    // Qt6: QIcon::pixmap() already returns a DPR-aware pixmap,
-    // so we pass the logical size directly.
-    return QIcon::fromTheme(fileName).pixmap(size);
+    // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+    return QIcon::fromTheme(fileName).pixmap(size, devicePixelRatioF());
 }

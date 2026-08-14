@@ -180,7 +180,8 @@ void SoundItem::refreshIcon()
 
         const int iconSize = displayMode == Dock::Fashion ? std::min(width(), height()) * 0.8 : 16;
         const QIcon icon = QIcon::fromTheme(iconString);
-        m_iconPixmap = icon.pixmap(iconSize, iconSize);
+        // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+        m_iconPixmap = icon.pixmap(QSize(iconSize, iconSize), devicePixelRatioF());
 
     update();
 }

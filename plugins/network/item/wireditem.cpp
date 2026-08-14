@@ -72,11 +72,11 @@ void WiredItem::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
 
     QPainter painter(this);
-    const auto ratio = devicePixelRatioF();
+    // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）
     const QRectF &rf = QRectF(rect());
     const QRectF &rfp = QRectF(m_icon.rect());
-    const int x = rf.center().x() - rfp.center().x() / ratio;
-    const int y = rf.center().y() - rfp.center().y() / ratio;
+    const int x = rf.center().x() - rfp.center().x() / m_icon.devicePixelRatioF();
+    const int y = rf.center().y() - rfp.center().y() / m_icon.devicePixelRatioF();
     painter.drawPixmap(x, y, m_icon);
 }
 
@@ -104,7 +104,6 @@ void WiredItem::reloadIcon()
 
 //    const Dock::DisplayMode displayMode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
     const Dock::DisplayMode displayMode = Dock::DisplayMode::Efficient;
-    const auto ratio = devicePixelRatioF();
     const int iconSize = displayMode == Dock::Efficient ? 16 : std::min(width(), height()) * 0.8;
 
     QString iconName = "network-";
@@ -131,8 +130,9 @@ void WiredItem::reloadIcon()
             m_delayTimer->start();
             const quint64 index = QDateTime::currentMSecsSinceEpoch() / 200;
             const int num = (index % 5) + 1;
+            // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
             m_icon = QIcon(QString(":/wired/resources/wired/network-wired-symbolic-connecting%1.svg").arg(num))
-                    .pixmap(iconSize, iconSize);
+                    .pixmap(QSize(iconSize, iconSize), devicePixelRatioF());
             update();
             return;
         }
@@ -164,7 +164,8 @@ void WiredItem::reloadIcon()
     if (displayMode == Dock::Efficient)
         iconName.append("-symbolic");
 
-    m_icon = QIcon::fromTheme(iconName).pixmap(iconSize, iconSize);
+    // 按当前 DPR 请求 pixmap，HDPI 下图标才不会糊
+    m_icon = QIcon::fromTheme(iconName).pixmap(QSize(iconSize, iconSize), devicePixelRatioF());
     update();
 }
 
