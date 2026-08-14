@@ -1,3 +1,9 @@
+gxde-dock (6.0.8) UNRELEASED; urgency=medium
+
+  * 修复了磁盘插件图标大小过大的问题
+
+ -- CharOfString <root@charofstring.cc>  Fri, 14 Aug 2026 23:49:50 +0800
+
 gxde-dock (6.0.7) UNRELEASED; urgency=medium
 
   * 修复了Wayland HDPI下dock图标错位的问题
