@@ -43,7 +43,7 @@ const char *RequestDockKeyFallback = "text/plain";
 
 const char *DesktopMimeType = "application/x-desktop";
 
-MainPanel::MainPanel(QWidget *parent)
+MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
     : DBlurEffectWidget(parent),
       m_position(Dock::Top),
       m_displayMode(Dock::Fashion),
@@ -53,7 +53,7 @@ MainPanel::MainPanel(QWidget *parent)
       m_appDragWidget(nullptr),
       m_sizeChangeAni(new QVariantAnimation(this)),
       m_showDesktopItem(new ShowDesktopItem(this)),
-      m_itemController(DockItemController::instance(this))
+      m_itemController(controller)
 {
     m_itemLayout->setSpacing(0);
     m_itemLayout->setContentsMargins(0, 0, 0, 0);

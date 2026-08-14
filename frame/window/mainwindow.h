@@ -37,15 +37,19 @@
 
 class MainPanel;
 class DBusDockAdaptors;
+class DockItemController;
+class QScreen;
 class MainWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QScreen *screen, QWidget *parent = 0);
     ~MainWindow();
 
     friend class MainPanel;
+
+    QScreen *screen() const;
 
 public slots:
     void launch();
@@ -96,6 +100,8 @@ private slots:
 private:
     bool m_launched;
     bool m_updatePanelVisible;
+    QScreen *m_screen;
+    DockItemController *m_itemController;
     MainPanel *m_mainPanel;
 
     DPlatformWindowHandle m_platformWindowHandle;

@@ -50,7 +50,8 @@ class MainPanel : public DBlurEffectWidget
     Q_PROPERTY(int position READ position DESIGNABLE true)
 
 public:
-    explicit MainPanel(QWidget *parent = 0);
+    // 多屏: controller 为当前屏幕的 DockItemController
+    explicit MainPanel(DockItemController *controller, QWidget *parent = 0);
     virtual ~MainPanel();
 
     void updateDockPosition(const Position dockPosition);

@@ -30,15 +30,40 @@
 
 #include <QDebug>
 #include <QGSettings>
+#include <QGuiApplication>
+#include <QScreen>
 
-DockItemController *DockItemController::INSTANCE = nullptr;
+QHash<QScreen *, DockItemController *> DockItemController::INSTANCES;
+
+DockItemController *DockItemController::instanceForScreen(QScreen *screen, QObject *parent)
+{
+    if (!screen) {
+        screen = qGuiApp->primaryScreen();
+    }
+
+    DockItemController *controller = INSTANCES.value(screen, nullptr);
+    if (!controller) {
+        controller = new DockItemController(screen, parent);
+        INSTANCES.insert(screen, controller);
+
+        // 屏幕被移除后，对应的 controller 一并销毁
+        QObject::connect(screen, &QScreen::destroyed, controller, [controller, screen]() {
+            INSTANCES.remove(screen);
+            controller->deleteLater();
+        });
+    }
+
+    return controller;
+}
 
 DockItemController *DockItemController::instance(QObject *parent)
 {
-    if (!INSTANCE)
-        INSTANCE = new DockItemController(parent);
+    return instanceForScreen(qGuiApp->primaryScreen(), parent);
+}
 
-    return INSTANCE;
+QScreen *DockItemController::screen() const
+{
+    return m_screen;
 }
 
 const QList<QPointer<DockItem>> DockItemController::itemList() const
@@ -214,8 +239,9 @@ void DockItemController::refreshFSTItemSpliterVisible()
     }
 }
 
-DockItemController::DockItemController(QObject *parent)
+DockItemController::DockItemController(QScreen *screen, QObject *parent)
     : QObject(parent),
+      m_screen(screen),
       m_updatePluginsOrderTimer(new QTimer(this)),
       m_appInter(new DBusDock(dockDBusService(), dockDBusManagerPath(),
 QDBusConnection::sessionBus(), this)),

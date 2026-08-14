@@ -20,6 +20,7 @@
  */
 
 #include "window/mainwindow.h"
+#include "controller/dockitemcontroller.h"
 #include "util/themeappicon.h"
 #include "wayland/layershellhelper.h"
 #include "wayland/xsettings.h"
@@ -33,8 +34,11 @@
 #include <QCursor>
 #include <QElapsedTimer>
 #include <QEvent>
+#include <QHash>
 #include <QIcon>
+#include <QScreen>
 #include <QSettings>
+#include <QSet>
 #include <QApplication>
 #include <QDBusServiceWatcher>
 #include <QWidget>
@@ -49,6 +53,7 @@
 #include <LayerShellQt/Shell>
 
 #include <unistd.h>
+#include <algorithm>
 #include <vector>
 
 #include "dbus/dbusdockadaptors.h"
@@ -370,7 +375,115 @@ int main(int argc, char *argv[])
 #ifndef QT_DEBUG
     QDir::setCurrent(QApplication::applicationDirPath());
 #endif
-    MainWindow mw;
+
+    QHash<QScreen *, MainWindow *> dockWindows;
+    MainWindow *primaryWindow = nullptr;
+
+    const bool dockHidden = QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/dock-hide");
+    const bool macMode = QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode");
+
+    auto createDockForScreen = [&](QScreen *screen) {
+        if (dockHidden) {
+            return;
+        }
+
+        MainWindow *mw = new MainWindow(screen);
+        dockWindows.insert(screen, mw);
+
+        if (screen == qApp->primaryScreen()) {
+            primaryWindow = mw;
+        }
+
+        QTimer::singleShot(1, mw, &MainWindow::launch);
+
+        if (!parser.isSet(disablePlugOption) && !macMode) {
+            DockItemController::instanceForScreen(screen)->startLoadPlugins();
+        }
+    };
+
+    auto reconcileDocks = [&]() {
+        if (dockHidden) {
+            return;
+        }
+
+        QList<QScreen *> screens = qApp->screens();
+        std::sort(screens.begin(), screens.end(), [](QScreen *a, QScreen *b) {
+            if (a == b) {
+                return false;
+            }
+            QScreen *primary = qApp->primaryScreen();
+            if (a == primary) {
+                return true;
+            }
+            if (b == primary) {
+                return false;
+            }
+            return a->name() < b->name();
+        });
+
+        QSet<QRect> coveredGeometries;
+
+        QList<QScreen *> stale;
+        for (QScreen *s : screens) {
+            if (!dockWindows.contains(s)) {
+                continue;
+            }
+            const QRect g = s->geometry();
+            if (coveredGeometries.contains(g)) {
+                qInfo() << "(Dock) screen" << s->name() << "mirrors another screen, remove its dock";
+                stale.append(s);
+            } else {
+                coveredGeometries.insert(g);
+            }
+        }
+        for (QScreen *s : stale) {
+            MainWindow *mw = dockWindows.take(s);
+            if (mw) {
+                mw->hide();
+                mw->deleteLater();
+            }
+        }
+
+        for (QScreen *s : screens) {
+            if (dockWindows.contains(s)) {
+                continue;
+            }
+            if (coveredGeometries.contains(s->geometry())) {
+                qInfo() << "(Dock) screen" << s->name() << "mirrors an existing dock, skip";
+                continue;
+            }
+            qInfo() << "(Dock) create dock for screen" << s->name() << s->geometry();
+            createDockForScreen(s);
+            coveredGeometries.insert(s->geometry());
+        }
+    };
+
+    reconcileDocks();
+
+    QObject::connect(qGuiApp, &QGuiApplication::screenAdded, qApp, [&](QScreen *screen) {
+        qInfo() << "(Dock) screen added:" << screen->name() << screen->geometry();
+        reconcileDocks();
+        // 镜像 <-> 扩展切换时 geometry 会变化，需要重新核对
+        QObject::connect(screen, &QScreen::geometryChanged, qApp, [&]() {
+            reconcileDocks();
+        });
+    });
+
+    QObject::connect(qGuiApp, &QGuiApplication::screenRemoved, qApp, [&](QScreen *screen) {
+        qInfo() << "(Dock) screen removed:" << screen->name();
+        MainWindow *mw = dockWindows.take(screen);
+        if (mw) {
+            mw->hide();
+            mw->deleteLater();
+        }
+        reconcileDocks();
+    });
+
+    for (QScreen *screen : qApp->screens()) {
+        QObject::connect(screen, &QScreen::geometryChanged, qApp, [&]() {
+            reconcileDocks();
+        });
+    }
 
     if (waylandSession) {
         // 等layershell设置好后再把D-XCB弄回来，这样不支持Wayland的子进程就吃D-XCB了
@@ -383,17 +496,18 @@ int main(int argc, char *argv[])
         qunsetenv("QT_QPA_PLATFORM");
     }
 
-    if (QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/dock-hide")) {
+    if (dockHidden) {
         return app.exec();
     }
 
-    DBusDockAdaptors adaptor(&mw);
-    QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
-    QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", &mw);
+    MainWindow *dbusWindow = primaryWindow ? primaryWindow : dockWindows.value(qApp->primaryScreen());
+    if (dbusWindow) {
+        new DBusDockAdaptors(dbusWindow);
+        QDBusConnection::sessionBus().registerService("com.deepin.dde.Dock");
+        QDBusConnection::sessionBus().registerObject("/com/deepin/dde/Dock", "com.deepin.dde.Dock", dbusWindow);
+    }
 
-    QTimer::singleShot(1, &mw, &MainWindow::launch);
-
-    if (QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode")) {
+    if (macMode) {
         // Mac 模式下强制开启时尚模式
         QProcess process;
         process.start("gsettings set com.deepin.dde.dock display-mode 'fashion'");
@@ -402,10 +516,5 @@ int main(int argc, char *argv[])
         process.close();
     }
 
-    if (!parser.isSet(disablePlugOption) &&
-        !QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode")) {
-        DockItemController::instance()->startLoadPlugins();
-
-    }
     return app.exec();
 }

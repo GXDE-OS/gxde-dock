@@ -20,6 +20,7 @@
  */
 
 #include "mainwindow.h"
+#include "controller/dockitemcontroller.h"
 #include "panel/mainpanel.h"
 #include "util/utils.h"
 #include "wayland/layershellhelper.h"
@@ -66,13 +67,14 @@ const QPoint scaledPos(const QPoint &rawXPos)
                : rawXPos;
 }
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QScreen *screen, QWidget *parent)
     : QWidget(parent),
 
       m_launched(false),
       m_updatePanelVisible(false),
-
-      m_mainPanel(new MainPanel(this)),
+      m_screen(screen ? screen : qApp->primaryScreen()),
+      m_itemController(DockItemController::instanceForScreen(m_screen, this)),
+      m_mainPanel(new MainPanel(m_itemController, this)),
 
       m_platformWindowHandle(this),
       m_wmHelper(DWindowManagerHelper::instance()),
@@ -114,8 +116,8 @@ MainWindow::MainWindow(QWidget *parent)
         // layer-shell-qt在创建表面时固定窗体尺寸，即使后期resize也不会重新发送set_size
         // 所以初始化之前就得确定真实高度了
         // 不然的话dock的尺寸会卡在100*30 在桌面上看就是半个dock
-        resize(m_settings->windowSize());
-        Wayland::LayerShellHelper::setDockRole(this, qApp->primaryScreen(),
+        resize(m_settings->windowSize(m_screen));
+        Wayland::LayerShellHelper::setDockRole(this, m_screen,
             QStringLiteral("dde-shell/dock"), m_settings->position());
     } else {
         m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
@@ -137,6 +139,11 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete m_xcbMisc;
+}
+
+QScreen *MainWindow::screen() const
+{
+    return m_screen;
 }
 
 void MainWindow::launch()
@@ -202,29 +209,13 @@ void MainWindow::showEvent(QShowEvent *e)
 
     if (m_screenChangeConn)
         QObject::disconnect(m_screenChangeConn);
-    m_screenChangeConn = connect(qGuiApp, &QGuiApplication::primaryScreenChanged,
-            windowHandle(), [this] (QScreen *new_screen) {
-        if (Wayland::LayerShellHelper::isWayland()) {
-            Wayland::LayerShellHelper::updateOutput(this, new_screen);
-            return;
-        }
-
-        QScreen *old_screen = windowHandle()->screen();
-        windowHandle()->setScreen(new_screen);
-        // 屏幕变化后可能导致控件缩放比变化，此时应该重设控件位置大小
-        // 比如：窗口大小为 100 x 100, 显示在缩放比为 1.0 的屏幕上，此时窗口的真实大小 = 100x100
-        // 随后窗口被移动到了缩放比为 2.0 的屏幕上，应该将真实大小改为 200x200。另外，只能使用
-        // QPlatformWindow直接设置大小来绕过QWidget和QWindow对新旧geometry的比较。
-        const qreal scale = devicePixelRatioF();
-        const QPoint screenPos = new_screen->geometry().topLeft();
-        const QPoint posInScreen = this->pos() - old_screen->geometry().topLeft();
-        const QPoint pos = screenPos + posInScreen * scale;
-        const QSize size = this->size() * scale;
-
-        windowHandle()->handle()->setGeometry(QRect(pos, size));
+    // 多屏: 本窗口固定在自己的屏幕上，只跟随屏幕 DPI/几何变化重排，不再跳到主屏
+    m_screenChangeConn = connect(m_screen, &QScreen::geometryChanged,
+            windowHandle(), [this] (const QRect &) {
+        updateGeometry();
     });
 
-    windowHandle()->setScreen(qGuiApp->primaryScreen());
+    windowHandle()->setScreen(m_screen);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e)
@@ -307,8 +298,11 @@ void MainWindow::internalAnimationMove(int x, int y)
 void MainWindow::initSNIHost()
 {
     // registor dock as SNI Host on dbus
+    // 多屏: 每个窗口都是独立 SNI host，服务名要唯一(用窗口地址做后缀)
     QDBusConnection dbusConn = QDBusConnection::sessionBus();
-    m_sniHostService = QString("org.kde.StatusNotifierHost-") + QString::number(qApp->applicationPid());
+    m_sniHostService = QString("org.kde.StatusNotifierHost-%1-%2")
+        .arg(qApp->applicationPid())
+        .arg(reinterpret_cast<quintptr>(this), 0, 16);
     dbusConn.registerService(m_sniHostService);
     dbusConn.registerObject("/StatusNotifierHost", this);
 
@@ -531,7 +525,7 @@ void MainWindow::updatePosition()
 void MainWindow::updateGeometry()
 {
     const Position position = m_settings->position();
-    QSize size = m_settings->windowSize();
+    QSize size = m_settings->windowSize(m_screen);
 
     if (Wayland::LayerShellHelper::isWayland()) {
         Wayland::LayerShellHelper::updateDockAnchor(this, position);
@@ -563,7 +557,7 @@ void MainWindow::updateGeometry()
         setFixedSize(size);
     }
 
-    const QRect windowRect = m_settings->windowRect(position, isHide);
+    const QRect windowRect = m_settings->windowRect(position, isHide, m_screen);
 
     if (animation)
         internalAnimationMove(windowRect.x(), windowRect.y());
@@ -600,7 +594,7 @@ void MainWindow::setStrutPartial()
     // 所以我们放松就好~
     if (Wayland::LayerShellHelper::isWayland()) {
         const Position side = m_settings->position();
-        const QSize s = m_settings->windowSize();
+        const QSize s = m_settings->windowSize(m_screen);
         const int zone = (side == Position::Top || side == Position::Bottom)
             ? s.height() : s.width();
         Wayland::LayerShellHelper::updateExclusiveZone(this, zone);
@@ -612,7 +606,7 @@ void MainWindow::setStrutPartial()
     const int maxScreenWidth = m_settings->screenRawWidth();
     const Position side = m_settings->position();
     const QPoint &p = rawXPosition(m_posChangeAni->endValue().toPoint());
-    const QSize &s = m_settings->windowSize();
+    const QSize &s = m_settings->windowSize(m_screen);
     const QRect &primaryRawRect = m_settings->primaryRawRect();
 
     XcbMisc::Orientation orientation = XcbMisc::OrientationTop;
@@ -701,7 +695,7 @@ void MainWindow::expand()
     if (showAniState != QPropertyAnimation::Running && m_mainPanel->pos() != m_panelShowAni->currentValue())
     {
         QPoint startPos(0, 0);
-        const QSize &size = m_settings->windowSize();
+        const QSize &size = m_settings->windowSize(m_screen);
         switch (m_settings->position())
         {
         case Top:       startPos.setY(-size.height());     break;
@@ -750,7 +744,7 @@ void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosit
     m_posChangeAni->stop();
 
     const Position position = m_settings->position();
-    const QRect r(m_settings->windowRect(position));
+    const QRect r(m_settings->windowRect(position, false, m_screen));
 
     m_sizeChangeAni->setEndValue(r.size());
     m_mainPanel->setFixedSize(m_settings->panelSize());
@@ -826,13 +820,14 @@ void MainWindow::positionCheck()
     if (m_positionUpdateTimer->isActive())
         return;
 
-    const QPoint scaledFrontPos = scaledPos(m_settings->frontendWindowRect().topLeft());
+    // 多屏: 用本窗口屏幕的期望矩形做校验
+    const QPoint expectPos = m_settings->windowRect(m_settings->position(), false, m_screen).topLeft();
 
-    if (QPoint(pos() - scaledFrontPos).manhattanLength() < 2)
+    if (QPoint(pos() - expectPos).manhattanLength() < 2)
         return;
 
     qWarning() << "Dock position may error!!!!!";
-    qDebug() << pos() << m_settings->frontendWindowRect() << m_settings->windowRect(m_settings->position(), false);
+    qDebug() << pos() << expectPos << m_settings->windowRect(m_settings->position(), false, m_screen);
 
     // this may cause some position error and animation caton
     //internalMove();

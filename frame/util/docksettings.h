@@ -42,6 +42,7 @@
 DWIDGET_USE_NAMESPACE
 
 class QGSettings;
+class QScreen;
 
 using namespace Dock;
 using DBusDock = DockDaemonInterface;
@@ -84,6 +85,9 @@ public:
 
     const QSize panelSize() const;
     const QRect windowRect(const Position position, const bool hide = false) const;
+    // 多屏: 按屏幕计算窗口矩形/尺寸
+    const QRect windowRect(const Position position, const bool hide, QScreen *screen) const;
+    const QSize windowSize(QScreen *screen) const;
     qreal dockRatio() const;
 
     QPoint wlAdjustMenuPos(const QSize &menuSize) const;

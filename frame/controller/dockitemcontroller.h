@@ -23,6 +23,7 @@
 #define DOCKITEMCONTROLLER_H
 
 #include <QObject>
+#include <QHash>
 
 #include "dockpluginscontroller.h"
 #include "pluginsiteminterface.h"
@@ -35,12 +36,17 @@
 
 using DBusDock = DockDaemonInterface;
 
+class QScreen;
+
 class DockItemController : public QObject
 {
     Q_OBJECT
 
 public:
+    static DockItemController *instanceForScreen(QScreen *screen, QObject *parent = nullptr);
     static DockItemController *instance(QObject *parent = nullptr);
+
+    QScreen *screen() const;
 
     const QList<QPointer<DockItem> > itemList() const;
     const QList<PluginsItemInterface *> pluginList() const;
@@ -71,7 +77,7 @@ public slots:
     void refreshFSTItemSpliterVisible();
 
 private:
-    explicit DockItemController(QObject *parent = nullptr);
+    explicit DockItemController(QScreen *screen, QObject *parent = nullptr);
     void appItemAdded(const QDBusObjectPath &path, const int index);
     void appItemRemoved(const QString &appId);
     void appItemRemoved(AppItem *appItem);
@@ -80,13 +86,14 @@ private:
 
 
 private:
+    QScreen *m_screen;
     QTimer *m_updatePluginsOrderTimer;
     DBusDock *m_appInter;
     DockPluginsController *m_pluginsInter;
     StretchItem *m_placeholderItem;
     ContainerItem *m_containerItem;
 
-    static DockItemController *INSTANCE;
+    static QHash<QScreen *, DockItemController *> INSTANCES;
 
     QList<QPointer<DockItem>> m_itemList;
 };

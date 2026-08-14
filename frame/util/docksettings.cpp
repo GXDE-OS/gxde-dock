@@ -417,7 +417,17 @@ const QSize DockSettings::panelSize() const
 
 const QRect DockSettings::windowRect(const Position position, const bool hide) const
 {
-    QSize size = m_mainWindowSize;
+    return windowRect(position, hide, qApp->primaryScreen());
+}
+
+// 多屏: 在指定屏幕上计算窗口矩形(主窗口尺寸全局一致，全宽模式的宽度按屏幕换算)
+const QRect DockSettings::windowRect(const Position position, const bool hide, QScreen *screen) const
+{
+    if (!screen) {
+        screen = qApp->primaryScreen();
+    }
+
+    QSize size = windowSize(screen);
     if (hide)
     {
         switch (position)
@@ -429,9 +439,9 @@ const QRect DockSettings::windowRect(const Position position, const bool hide) c
         }
     }
 
-    const QRect primaryRect = this->primaryRect();
-    const int offsetX = (primaryRect.width() - size.width()) / 2;
-    const int offsetY = (primaryRect.height() - size.height()) / 2;
+    const QRect screenRect = screen->geometry();
+    const int offsetX = (screenRect.width() - size.width()) / 2;
+    const int offsetY = (screenRect.height() - size.height()) / 2;
 
     QPoint p(0, 0);
     switch (position)
@@ -441,13 +451,39 @@ const QRect DockSettings::windowRect(const Position position, const bool hide) c
     case Left:
         p = QPoint(0, offsetY);                                        break;
     case Right:
-        p = QPoint(primaryRect.width() - size.width(), offsetY);    break;
+        p = QPoint(screenRect.width() - size.width(), offsetY);    break;
     case Bottom:
-        p = QPoint(offsetX, primaryRect.height() - size.height());  break;
+        p = QPoint(offsetX, screenRect.height() - size.height());  break;
     default:Q_UNREACHABLE();
     }
 
-    return QRect(primaryRect.topLeft() + p, size);
+    return QRect(screenRect.topLeft() + p, size);
+}
+
+// 多屏: 全局共享的窗口尺寸按屏幕换算。时尚模式的宽度按条目数计算，全宽模式取屏幕宽度。
+const QSize DockSettings::windowSize(QScreen *screen) const
+{
+    QSize size = m_mainWindowSize;
+    if (!screen) {
+        return size;
+    }
+
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic) {
+        switch (m_position) {
+        case Top:
+        case Bottom:
+            size.setWidth(screen->geometry().width());
+            break;
+        case Left:
+        case Right:
+            size.setHeight(screen->geometry().height());
+            break;
+        default:
+            break;
+        }
+    }
+
+    return size;
 }
 
 void DockSettings::showDockSettingsMenu()
