@@ -132,97 +132,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Fashion Mode</source>
         <translation>النمط الحداثي</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Efficient Mode</source>
         <translation>النمط الفعال</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Top</source>
         <translation>أعلى</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Bottom</source>
         <translation>أسفل</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Left</source>
         <translation>يسار</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>Right</source>
         <translation>يمين</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Large</source>
         <translation>كبير</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="176"/>
         <source>Medium</source>
         <translation>متوسط</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="177"/>
         <source>Small</source>
         <translation>صغير</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="178"/>
         <source>Keep Shown</source>
         <translation>اﻹبقاء ظاهراً</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="179"/>
         <source>Keep Hidden</source>
         <translation>الإبقاء مخفياً</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="180"/>
         <source>Smart Hide</source>
         <translation>إخفاء ذكي</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="223"/>
         <source>Mode</source>
         <translation>النمط</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="232"/>
         <source>Location</source>
         <translation>الموقع</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="239"/>
         <source>Size</source>
         <translation>الحجم</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="246"/>
         <source>Status</source>
         <translation>الحالة</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="250"/>
         <source>Plugins</source>
         <translation>الإضافات</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="181"/>
         <source>System Monitor</source>
         <translation>مonitor النظام</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="182"/>
         <source>Window Split</source>
         <translation>نافذة مقسمة</translation>
     </message>
@@ -401,7 +401,7 @@
         <translation>إعدادات الصوت</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="205"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="206"/>
         <source>Current Volume %1</source>
         <translation>الحجم الحالي %1</translation>
     </message>
@@ -461,7 +461,7 @@
         <translation>غير معروف</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="197"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="198"/>
         <source>Wired connection: %1</source>
         <translation>اتصال سلكي بـ : %1</translation>
     </message>
@@ -474,7 +474,7 @@
         <translation>لا توجد شبكة</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="278"/>
         <source>Wireless Connection: %1</source>
         <translation>اتصال لاسلكي بـ : %1</translation>
     </message>
@@ -496,41 +496,49 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>系统监控插件设置</source>
         <translation>إعدادات إدراج مراقبة النظام</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示网速</source>
         <translation>عرض السرعة فقط</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>只显示CPU、内存</source>
         <translation>المعالج، الذاكرة</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation>عرض CP&amp;U، الذاكرة، وسرعة الإنترنت</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>行高：</source>
         <translation>الارتفاع:</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="138"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>显示内容设置</source>
         <translation>إظهار إعدادات المحتوى</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="135"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation>عرض المعالج، الذاكرة، سرعة الإنترنت، البطارية، ودرجة حرارة المعالج</translation>

@@ -228,11 +228,16 @@ static QWindow* configurePopupLayerShell(QWidget* popup,
     const QPoint pos = requestedPosition.isValid()
         ? requestedPosition.toPoint()
         : popup->pos();
+    QScreen* screen = window->screen();
+    const QPoint localPos = screen
+        ? pos - screen->geometry().topLeft()
+        : pos;
     LayerShellQt::Window::Anchors anchors;
     anchors |= LayerShellQt::Window::AnchorTop;
     anchors |= LayerShellQt::Window::AnchorLeft;
     layer->setAnchors(anchors);
-    layer->setMargins(QMargins(pos.x(), pos.y(), 0, 0));
+    layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
+    layer->setMargins(QMargins(localPos.x(), localPos.y(), 0, 0));
     layer->setLayer(LayerShellQt::Window::LayerOverlay);
     layer->setExclusiveZone(0);
 

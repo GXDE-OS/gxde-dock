@@ -14,7 +14,6 @@ static PreviewContainer *PreviewWindow(const WindowInfoMap &infos, const WindowL
 
     preview->disconnect();
     preview->setWindowInfos(infos, allowClose, appId);
-    preview->updateSnapshots();
     preview->updateLayoutDirection(dockPos);
 
     return preview;

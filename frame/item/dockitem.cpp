@@ -333,6 +333,10 @@ void DockItem::showPopupWindow(QWidget * const content, const bool model)
         emit requestWindowAutoHide(false);
 
     DockPopupWindow *popup = PopupWindow.data();
+    QScreen *targetScreen = window() ? window()->screen() : nullptr;
+    if (targetScreen && popup->screen() != targetScreen)
+        popup->setScreen(targetScreen);
+
     QWidget *lastContent = popup->getContent();
     if (lastContent)
         lastContent->setVisible(false);
@@ -424,7 +428,8 @@ const QPoint DockItem::topleftPoint() const
 {
     if (Wayland::LayerShellHelper::isWayland()) {
         // Manually calculate global position on Wayland.
-        return DockSettings::Instance().windowRect(DockPosition).topLeft()
+        QScreen *screen = window() ? window()->screen() : nullptr;
+        return DockSettings::Instance().windowRect(DockPosition, false, screen).topLeft()
             + mapTo(window(), QPoint());
     }
 

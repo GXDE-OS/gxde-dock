@@ -89,6 +89,14 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
     m_model = model;
     m_lastPoint = pos;
 
+    QScreen *screen = this->screen();
+    if (!screen || !screen->geometry().contains(pos))
+        screen = QGuiApplication::screenAt(pos);
+    if (!screen)
+        screen = QGuiApplication::primaryScreen();
+    if (screen && this->screen() != screen)
+        setScreen(screen);
+
     show(pos.x(), pos.y());
 
     const bool nativeWayland = QGuiApplication::platformName().contains(
@@ -101,9 +109,6 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
         m_regionInter->registerRegion();
     }else{
         // Wayland 下显示遮罩窗口
-        QScreen *screen = QGuiApplication::screenAt(pos);
-        if (!screen) screen = QGuiApplication::primaryScreen();
-        
         m_maskWindow->showMask(screen);
         this->raise(); 
     }

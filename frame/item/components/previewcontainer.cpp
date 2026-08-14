@@ -43,7 +43,8 @@ PreviewContainer::PreviewContainer(QWidget *parent)
 
       m_floatingPreview(new FloatingPreview(this)),
       m_mouseLeaveTimer(new QTimer(this)),
-      m_wmHelper(DWindowManagerHelper::instance())
+      m_wmHelper(DWindowManagerHelper::instance()),
+      m_currentWId(0)
 {
     m_windowListLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     m_windowListLayout->setSpacing(SPACING);
@@ -154,7 +155,10 @@ void PreviewContainer::adjustSize()
         return;
     }
 
-    const QRect r = qApp->primaryScreen()->geometry();
+    QScreen *targetScreen = screen();
+    if (!targetScreen)
+        targetScreen = qApp->primaryScreen();
+    const QRect r = targetScreen->geometry();
     const int padding = 20;
 
     const bool horizontal = m_windowListLayout->direction() == QBoxLayout::LeftToRight;
@@ -230,6 +234,18 @@ void PreviewContainer::dragLeaveEvent(QDragLeaveEvent *e)
     m_mouseLeaveTimer->start();
 }
 
+void PreviewContainer::showEvent(QShowEvent *e)
+{
+    QWidget::showEvent(e);
+
+    adjustSize();
+    m_windowListLayout->activate();
+    QTimer::singleShot(0, this, [this] {
+        if (isVisible())
+            updateSnapshots();
+    });
+}
+
 void PreviewContainer::onSnapshotClicked(const WId wid)
 {
     const bool nativeWayland = QGuiApplication::platformName().contains(
@@ -272,6 +288,9 @@ void PreviewContainer::previewEntered(const WId wid)
 
 void PreviewContainer::previewFloating()
 {
+    if (!m_floatingPreview->trackedWindow())
+        return;
+
     m_floatingPreview->setVisible(true);
     m_floatingPreview->raise();
 

@@ -134,97 +134,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="169"/>
         <source>Fashion Mode</source>
         <translation>በ ዘመናዊ ዘዴ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="170"/>
         <source>Efficient Mode</source>
         <translation>በ አጥጋቢ ዘዴ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="171"/>
         <source>Top</source>
         <translation>ከ ላይ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="172"/>
         <source>Bottom</source>
         <translation>ከ ታች</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="173"/>
         <source>Left</source>
         <translation>የ ግራ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>Right</source>
         <translation>የ ቀኝ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="168"/>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
         <source>Large</source>
         <translation>ትልቅ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="176"/>
         <source>Medium</source>
         <translation>መካከለኛ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="177"/>
         <source>Small</source>
         <translation>ትንሽ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="178"/>
         <source>Keep Shown</source>
         <translation>እንደ ታየ ማቆያ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="179"/>
         <source>Keep Hidden</source>
         <translation>እንደ ተደበቅ ማቆያ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="180"/>
         <source>Smart Hide</source>
         <translation>በራሱ መደበቂያ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="223"/>
         <source>Mode</source>
         <translation>ዘዴ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="232"/>
         <source>Location</source>
         <translation>አካባቢ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="239"/>
         <source>Size</source>
         <translation>መጠን</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="246"/>
         <source>Status</source>
         <translation>ሁኔታው</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="243"/>
+        <location filename="../frame/util/docksettings.cpp" line="250"/>
         <source>Plugins</source>
         <translation>ተሰኪዎች</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="181"/>
         <source>System Monitor</source>
         <translation>ስስተም የሚከተል ስስተም</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="182"/>
         <source>Window Split</source>
         <translation>ሳንታ አስቀምጥ</translation>
     </message>
@@ -403,7 +403,7 @@
         <translation>ድምፅ ማሰናጃ</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/sounditem.cpp" line="205"/>
+        <location filename="../plugins/sound/sounditem.cpp" line="206"/>
         <source>Current Volume %1</source>
         <translation>የ አሁኑ መጠን %1</translation>
     </message>
@@ -463,7 +463,7 @@
         <translation>ያልታወቀ</translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wireditem.cpp" line="197"/>
+        <location filename="../plugins/network/item/wireditem.cpp" line="198"/>
         <source>Wired connection: %1</source>
         <translation>በ ሽቦ ግንኙነት: %1</translation>
     </message>
@@ -476,7 +476,7 @@
         <translation>ኔትዎርክ የለም </translation>
     </message>
     <message>
-        <location filename="../plugins/network/item/wirelessitem.cpp" line="275"/>
+        <location filename="../plugins/network/item/wirelessitem.cpp" line="278"/>
         <source>Wireless Connection: %1</source>
         <translation>ሽቦ አልባ ኔትዎርክ: %1</translation>
     </message>
@@ -498,41 +498,49 @@
     <name>pluginSettingDialog</name>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>系统监控插件设置</source>
         <translation>ስስተም ማስተካከል ግዴታ ስልጣን</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示网速</source>
         <translation>የንብረት አባት ብቻ እንደሚሆን እንደሚሆን እንደሚሆን እንደሚሆን</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>只显示CPU、内存</source>
         <translation>አንድ ቀለም እና መሙሪያል ብቻ እንደሚሆን እንደሚሆን ይህንን ያሳያል</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation>የስራ አስተካክል እና የስራ አካል እና የነትዊት አባባል</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>行高：</source>
         <translation>የቅርቆር ስነ-ምንዛሪ</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="138"/>
         <source>%</source>
         <translation>አይስት፥</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>显示内容设置</source>
         <translation>የማዳመጥ ስልጣን ማስተካከል</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
+        <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="135"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation>የኳፕ ኳፕ የስራ የስራ የነትዎርክ የነትዎርክ የአይፒ አደጋ እና የኳፕ ኳፕ የምንጭ ባሕር</translation>

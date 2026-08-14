@@ -69,6 +69,7 @@ private:
     void leaveEvent(QEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
     void dragLeaveEvent(QDragLeaveEvent *e);
+    void showEvent(QShowEvent *e) override;
 
 private slots:
     void onSnapshotClicked(const WId wid);
