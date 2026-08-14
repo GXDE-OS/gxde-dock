@@ -23,6 +23,7 @@
 #include "panel/mainpanel.h"
 #include "util/utils.h"
 #include "wayland/layershellhelper.h"
+#include "wayland/gxdescreenshotclient.h"
 
 #include <QDebug>
 #include <QEvent>
@@ -123,6 +124,10 @@ MainWindow::MainWindow(QWidget *parent)
     initSNIHost();
     initComponents();
     initConnections();
+
+    if (wayland) {
+        GxdeScreenshotClient::instance()->refreshToplevels();
+    }
 
     m_mainPanel->setFixedSize(m_settings->panelSize());
 

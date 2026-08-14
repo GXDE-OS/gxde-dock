@@ -21,6 +21,7 @@
 
 #include "appsnapshot.h"
 #include "../../util/waylandhelper.h"
+#include "../../wayland/gxdescreenshotclient.h"
 #include "previewcontainer.h"
 #include "../../dbus/dockdbusnames.h"
 
@@ -158,6 +159,21 @@ void AppSnapshot::dragEnterEvent(QDragEnterEvent *e)
 void AppSnapshot::fetchWaylandSnapshot() {
     if (m_waylandCapturePending) {
         return;
+    }
+
+    // If gxde_screenshot_manager_v1 is avaliable, first try that to get
+    // window thumbnail
+    GxdeScreenshotClient *client = GxdeScreenshotClient::instance();
+    if (client->available()) {
+        const QString appId = m_appId.section('@', -1);
+        const qreal ratio = devicePixelRatioF();
+        QImage image;
+        if (client->captureWindowThumbnail(appId, m_windowInfo.title,
+                quint32(SNAP_WIDTH * ratio),
+                quint32(SNAP_HEIGHT * ratio), &image)) {
+            applyWaylandSnapshot(image);
+            return;
+        }
     }
 
     const QString dir = QStringLiteral("%1/gxde-dock")

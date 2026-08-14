@@ -53,6 +53,7 @@ public:
     inline bool attentioned() const { return m_windowInfo.attention; }
     inline bool closeAble() const { return m_closeAble; }
     inline void setCloseAble(const bool value) { m_closeAble = value; }
+    inline void setAppId(const QString &appId) { m_appId = appId; }
     inline const QImage snapshot() const { return m_snapshot; }
     inline const QRectF snapshotGeometry() const { return m_snapshotSrcRect; }
     inline const QString title() const { return m_windowInfo.title; }
@@ -84,6 +85,7 @@ private:
 private:
     const WId m_wid;
     WindowInfo m_windowInfo;
+    QString m_appId;
 
     bool m_closeAble;
 

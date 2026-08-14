@@ -52,7 +52,8 @@ signals:
     void requestHidePopup() const;
 
 public:
-    void setWindowInfos(const WindowInfoMap &infos, const WindowList &allowClose);
+    void setWindowInfos(const WindowInfoMap &infos, const WindowList &allowClose,
+        const QString &appId = QString());
     void updateSnapshots();
 
 public slots:

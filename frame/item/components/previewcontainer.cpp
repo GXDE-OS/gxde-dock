@@ -66,7 +66,8 @@ PreviewContainer::PreviewContainer(QWidget *parent)
     connect(m_waitForShowPreviewTimer, &QTimer::timeout, this, &PreviewContainer::previewFloating);
 }
 
-void PreviewContainer::setWindowInfos(const WindowInfoMap &infos, const WindowList &allowClose)
+void PreviewContainer::setWindowInfos(const WindowInfoMap &infos, const WindowList &allowClose,
+        const QString &appId)
 {
     // check removed window
     for (auto it(m_snapshots.begin()); it != m_snapshots.end();)
@@ -88,6 +89,7 @@ void PreviewContainer::setWindowInfos(const WindowInfoMap &infos, const WindowLi
             appendSnapWidget(key);
         m_snapshots[key]->setWindowInfo(it.value());
         m_snapshots[key]->setCloseAble(allowClose.contains(key));
+        m_snapshots[key]->setAppId(appId);
     }
 
     if (m_snapshots.isEmpty()) {

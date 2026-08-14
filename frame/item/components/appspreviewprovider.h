@@ -4,7 +4,8 @@
 
 #include "previewcontainer.h"
 
-static PreviewContainer *PreviewWindow(const WindowInfoMap &infos, const WindowList &allowClose, const Dock::Position dockPos)
+static PreviewContainer *PreviewWindow(const WindowInfoMap &infos, const WindowList &allowClose,
+        const Dock::Position dockPos, const QString &appId = QString())
 {
     static PreviewContainer *preview;
     if (!preview) {
@@ -12,7 +13,7 @@ static PreviewContainer *PreviewWindow(const WindowInfoMap &infos, const WindowL
     }
 
     preview->disconnect();
-    preview->setWindowInfos(infos, allowClose);
+    preview->setWindowInfos(infos, allowClose, appId);
     preview->updateSnapshots();
     preview->updateLayoutDirection(dockPos);
 
