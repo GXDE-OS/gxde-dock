@@ -90,6 +90,7 @@ private:
     void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;
     QPixmap newIconPixmap(IconType iconType);
 
+    QPoint menuPopupPos(const QSize &menuSize) const;
 private:
     StatusNotifierItem *m_sniInter = nullptr;
 

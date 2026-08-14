@@ -21,9 +21,12 @@
 
 #include "snitraywidget.h"
 #include "util/themeappicon.h"
+#include "util/docksettings.h"
+#include "wayland/layershellhelper.h"
 
 #include <QPainter>
 #include <QApplication>
+#include <QWindow>
 
 #include <xcb/xproto.h>
 
@@ -258,6 +261,16 @@ void SNITrayWidget::initMenu()
 
     qDebug() << "using sni service path:" << m_dbusService << "menu path:" << sniMenuPath;
 
+    if (m_menu) {
+        m_menu->hide();
+        m_menu->deleteLater();
+        m_menu = nullptr;
+    }
+    if (m_dbusMenuImporter) {
+        m_dbusMenuImporter->deleteLater();
+        m_dbusMenuImporter = nullptr;
+    }
+
     m_dbusMenuImporter = new DBusMenuImporter(m_dbusService, sniMenuPath, ASYNCHRONOUS, this);
 
     qDebug() << "generate the sni menu object";
@@ -322,12 +335,44 @@ void SNITrayWidget::showContextMenu(int x, int y)
     if (m_sniMenuPath.path().startsWith("/NO_DBUSMENU")) {
         m_sniInter->ContextMenu(x, y);
     } else {
-        if (!m_menu) {
-            qDebug() << "context menu has not be ready, init menu";
-            initMenu();
+        // 每次都重建菜单 (initMenu 内部会重建 QMenu), 避免复用同一 Wayland xdg_popup surface 导致第二次及以后弹出位置错位。
+        qDebug() << "context menu init menu";
+        initMenu();
+        QPoint pos(x, y);
+        if (Wayland::LayerShellHelper::isWayland()) {
+            pos = menuPopupPos(m_menu->sizeHint());
         }
-        m_menu->popup(QPoint(x, y));
+        m_menu->popup(pos);
     }
+}
+
+QPoint SNITrayWidget::menuPopupPos(const QSize &menuSize) const
+{
+    const Dock::Position pos = DockSettings::Instance().position();
+    const QRect dockRect = DockSettings::Instance().windowRect(pos);
+    const QPoint iconGlobal = dockRect.topLeft() + mapTo(window(), QPoint());
+    const QRect iconRect(iconGlobal, size());
+
+    QPoint p;
+    switch (pos) {
+    case Dock::Position::Top:
+        p = QPoint(iconRect.x(), iconRect.bottom());
+        break;
+    case Dock::Position::Bottom:
+        p = QPoint(iconRect.x(), iconRect.y() - menuSize.height());
+        break;
+    case Dock::Position::Left:
+        p = QPoint(iconRect.right(), iconRect.y());
+        break;
+    case Dock::Position::Right:
+        p = QPoint(iconRect.x() - menuSize.width(), iconRect.y());
+        break;
+    }
+
+    // 往左下移一点, 让菜单更贴近托盘图标
+    p += QPoint(-4, 4);
+
+    return p;
 }
 
 void SNITrayWidget::onSNIAttentionIconNameChanged(const QString &value)

@@ -22,6 +22,7 @@ find_package(DFrameworkdbusQt6 REQUIRED)
 
 # driver-manager
 add_executable(${BIN_NAME} ${SRCS} ${INTERFACES} item/item.qrc frame.qrc)
+target_link_options(${BIN_NAME} PRIVATE -Wl,--export-dynamic)
 target_include_directories(${BIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
                                               ${dtk6core_INCLUDE_DIRS}
                                               ${XCB_EWMH_INCLUDE_DIRS}
