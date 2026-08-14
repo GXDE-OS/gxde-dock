@@ -342,7 +342,11 @@ void SNITrayWidget::showContextMenu(int x, int y)
         if (Wayland::LayerShellHelper::isWayland()) {
             pos = menuPopupPos(m_menu->sizeHint());
         }
-        m_menu->popup(pos);
+        if (m_menu) {
+            m_menu->popup(pos);
+        } else {
+            qWarning() << "Failed to create context menu";
+        }
     }
 }
 
