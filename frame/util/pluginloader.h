@@ -22,6 +22,7 @@
 #ifndef PLUGINLOADER_H
 #define PLUGINLOADER_H
 
+#include <QStringList>
 #include <QThread>
 
 class PluginLoader : public QThread
@@ -30,6 +31,7 @@ class PluginLoader : public QThread
 
 public:
     explicit PluginLoader(const QString &pluginDirPath, QObject *parent);
+    explicit PluginLoader(const QStringList &pluginDirPaths, QObject *parent);
 
 signals:
     void finished() const;
@@ -39,7 +41,7 @@ protected:
     void run();
 
 private:
-    QString m_pluginDirPath;
+    QStringList m_pluginDirPaths;
 };
 
 #endif // PLUGINLOADER_H

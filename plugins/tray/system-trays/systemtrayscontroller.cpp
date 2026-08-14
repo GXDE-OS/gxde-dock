@@ -22,6 +22,7 @@
 #include "systemtrayscontroller.h"
 #include "pluginsiteminterface.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 
@@ -157,11 +158,17 @@ void SystemTraysController::saveValueSystemTrayItem(const QString &itemKey, cons
 
 void SystemTraysController::startLoader()
 {
-    QString pluginsDir("../plugins/system-trays");
-    if (!QDir(pluginsDir).exists()) {
-        pluginsDir = "/usr/lib/gxde-dock/plugins/system-trays";
-    }
-    qDebug() << "using system tray plugins dir:" << pluginsDir;
+    const QString localPluginsDir(QCoreApplication::applicationDirPath()
+                                  + "/../plugins/system-trays");
+    const QString systemPluginsDir("/usr/lib/gxde-dock/plugins/system-trays");
+    QStringList pluginDirs;
 
-    AbstractPluginsController::startLoader(new PluginLoader(pluginsDir, this));
+    if (QDir(localPluginsDir).exists())
+        pluginDirs << localPluginsDir;
+    if (QDir(systemPluginsDir).exists())
+        pluginDirs << systemPluginsDir;
+
+    qDebug() << "using system tray plugin dirs:" << pluginDirs;
+
+    AbstractPluginsController::startLoader(new PluginLoader(pluginDirs, this));
 }

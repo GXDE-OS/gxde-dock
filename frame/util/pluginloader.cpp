@@ -24,28 +24,43 @@
 #include <QDir>
 #include <QDebug>
 #include <QLibrary>
+#include <QSet>
 
 PluginLoader::PluginLoader(const QString &pluginDirPath, QObject *parent)
+    : PluginLoader(QStringList() << pluginDirPath, parent)
+{
+}
+
+PluginLoader::PluginLoader(const QStringList &pluginDirPaths, QObject *parent)
     : QThread(parent)
-    , m_pluginDirPath(pluginDirPath)
+    , m_pluginDirPaths(pluginDirPaths)
 {
 }
 
 void PluginLoader::run()
 {
-    QDir pluginsDir(m_pluginDirPath);
-    const QStringList plugins = pluginsDir.entryList(QDir::Files);
+    QSet<QString> loadedPluginFiles;
 
-    for (const QString file : plugins)
-    {
-        if (!QLibrary::isLibrary(file))
-            continue;
+    for (const QString &pluginDirPath : m_pluginDirPaths) {
+        QDir pluginsDir(pluginDirPath);
+        const QStringList plugins = pluginsDir.entryList(QDir::Files);
 
-        // TODO: old dock plugins is uncompatible
-        if (file.startsWith("libgxde-dock-"))
-            continue;
+        for (const QString &file : plugins) {
+            if (!QLibrary::isLibrary(file))
+                continue;
 
-        emit pluginFounded(pluginsDir.absoluteFilePath(file));
+            // TODO: old dock plugins is uncompatible
+            if (file.startsWith("libgxde-dock-"))
+                continue;
+
+            // Prefer the first directory's copy while still loading plugins
+            // that are only installed in later directories.
+            if (loadedPluginFiles.contains(file))
+                continue;
+
+            loadedPluginFiles.insert(file);
+            emit pluginFounded(pluginsDir.absoluteFilePath(file));
+        }
     }
 
     emit finished();

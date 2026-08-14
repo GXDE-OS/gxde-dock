@@ -22,12 +22,52 @@
 #include "systemtrayitem.h"
 #include "dbus/dbusmenu.h"
 
+#include <QGraphicsEffect>
+#include <QPainter>
 #include <QProcess>
 #include <QDebug>
 #include <QGuiApplication>
 #include <QScreen>
 
 #include <xcb/xproto.h>
+
+namespace {
+
+constexpr qreal DiskMountIconScale = 0.56;
+
+class ScaledContentsEffect final : public QGraphicsEffect
+{
+public:
+    explicit ScaledContentsEffect(qreal scale, QObject *parent = nullptr)
+        : QGraphicsEffect(parent)
+        , m_scale(scale)
+    {
+    }
+
+protected:
+    void draw(QPainter *painter) override
+    {
+        QPoint offset;
+        const QPixmap pixmap = sourcePixmap(Qt::LogicalCoordinates, &offset, NoPad);
+        if (pixmap.isNull())
+            return;
+
+        const QSizeF sourceSize = pixmap.deviceIndependentSize();
+        const QRectF sourceBounds(QPointF(offset), sourceSize);
+        QRectF targetBounds(QPointF(), sourceSize * m_scale);
+        targetBounds.moveCenter(sourceBounds.center());
+
+        painter->save();
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+        painter->drawPixmap(targetBounds, pixmap, QRectF(pixmap.rect()));
+        painter->restore();
+    }
+
+private:
+    qreal m_scale;
+};
+
+}
 
 Dock::Position SystemTrayItem::DockPosition = Dock::Position::Top;
 QPointer<DockPopupWindow> SystemTrayItem::PopupWindow = nullptr;
@@ -48,6 +88,13 @@ SystemTrayItem::SystemTrayItem(PluginsItemInterface * const pluginInter, const Q
     m_centralWidget->setParent(this);
     m_centralWidget->setVisible(true);
     m_centralWidget->installEventFilter(this);
+
+    // The external disk-mount plugin paints a noticeably larger symbol than
+    // the other system tray plugins. Scale only its visual contents; keep the
+    // widget geometry unchanged so its hit area and popup anchoring stay put.
+    if (m_pluginInter->pluginName() == "disk-mount")
+        m_centralWidget->setGraphicsEffect(
+            new ScaledContentsEffect(DiskMountIconScale, m_centralWidget));
 
     QBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(m_centralWidget);
@@ -157,6 +204,18 @@ void SystemTrayItem::detachPluginWidget()
 
 bool SystemTrayItem::event(QEvent *event)
 {
+    switch (event->type()) {
+    case QEvent::Show:
+    case QEvent::DevicePixelRatioChange:
+        // Some external tray plugins cache their pixmap before the dock has
+        // been associated with its final screen. Refresh once the effective
+        // DPR is known so their icon is not painted at the startup DPR.
+        QTimer::singleShot(0, this, &SystemTrayItem::updateIcon);
+        break;
+    default:
+        break;
+    }
+
     if (m_popupShown)
     {
         switch (event->type())
