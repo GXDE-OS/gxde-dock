@@ -32,6 +32,7 @@ Package: gxde-dock
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland, gxde-sni-server
 Recommends: gxde-dock-onboard-plugin
+Breaks: gxde-wlcom (<< 2.2.0-gxde1)
 Conflicts:
  dde-workspace (<< 2.90.5),
  ddee-dock-applets,
