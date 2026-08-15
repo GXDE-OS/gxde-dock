@@ -1,3 +1,10 @@
+gxde-dock (6.0.9) UNRELEASED; urgency=medium
+
+  * 修复了Wayland下菜单错位的问题
+  * 修复了Wayland下音量等插件窗口blur溢出的问题
+
+ -- CharOfString <root@charofstring.cc>  Fri, 14 Aug 2026 23:49:51 +0800
+
 gxde-dock (6.0.8) UNRELEASED; urgency=medium
 
   * 修复了磁盘插件图标大小过大的问题
