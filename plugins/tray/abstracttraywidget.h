@@ -58,10 +58,11 @@ protected:
 
     void handleMouseRelease();
     const QRect perfectIconRect() const;
+    QPoint popupMenuPosition(const QSize &menuSize,
+                             const QWidget *menu = nullptr) const;
 
 private:
     QTimer *m_handleMouseReleaseTimer;
 
     QPair<QPoint, Qt::MouseButton> m_lastMouseReleaseData;
 };
-

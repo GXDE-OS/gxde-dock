@@ -51,6 +51,16 @@ DockItemController *DockItemController::instanceForScreen(QScreen *screen, QObje
             INSTANCES.remove(screen);
             controller->deleteLater();
         });
+        // A mirrored output can remove its MainWindow while QScreen itself stays
+        // alive. Since the controller is a child of that window, also clear the
+        // registry when the controller dies or a later extended-mode transition
+        // would retrieve a dangling pointer.
+        QObject::connect(controller, &QObject::destroyed, qApp,
+                         [controller, screen] {
+            if (INSTANCES.value(screen) == controller) {
+                INSTANCES.remove(screen);
+            }
+        });
     }
 
     return controller;
@@ -59,6 +69,11 @@ DockItemController *DockItemController::instanceForScreen(QScreen *screen, QObje
 DockItemController *DockItemController::instance(QObject *parent)
 {
     return instanceForScreen(qGuiApp->primaryScreen(), parent);
+}
+
+QList<DockItemController *> DockItemController::instances()
+{
+    return INSTANCES.values();
 }
 
 QScreen *DockItemController::screen() const

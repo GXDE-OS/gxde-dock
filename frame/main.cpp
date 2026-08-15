@@ -272,12 +272,11 @@ int main(int argc, char *argv[])
                         });
                     }
                 } else if (target && target->windowType() == Qt::Popup) {
-                    QWindow* wh = target->windowHandle();
-                    const bool isSubMenu = wh && wh->transientParent();
+                    QWidget *popupParent = target->parentWidget();
+                    const bool isSubMenu = popupParent
+                        && popupParent->windowType() == Qt::Popup;
 
-                    if (event->type() == QEvent::Show) {
-                        Wayland::LayerShellHelper::fixPopupLayerShell(target);
-                    } else if ((event->type() == QEvent::Close
+                    if ((event->type() == QEvent::Close
                                 || event->type() == QEvent::Hide)
                                && isSubMenu) {
                         // 记下子菜单刚关闭的时刻, 用于识别误发Close

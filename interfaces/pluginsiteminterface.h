@@ -27,6 +27,27 @@
 #include <QIcon>
 #include <QtCore>
 
+// QPluginLoader returns one root QObject for a plugin library inside a process.
+// A multi-screen dock therefore needs a factory to create one state/widget tree
+// per screen instead of initializing and reparenting that root object twice.
+class PluginsItemFactoryInterface
+{
+public:
+    virtual ~PluginsItemFactoryInterface() {}
+    virtual QObject *createPluginInstance() const = 0;
+};
+
+#define PluginsItemFactoryInterface_iid \
+    "com.deepin.dock.PluginsItemFactoryInterface/1.0"
+Q_DECLARE_INTERFACE(PluginsItemFactoryInterface, PluginsItemFactoryInterface_iid)
+
+template<typename PluginType>
+class PluginsItemFactory : public PluginsItemFactoryInterface
+{
+public:
+    QObject *createPluginInstance() const final { return new PluginType; }
+};
+
 ///
 /// \brief The PluginsItemInterface class
 /// the dock plugins item interface, all dock plugins should

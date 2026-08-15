@@ -246,11 +246,12 @@ install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins)
 
 #include <QObject>
 
-class HomeMonitorPlugin : public QObject, PluginsItemInterface
+class HomeMonitorPlugin : public QObject, PluginsItemInterface,
+                          PluginsItemFactory<HomeMonitorPlugin>
 {
     Q_OBJECT
     // 声明实现了的接口
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     // 插件元数据
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "home_monitor.json")
 
@@ -269,6 +270,10 @@ public:
 
 #endif // HOMEMONITORPLUGIN_H
 ```
+
+`PluginsItemFactory` 使每个屏幕获得独立的插件实例和 `QWidget`。Dock 也会为
+没有该接口的旧插件创建隔离加载副本，但新插件应实现工厂接口，以避免额外的
+文件复制和模块加载。
 
 `homemonitorplugin.cpp` 中包含对应接口的实现
 
@@ -464,7 +469,8 @@ void InformationWidget::refreshInfo()
 ``` c++
 #include "informationwidget.h"
 
-class HomeMonitorPlugin : public QObject, PluginsItemInterface
+class HomeMonitorPlugin : public QObject, PluginsItemInterface,
+                          PluginsItemFactory<HomeMonitorPlugin>
 {
 private:
     InformationWidget *m_pluginWidget;

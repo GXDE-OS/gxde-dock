@@ -6,6 +6,7 @@ project(${PLUGIN_NAME})
 # Sources files
 file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
     "../../frame/util/themeappicon.h" "../../frame/util/themeappicon.cpp"
+    "../../frame/util/styledmenu.h" "../../frame/util/styledmenu.cpp"
     "../../frame/util/dockpopupwindow.h" "../../frame/util/dockpopupwindow.cpp"
     "../../frame/util/abstractpluginscontroller.h" "../../frame/util/abstractpluginscontroller.cpp"
     "../../frame/util/pluginloader.h" "../../frame/util/pluginloader.cpp"
@@ -14,7 +15,12 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
     "../../frame/dbus/sni/*.h" "../../frame/dbus/sni/*.cpp"
     "../../frame/dbus/dbusmenu.h" "../../frame/dbus/dbusmenu.cpp"
     "../../frame/dbus/dbusmenumanager.h" "../../frame/dbus/dbusmenumanager.cpp"
-    "../../frame/wayland/layershellhelper.cpp" "../../frame/wayland/layershellhelper.h")
+    "../../frame/wayland/layershellhelper.cpp" "../../frame/wayland/layershellhelper.h"
+    "../../frame/wayland/layershell_styler.cpp" "../../frame/wayland/layershell_styler.h"
+    "../../frame/wayland/protocols/dde-shell-client-protocol.c"
+    "../../frame/wayland/protocols/dde-shell-client-protocol.h"
+    "../../frame/wayland/protocols/blur-client-protocol.c"
+    "../../frame/wayland/protocols/blur-client-protocol.h")
 
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus Gui)

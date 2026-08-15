@@ -23,10 +23,10 @@
 #include "pluginsiteminterface.h"
 #include "dbusadaptors.h"
 
-class KeyboardPlugin : public QObject , PluginsItemInterface
+class KeyboardPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<KeyboardPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "keyboard.json")
 
 public:

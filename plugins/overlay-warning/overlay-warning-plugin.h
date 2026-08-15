@@ -35,10 +35,10 @@ namespace Dtk {
     }
 }
 
-class OverlayWarningPlugin : public QObject, PluginsItemInterface
+class OverlayWarningPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<OverlayWarningPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "overlay-warning.json")
 
 public:

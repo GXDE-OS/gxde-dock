@@ -10,10 +10,10 @@
 #include "pluginsettingdialog.h"
 #include <QDebug>
 
-class SysMonitorPlugin : public QObject, PluginsItemInterface
+class SysMonitorPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<SysMonitorPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "sys_monitor.json")
 
 public:

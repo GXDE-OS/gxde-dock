@@ -20,10 +20,64 @@
  */
 
 #include "abstracttraywidget.h"
+#include "constants.h"
 
 #include <xcb/xproto.h>
+#include <QApplication>
+#include <QGuiApplication>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QScreen>
+
+namespace {
+
+QPoint trayGlobalPoint(const QWidget *widget, const QPoint &localPoint)
+{
+    if (!widget)
+        return QCursor::pos();
+
+    if (!QGuiApplication::platformName().contains("wayland",
+                                                  Qt::CaseInsensitive))
+        return widget->mapToGlobal(localPoint);
+
+    QWidget *topLevel = widget->window();
+    QScreen *screen = topLevel ? topLevel->screen() : nullptr;
+    if (!topLevel || !screen)
+        return widget->mapToGlobal(localPoint);
+
+    const QRect screenRect = screen->geometry();
+    const QSize dockSize = topLevel->size();
+    const Dock::Position position =
+        qApp->property(PROP_POSITION).value<Dock::Position>();
+    QPoint dockOrigin;
+
+    switch (position) {
+    case Dock::Top:
+        dockOrigin = QPoint(screenRect.left()
+                                + (screenRect.width() - dockSize.width()) / 2,
+                            screenRect.top());
+        break;
+    case Dock::Bottom:
+        dockOrigin = QPoint(screenRect.left()
+                                + (screenRect.width() - dockSize.width()) / 2,
+                            screenRect.bottom() - dockSize.height() + 1);
+        break;
+    case Dock::Left:
+        dockOrigin = QPoint(screenRect.left(),
+                            screenRect.top()
+                                + (screenRect.height() - dockSize.height()) / 2);
+        break;
+    case Dock::Right:
+        dockOrigin = QPoint(screenRect.right() - dockSize.width() + 1,
+                            screenRect.top()
+                                + (screenRect.height() - dockSize.height()) / 2);
+        break;
+    }
+
+    return dockOrigin + widget->mapTo(topLevel, localPoint);
+}
+
+} // namespace
 
 AbstractTrayWidget::AbstractTrayWidget(QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f),
@@ -82,7 +136,8 @@ void AbstractTrayWidget::handleMouseRelease() {
     if (point.manhattanLength() > 24)
         return;
 
-    QPoint globalPos = QCursor::pos();
+    const QPoint globalPos = trayGlobalPoint(this,
+                                              m_lastMouseReleaseData.first);
     uint8_t buttonIndex = XCB_BUTTON_INDEX_1;
 
     switch (m_lastMouseReleaseData.second) {
@@ -115,4 +170,62 @@ const QRect AbstractTrayWidget::perfectIconRect() const
     iconRect.moveTopLeft(itemRect.center() - iconRect.center());
 
     return iconRect;
+}
+
+QPoint AbstractTrayWidget::popupMenuPosition(const QSize &menuSize,
+                                              const QWidget *menu) const
+{
+    QWidget *topLevel = window();
+    QScreen *screen = topLevel ? topLevel->screen() : nullptr;
+    if (!topLevel || !screen)
+        return mapToGlobal(rect().center());
+
+    const QRect screenRect = screen->geometry();
+    const QSize dockSize = topLevel->size();
+    const Dock::Position position =
+        qApp->property(PROP_POSITION).value<Dock::Position>();
+    const QMargins margins = menu ? menu->contentsMargins() : QMargins();
+    const int panelWidth = menuSize.width() - margins.left() - margins.right();
+    const int panelHeight = menuSize.height() - margins.top() - margins.bottom();
+    QPoint dockOrigin;
+    QPoint local = mapTo(topLevel, rect().center());
+
+    switch (position) {
+    case Dock::Top:
+        dockOrigin = QPoint(screenRect.left()
+                                + (screenRect.width() - dockSize.width()) / 2,
+                            screenRect.top());
+        local.setX(local.x() - margins.left() - panelWidth / 2);
+        local.setY(dockSize.height() - margins.top());
+        break;
+    case Dock::Bottom:
+        dockOrigin = QPoint(screenRect.left()
+                                + (screenRect.width() - dockSize.width()) / 2,
+                            screenRect.bottom() - dockSize.height() + 1);
+        local.setX(local.x() - margins.left() - panelWidth / 2);
+        local.setY(-menuSize.height() + margins.bottom());
+        break;
+    case Dock::Left:
+        dockOrigin = QPoint(screenRect.left(),
+                            screenRect.top()
+                                + (screenRect.height() - dockSize.height()) / 2);
+        local.setX(dockSize.width() - margins.left());
+        local.setY(local.y() - margins.top() - panelHeight / 2);
+        break;
+    case Dock::Right:
+        dockOrigin = QPoint(screenRect.right() - dockSize.width() + 1,
+                            screenRect.top()
+                                + (screenRect.height() - dockSize.height()) / 2);
+        local.setX(-menuSize.width() + margins.right());
+        local.setY(local.y() - margins.top() - panelHeight / 2);
+        break;
+    }
+
+    const QRect screenLocal(screenRect.topLeft() - dockOrigin,
+                            screenRect.size());
+    local.setX(qBound(screenLocal.left(), local.x(),
+                      screenLocal.right() - menuSize.width() + 1));
+    local.setY(qBound(screenLocal.top(), local.y(),
+                      screenLocal.bottom() - menuSize.height() + 1));
+    return dockOrigin + local;
 }

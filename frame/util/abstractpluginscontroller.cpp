@@ -28,7 +28,11 @@
 #include <QDebug>
 #include <QDBusServiceWatcher>
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QGSettings>
+#include <QSet>
+#include <QTemporaryFile>
 
 static const QStringList CompatiblePluginApiList {
     "1.1.1",
@@ -163,7 +167,9 @@ void AbstractPluginsController::positionChanged()
 
 void AbstractPluginsController::loadPlugin(const QString &pluginFile)
 {
-    QPluginLoader *pluginLoader = new QPluginLoader(pluginFile);
+    // Keep the module loaded for the application lifetime. Factory-created
+    // plugin objects belong to a screen controller and may outlive this call.
+    QPluginLoader *pluginLoader = new QPluginLoader(pluginFile, qApp);
     const QJsonObject &meta = pluginLoader->metaData().value("MetaData").toObject();
     const QString &pluginApi = meta.value("api").toString();
     if (pluginApi.isEmpty() || !CompatiblePluginApiList.contains(pluginApi))
@@ -179,7 +185,78 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
         return;
     }
 
-    PluginsItemInterface *interface = qobject_cast<PluginsItemInterface *>(pluginLoader->instance());
+    QObject *rootObject = pluginLoader->instance();
+    PluginsItemInterface *interface = nullptr;
+    if (auto *factory = qobject_cast<PluginsItemFactoryInterface *>(rootObject)) {
+        QObject *instanceObject = factory->createPluginInstance();
+        interface = qobject_cast<PluginsItemInterface *>(instanceObject);
+        if (interface) {
+            instanceObject->setParent(this);
+        } else if (instanceObject) {
+            delete instanceObject;
+        }
+    } else {
+        // QPluginLoader shares one root QObject for the same library path. Old
+        // plugins have no factory, so load an isolated on-disk copy per screen;
+        // otherwise their single QWidget tree is reparented between two Docks.
+        QObject *isolatedRoot = nullptr;
+        auto *isolatedFile = new QTemporaryFile(
+            QDir::tempPath() + QStringLiteral("/gxde-dock-plugin-XXXXXX.so"),
+            qApp);
+        QFile sourceFile(pluginFile);
+        if (sourceFile.open(QIODevice::ReadOnly) && isolatedFile->open()) {
+            bool copied = true;
+            while (!sourceFile.atEnd()) {
+                const QByteArray chunk = sourceFile.read(1024 * 1024);
+                if (chunk.isEmpty() || isolatedFile->write(chunk) != chunk.size()) {
+                    copied = false;
+                    break;
+                }
+            }
+            copied = copied && isolatedFile->flush();
+            isolatedFile->close();
+
+            if (copied) {
+                auto *isolatedLoader = new QPluginLoader(isolatedFile->fileName(), qApp);
+                isolatedRoot = isolatedLoader->instance();
+                interface = qobject_cast<PluginsItemInterface *>(isolatedRoot);
+                if (!interface) {
+                    qWarning() << objectName()
+                               << "failed to load isolated legacy plugin:"
+                               << pluginFile << isolatedLoader->errorString();
+                    isolatedLoader->deleteLater();
+                } else {
+                    qInfo() << objectName() << "isolated legacy plugin instance:"
+                            << pluginFile << isolatedRoot;
+                }
+            }
+        }
+
+        if (!interface) {
+            isolatedFile->deleteLater();
+        }
+
+        // Copying may fail for a plugin with unusual filesystem constraints or
+        // $ORIGIN-only dependencies. In that case retain the safe first-screen
+        // fallback instead of stealing its widget into another Dock.
+        static QSet<QString> initializedLegacyPlugins;
+        const QString canonicalFile = QFileInfo(pluginFile).canonicalFilePath();
+        if (!interface) {
+            interface = qobject_cast<PluginsItemInterface *>(rootObject);
+            if (!interface) {
+                // The common error path below will report the loader error.
+            } else if (initializedLegacyPlugins.contains(canonicalFile)) {
+                qWarning() << objectName()
+                           << "legacy plugin isolation unavailable; skip duplicate load:"
+                           << pluginFile;
+                pluginLoader->deleteLater();
+                return;
+            } else {
+                initializedLegacyPlugins.insert(canonicalFile);
+            }
+        }
+    }
+
     if (!interface)
     {
         qWarning() << objectName() << "load plugin failed!!!" << pluginLoader->errorString() << pluginFile;

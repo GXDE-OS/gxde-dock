@@ -223,7 +223,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
     e->ignore();
 
     if (e->button() == Qt::RightButton)
-        m_settings->showDockSettingsMenu();
+        m_settings->showDockSettingsMenu(this, e->position().toPoint());
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)

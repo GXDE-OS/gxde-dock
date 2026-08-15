@@ -23,6 +23,7 @@
 #define SNITRAYWIDGET_H
 
 #include "abstracttraywidget.h"
+#include "util/menudismissmask.h"
 //#include "dbus/sni/statusnotifieritem_interface.h"
 
 #include <org_kde_statusnotifieritem.h>
@@ -30,6 +31,7 @@
 
 #include <QMenu>
 #include <QDBusObjectPath>
+#include <QPointer>
 
 //using namespace com::deepin::dde;
 using namespace org::kde;
@@ -71,6 +73,7 @@ private Q_SLOTS:
     void refreshOverlayIcon();
     void refreshAttentionIcon();
     void showContextMenu(int x, int y);
+    void showContextMenuReady();
     // SNI property change slot
     void onSNIAttentionIconNameChanged(const QString & value);
     void onSNIAttentionIconPixmapChanged(DBusImageList  value);
@@ -97,6 +100,8 @@ private:
     DBusMenuImporter *m_dbusMenuImporter;
 
     QMenu *m_menu;
+    QPointer<MenuDismissMask> m_menuMask;
+    bool m_pendingShowContextMenu = false;
     QTimer *m_updateIconTimer;
     QTimer *m_updateOverlayIconTimer;
     QTimer *m_updateAttentionIconTimer;

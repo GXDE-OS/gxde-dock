@@ -26,6 +26,7 @@
 #include "dbus/dbusmenumanager.h"
 #include "dbus/dbusdisplay.h"
 #include "controller/dockitemcontroller.h"
+#include "util/styledmenu.h"
 
 #include "dbus/dockdaemoninterface.h"
 
@@ -43,17 +44,18 @@ DWIDGET_USE_NAMESPACE
 
 class QGSettings;
 class QScreen;
+class QWidget;
 
 using namespace Dock;
 using DBusDock = DockDaemonInterface;
 
-class WhiteMenu : public QMenu
+class WhiteMenu : public StyledMenu
 {
     Q_OBJECT
 public:
-    WhiteMenu(QWidget * parent = nullptr) : QMenu(parent) {
-        QStyle *style = QStyleFactory::create("dlight");
-        if (style) setStyle(style);
+    WhiteMenu(QWidget * parent = nullptr)
+        : StyledMenu(QStringLiteral("dlight2"), parent)
+    {
     }
 
     virtual ~WhiteMenu() {}
@@ -91,9 +93,13 @@ public:
     const QSize windowSize(QScreen *screen) const;
     qreal dockRatio() const;
 
-    QPoint wlAdjustMenuPos(const QSize &menuSize) const;
+    QPoint adjustMenuPos(const QSize &menuSize, QScreen *screen,
+                         const QPoint &anchor) const;
+    QPoint popupMenuPosition(QWidget *sourceWindow, const QSize &menuSize,
+                             const QPoint &localAnchor,
+                             const QWidget *menu = nullptr) const;
 
-    void showDockSettingsMenu();
+    void showDockSettingsMenu(QWidget *sourceWindow, const QPoint &localPos);
 
 signals:
     void dataChanged() const;
@@ -184,6 +190,7 @@ private:
     DBusDisplay *m_displayInter;
     DBusDock *m_dockInter;
     DockItemController *m_itemController;
+    QPointer<DockItemController> m_menuItemController;
 
     QGSettings *m_dockGsettings;
     QGSettings *m_appearanceGsettings;

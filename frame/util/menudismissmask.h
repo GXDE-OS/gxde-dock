@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 CharOfString <markus_verify@126.com>
+ * Copyright (C) 2026 CharOfString <root@charofstring.cc>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LAYERSHELL_STYLER_H
-#define LAYERSHELL_STYLER_H
+#ifndef MENUDISMISSMASK_H
+#define MENUDISMISSMASK_H
 
-#include <QRect>
+#include <QWidget>
+#include <QMouseEvent>
+#include <QMenu>
 
-class QWindow;
+class MenuDismissMask : public QWidget
+{
+public:
+    explicit MenuDismissMask(QMenu *menu, QWidget *parent = nullptr)
+        : QWidget(parent)
+        , m_menu(menu)
+    {
+    }
 
-namespace Wayland {
-namespace LayerShellStyler {
+protected:
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        Q_UNUSED(event);
+        if (m_menu) {
+            m_menu->close();
+        }
+        hide();
+    }
 
-void apply(QWindow *window, int radius, bool enableBlur,
-           const QRect &blurRect = QRect());
+private:
+    QMenu *m_menu;
+};
 
-}  // namespace LayerShellStyler
-}  // namespace Wayland
-
-#endif  // LAYERSHELL_STYLER_H
+#endif // MENUDISMISSMASK_H

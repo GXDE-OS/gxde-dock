@@ -25,10 +25,10 @@
 #include "pluginsiteminterface.h"
 #include "sounditem.h"
 
-class SoundPlugin : public QObject, PluginsItemInterface
+class SoundPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<SoundPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "sound.json")
 
 public:

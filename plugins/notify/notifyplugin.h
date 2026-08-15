@@ -28,10 +28,10 @@
 
 #include <QLabel>
 
-class NotifyPlugin : public QObject, PluginsItemInterface
+class NotifyPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<NotifyPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "notify.json")
 
 public:

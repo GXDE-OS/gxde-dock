@@ -7,10 +7,10 @@
 
 #include <gxde-dock/pluginsiteminterface.h>
 
-class HomeMonitorPlugin : public QObject, PluginsItemInterface
+class HomeMonitorPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<HomeMonitorPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "home_monitor.json")
 
 public:

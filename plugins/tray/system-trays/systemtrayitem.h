@@ -85,6 +85,7 @@ protected Q_SLOTS:
     void onContextMenuAccepted();
 
 private:
+    void popupMenuWayland(const QString &menuJson);
     void updatePopupPosition();
 
 private:

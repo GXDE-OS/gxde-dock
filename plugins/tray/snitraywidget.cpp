@@ -21,12 +21,11 @@
 
 #include "snitraywidget.h"
 #include "util/themeappicon.h"
-#include "util/docksettings.h"
 #include "wayland/layershellhelper.h"
 
 #include <QPainter>
 #include <QApplication>
-#include <QWindow>
+#include <QScreen>
 
 #include <xcb/xproto.h>
 
@@ -276,6 +275,9 @@ void SNITrayWidget::initMenu()
     qDebug() << "generate the sni menu object";
 
     m_menu = m_dbusMenuImporter->menu();
+    connect(m_dbusMenuImporter, &DBusMenuImporter::menuUpdated,
+            this, &SNITrayWidget::showContextMenuReady);
+    connect(m_menu, &QMenu::triggered, m_menu, &QMenu::close);
 
     qDebug() << "the sni menu obect is:" << m_menu;
 }
@@ -335,49 +337,63 @@ void SNITrayWidget::showContextMenu(int x, int y)
     if (m_sniMenuPath.path().startsWith("/NO_DBUSMENU")) {
         m_sniInter->ContextMenu(x, y);
     } else {
-        // 每次都重建菜单 (initMenu 内部会重建 QMenu), 避免复用同一 Wayland xdg_popup surface 导致第二次及以后弹出位置错位。
+        // 每次都重建菜单 (initMenu 内部会重建 QMenu), 避免复用同一 Wayland
+        // layer surface 导致第二次及以后弹出位置错位。
         qDebug() << "context menu init menu";
         initMenu();
-        QPoint pos(x, y);
-        if (Wayland::LayerShellHelper::isWayland()) {
-            pos = menuPopupPos(m_menu->sizeHint());
-        }
-        if (m_menu) {
-            m_menu->popup(pos);
+        if (!m_menu)
+            return;
+
+        if (QGuiApplication::platformName().contains("wayland",
+                                                     Qt::CaseInsensitive)) {
+            m_pendingShowContextMenu = true;
+            m_dbusMenuImporter->updateMenu();
         } else {
-            qWarning() << "Failed to create context menu";
+            m_menu->popup(QPoint(x, y));
         }
     }
 }
 
-QPoint SNITrayWidget::menuPopupPos(const QSize &menuSize) const
+void SNITrayWidget::showContextMenuReady()
 {
-    const Dock::Position pos = DockSettings::Instance().position();
-    const QRect dockRect = DockSettings::Instance().windowRect(pos);
-    const QPoint iconGlobal = dockRect.topLeft() + mapTo(window(), QPoint());
-    const QRect iconRect(iconGlobal, size());
-
-    QPoint p;
-    switch (pos) {
-    case Dock::Position::Top:
-        p = QPoint(iconRect.x(), iconRect.bottom());
-        break;
-    case Dock::Position::Bottom:
-        p = QPoint(iconRect.x(), iconRect.y() - menuSize.height());
-        break;
-    case Dock::Position::Left:
-        p = QPoint(iconRect.right(), iconRect.y());
-        break;
-    case Dock::Position::Right:
-        p = QPoint(iconRect.x() - menuSize.width(), iconRect.y());
-        break;
+    if (!m_pendingShowContextMenu || !m_menu) {
+        return;
     }
 
-    // 往左下移一点, 让菜单更贴近托盘图标
-    p += QPoint(-4, 4);
+    m_pendingShowContextMenu = false;
 
-    return p;
+    if (m_menuMask) {
+        m_menuMask->hide();
+        m_menuMask->deleteLater();
+        m_menuMask.clear();
+    }
+
+    const QPoint menuPosition = popupMenuPosition(m_menu->sizeHint(), m_menu);
+    Wayland::LayerShellHelper::preparePopupLayerShell(
+        m_menu, window() ? window()->screen() : nullptr, menuPosition);
+
+    QScreen *menuScreen = window() ? window()->screen() : nullptr;
+    if (!menuScreen)
+        menuScreen = qApp->screenAt(menuPosition);
+    if (!menuScreen)
+        menuScreen = qApp->primaryScreen();
+
+    m_menuMask = new MenuDismissMask(m_menu);
+    m_menuMask->setScreen(menuScreen);
+    Wayland::LayerShellHelper::setMenuMaskRole(m_menuMask);
+    m_menuMask->show();
+
+    connect(m_menu, &QMenu::aboutToHide, m_menuMask, [this] {
+        if (m_menuMask) {
+            m_menuMask->hide();
+            m_menuMask->deleteLater();
+            m_menuMask.clear();
+        }
+    });
+
+    m_menu->popup(menuPosition);
 }
+
 
 void SNITrayWidget::onSNIAttentionIconNameChanged(const QString &value)
 {

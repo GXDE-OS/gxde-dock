@@ -23,6 +23,7 @@
 #define FASHIONTRAYITEM_H
 
 #include "constants.h"
+#include "fashiontrayconstants.h"
 #include "trayplugin.h"
 #include "fashiontraywidgetwrapper.h"
 #include "fashiontraycontrolwidget.h"
@@ -53,8 +54,8 @@ public:
 
     void setDockPosition(Dock::Position pos);
 
-    inline static int trayWidgetWidth() {return TrayWidgetWidth;}
-    inline static int trayWidgetHeight() {return TrayWidgetHeight;}
+    inline int trayWidgetWidth() const { return m_trayWidgetWidth; }
+    inline int trayWidgetHeight() const { return m_trayWidgetHeight; }
 
 public slots:
     void onExpandChanged(const bool expand);
@@ -96,8 +97,11 @@ private:
     AttentionContainer *m_attentionContainer;
     HoldContainer *m_holdContainer;
 
-    static int TrayWidgetWidth;
-    static int TrayWidgetHeight;
+    // Each output owns a FashionTrayItem.  These sizes must not be static:
+    // otherwise the first output updates the shared value and the second
+    // output skips synchronising its still-default (24px) containers.
+    int m_trayWidgetWidth = TrayWidgetWidthMin;
+    int m_trayWidgetHeight = TrayWidgetHeightMin;
 };
 
 #endif // FASHIONTRAYITEM_H

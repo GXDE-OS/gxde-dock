@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 CharOfString <markus_verify@126.com>
+ * Copyright (C) 2026 CharOfString <root@charofstring.cc>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LAYERSHELL_STYLER_H
-#define LAYERSHELL_STYLER_H
+#ifndef STYLEDMENU_H
+#define STYLEDMENU_H
 
-#include <QRect>
+#include <QMenu>
 
-class QWindow;
+class QStyle;
 
-namespace Wayland {
-namespace LayerShellStyler {
+class StyledMenu : public QMenu
+{
+public:
+    explicit StyledMenu(const QString &styleName, QWidget *parent = nullptr);
 
-void apply(QWindow *window, int radius, bool enableBlur,
-           const QRect &blurRect = QRect());
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
-}  // namespace LayerShellStyler
-}  // namespace Wayland
+private:
+    QStyle *m_style = nullptr;
+};
 
-#endif  // LAYERSHELL_STYLER_H
+#endif // STYLEDMENU_H

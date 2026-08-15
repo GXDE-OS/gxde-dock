@@ -24,9 +24,11 @@
 #include "dbus/dockdbusnames.h"
 #include "item/appitem.h"
 #include "util/utils.h"
+#include "util/menudismissmask.h"
 #include "wayland/layershellhelper.h"
 
 #include <QDebug>
+#include <QScopedPointer>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QGSettings>
@@ -139,24 +141,6 @@ QString hideModeToString(const HideMode m) {
         }
     }
 }
-
-// 透明遮罩: 处理跨应用点击关闭菜单的辅助类。在X11下通过DRegionMonitor
-// 监听全局鼠标按钮按下事件，点击菜单外部时关闭菜单
-class MenuDismissMask : public QWidget {
-public:
-    explicit MenuDismissMask(QMenu* menu) : m_menu(menu) {}
-
-protected:
-    void mousePressEvent(QMouseEvent*) override {
-        if (m_menu) {
-            m_menu->close();
-        }
-        hide();
-    }
-
-private:
-    QMenu* m_menu;
-};
 
 }  // namespace
 
@@ -501,13 +485,22 @@ const QSize DockSettings::windowSize(QScreen *screen) const
     return size;
 }
 
-void DockSettings::showDockSettingsMenu()
+void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
+                                        const QPoint &localPos)
 {
     m_autoHide = false;
 
+    QScreen *targetScreen = sourceWindow && sourceWindow->screen()
+        ? sourceWindow->screen()
+        : qApp->screenAt(QCursor::pos());
+    if (!targetScreen) {
+        targetScreen = qApp->primaryScreen();
+    }
+    m_menuItemController = DockItemController::instanceForScreen(targetScreen);
+
     // create actions
     QList<QAction *> actions;
-    for (auto *p : m_itemController->pluginList())
+    for (auto *p : m_menuItemController->pluginList())
     {
         if (!p->pluginIsAllowDisable())
             continue;
@@ -557,56 +550,132 @@ void DockSettings::showDockSettingsMenu()
     m_smartHideAct.setChecked(m_hideMode == SmartHide);
     m_windowSplit.setChecked(m_dockInter->windowSplit());
 
-    // Wayland下dock是个layer-shell surface, Qt其实并不知道其真实屏幕位置
-    // QCursor::pos() 返回的是dock表面内的局部坐标
-    // 直接 exec 会让菜单乱飘，所以为Wayland计算全局坐标
-    const QPoint menuPos = wlAdjustMenuPos(m_settingsMenu.sizeHint());
-
-    // x11和Wayland都需要处理点击外部关闭菜单的逻辑
-    // X11下Qt6的QMenu::exec()在dock特殊窗口标志下无法检测跨应用点击
-    // Wayland下需要MenuDismissMask辅助
+    // A parentless QMenu is incorrectly created as another layer surface by
+    // layer-shell-qt.  Give the Wayland menu the Dock window as its transient
+    // parent so it is attached as a real xdg_popup on the correct output.
+    WhiteMenu waylandMenu;
+    QMenu *popupMenu = &m_settingsMenu;
     if (Wayland::LayerShellHelper::isWayland()) {
-        if (!m_menuMask) {
-            m_menuMask = new MenuDismissMask(&m_settingsMenu);
-        }
-        Wayland::LayerShellHelper::setMenuMaskRole(m_menuMask);
-        m_menuMask->show();
+        waylandMenu.addActions(m_settingsMenu.actions());
+        waylandMenu.setTitle(m_settingsMenu.title());
+        connect(&waylandMenu, &QMenu::triggered,
+                this, &DockSettings::menuActionClicked);
+        connect(&waylandMenu, &QMenu::triggered, &waylandMenu, &QMenu::close);
+        popupMenu = &waylandMenu;
+    }
+
+    const QPoint menuPos = Wayland::LayerShellHelper::isWayland()
+        ? popupMenuPosition(sourceWindow, popupMenu->sizeHint(), localPos,
+                            popupMenu)
+        : adjustMenuPos(popupMenu->sizeHint(), targetScreen,
+                        sourceWindow ? sourceWindow->mapToGlobal(localPos)
+                                     : QCursor::pos());
+
+    if (Wayland::LayerShellHelper::isWayland()) {
+        Wayland::LayerShellHelper::preparePopupLayerShell(
+            popupMenu, targetScreen, menuPos);
+    }
+
+    // Wayland 的 QMenu 被改造成独立 layer-shell 表面后，不再自动拥有
+    // xdg_popup 的“点击外部关闭”行为。这里垫一层全屏透明遮罩，
+    // 点击菜单外任意位置时由 MenuDismissMask 主动关闭菜单。
+    QScopedPointer<MenuDismissMask> waylandMenuMask;
+    if (Wayland::LayerShellHelper::isWayland()) {
+        waylandMenuMask.reset(new MenuDismissMask(popupMenu));
+        waylandMenuMask->setScreen(targetScreen);
+        Wayland::LayerShellHelper::setMenuMaskRole(waylandMenuMask.data());
+        waylandMenuMask->show();
     }
 
     // X11下注册全局鼠标监听，使点击菜单外部时能关闭菜单
     if (m_menuRegionMonitor && !m_menuRegionMonitor->registered()) {
-        const QRect screen = primaryRect();
-        m_menuRegionMonitor->setWatchedRegion(QRegion(screen));
+        m_menuRegionMonitor->setWatchedRegion(QRegion(targetScreen->geometry()));
         m_menuRegionMonitor->registerRegion();
     }
 
-    m_settingsMenu.exec(menuPos);
+    popupMenu->exec(menuPos);
 
     // 菜单关闭后取消全局鼠标监听
     if (m_menuRegionMonitor && m_menuRegionMonitor->registered()) {
         m_menuRegionMonitor->unregisterRegion();
     }
 
-    if (m_menuMask) {
-        m_menuMask->hide();
+    if (waylandMenuMask) {
+        waylandMenuMask->hide();
     }
 
     setAutoHide(true);
 }
 
-QPoint DockSettings::wlAdjustMenuPos(const QSize& menuSize) const {
-    // X11下QCursor::pos()是全局坐标，如果是X11直接返回这个
-    if (!Wayland::LayerShellHelper::isWayland()) {
+QPoint DockSettings::popupMenuPosition(QWidget *sourceWindow,
+                                       const QSize &menuSize,
+                                       const QPoint &localAnchor,
+                                       const QWidget *menu) const
+{
+    if (!sourceWindow)
         return QCursor::pos();
+
+    QScreen *screen = sourceWindow->screen();
+    if (!screen)
+        screen = qApp->primaryScreen();
+
+    const QMargins margins = menu ? menu->contentsMargins() : QMargins();
+    const int panelWidth = menuSize.width() - margins.left() - margins.right();
+    const int panelHeight = menuSize.height() - margins.top() - margins.bottom();
+
+    QPoint local = localAnchor;
+    switch (m_position) {
+    case Top:
+        local.setX(localAnchor.x() - margins.left() - panelWidth / 2);
+        local.setY(sourceWindow->height() - margins.top());
+        break;
+    case Bottom:
+        local.setX(localAnchor.x() - margins.left() - panelWidth / 2);
+        local.setY(-menuSize.height() + margins.bottom());
+        break;
+    case Left:
+        local.setX(sourceWindow->width() - margins.left());
+        local.setY(localAnchor.y() - margins.top() - panelHeight / 2);
+        break;
+    case Right:
+        local.setX(-menuSize.width() + margins.right());
+        local.setY(localAnchor.y() - margins.top() - panelHeight / 2);
+        break;
     }
 
-    // Wayland下QCursor::pos()是dock表面内的局部坐标
-    // 换算成全局坐标再返回
-    const QRect dockRect = windowRect(m_position);
-    const QRect screen = primaryRect();
-    QPoint global = QCursor::pos() + dockRect.topLeft();
+    if (screen) {
+        const QRect dockRect = windowRect(m_position, false, screen);
+        const QRect screenLocal(screen->geometry().topLeft()
+                                    - dockRect.topLeft(),
+                                screen->geometry().size());
+        local.setX(qBound(screenLocal.left(), local.x(),
+                          screenLocal.right() - menuSize.width() + 1));
+        local.setY(qBound(screenLocal.top(), local.y(),
+                          screenLocal.bottom() - menuSize.height() + 1));
+    }
 
-    switch (m_position) {
+    const QRect dockRect = screen
+        ? windowRect(m_position, false, screen)
+        : QRect(sourceWindow->pos(), sourceWindow->size());
+    return dockRect.topLeft() + local;
+}
+
+QPoint DockSettings::adjustMenuPos(const QSize &menuSize, QScreen *screen,
+                                   const QPoint &anchor) const
+{
+    if (!screen) {
+        screen = qApp->screenAt(anchor);
+    }
+    if (!screen) {
+        screen = qApp->primaryScreen();
+    }
+
+    const QRect dockRect = windowRect(m_position, false, screen);
+    const QRect screenRect = screen->geometry();
+    QPoint global = anchor;
+
+    if (Wayland::LayerShellHelper::isWayland()) {
+        switch (m_position) {
         case Top: {
             global.setY(dockRect.bottom());
             break;
@@ -626,12 +695,13 @@ QPoint DockSettings::wlAdjustMenuPos(const QSize& menuSize) const {
             global.setX(dockRect.left() - menuSize.width());
             break;
         }
+        }
     }
 
-    global.setX(qBound(screen.left(), global.x(),
-        screen.right() - menuSize.width()));
-    global.setY(qBound(screen.top(), global.y(),
-        screen.bottom() - menuSize.height()));
+    global.setX(qBound(screenRect.left(), global.x(),
+        screenRect.right() - menuSize.width() + 1));
+    global.setY(qBound(screenRect.top(), global.y(),
+        screenRect.bottom() - menuSize.height() + 1));
     return global;
 }
 
@@ -690,7 +760,9 @@ void DockSettings::menuActionClicked(QAction *action)
     const QString &data = action->data().toString();
     if (data.isEmpty())
         return;
-    for (auto *p : m_itemController->pluginList())
+    DockItemController *menuController = m_menuItemController
+        ? m_menuItemController.data() : m_itemController;
+    for (auto *p : menuController->pluginList())
     {
         if (p->pluginName() == data)
             return p->pluginStateSwitched();
@@ -714,7 +786,9 @@ void DockSettings::onPositionChanged()
 
         calculateWindowConfig();
 
-        m_itemController->refershItemsIcon();
+        for (DockItemController *controller : DockItemController::instances()) {
+            controller->refershItemsIcon();
+        }
     });
 }
 
@@ -740,7 +814,9 @@ void DockSettings::onDisplayModeChanged()
 
     emit displayModeChanegd();
 
-    QTimer::singleShot(1, m_itemController, &DockItemController::sortPluginItems);
+    for (DockItemController *controller : DockItemController::instances()) {
+        QTimer::singleShot(1, controller, &DockItemController::sortPluginItems);
+    }
 }
 
 void DockSettings::hideModeChanged()

@@ -24,16 +24,18 @@
 #include "dbus/dbusmenumanager.h"
 #include "components/hoverhighlighteffect.h"
 #include "util/docksettings.h"
+#include "util/menudismissmask.h"
+#include "util/styledmenu.h"
 #include "wayland/layershellhelper.h"
 
 #include <QMouseEvent>
+#include <QScopedPointer>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QCursor>
 #include <QMenu>
 #include <QAction>
-#include <QStyleFactory>
 
 Position DockItem::DockPosition = Position::Top;
 DisplayMode DockItem::DockDisplayMode = DisplayMode::Efficient;
@@ -164,7 +166,7 @@ void DockItem::mousePressEvent(QMouseEvent *e)
             // ignore this event to MainPanel/MainWindow to show context menu of MainWindow
             return e->ignore();
         }
-        if (perfectIconRect().contains(e->pos())) {
+        if (rect().contains(e->pos())) {
             return showContextMenu();
         }
     }
@@ -223,16 +225,21 @@ void DockItem::showContextMenu()
     if (menuJson.isEmpty())
         return;
 
+    // The deepin-menu object returned by RegisterMenu is not stable on
+    // Treeland: it may be unregistered before ShowMenu reaches it.  Use a
+    // native Qt popup on Wayland, which also lets us anchor it to this
+    // DockItem's actual output instead of the primary output.
+    if (Wayland::LayerShellHelper::isWayland()) {
+        popupMenuWayland(menuJson);
+        return;
+    }
+
     QDBusPendingReply<QDBusObjectPath> result = m_menuManagerInter->RegisterMenu();
 
     result.waitForFinished();
     if (result.isError())
     {
         qWarning() << result.error();
-        // Wayland下, 若com.deepin.menu不可用，使用QMenu代替
-        if (Wayland::LayerShellHelper::isWayland()) {
-            popupMenuWayland(menuJson);
-        }
         return;
     }
 
@@ -244,7 +251,6 @@ void DockItem::showContextMenu()
     menuObject.insert("y", QJsonValue(p.y()));
     menuObject.insert("isDockMenu", QJsonValue(true));
     menuObject.insert("menuJsonContent", QJsonValue(menuJson));
-
     switch (DockPosition)
     {
     case Top:       menuObject.insert("direction", "top");      break;
@@ -279,11 +285,7 @@ void DockItem::popupMenuWayland(const QString& menuJson) {
     if (items.isEmpty())
         return;
 
-    QMenu menu;
-    QStyle* style = QStyleFactory::create("ddark");
-    if (style) {
-        menu.setStyle(style);
-    }
+    StyledMenu menu(QStringLiteral("ddark2"));
 
     for (const QJsonValue& v : items) {
         const QJsonObject obj = v.toObject();
@@ -291,13 +293,40 @@ void DockItem::popupMenuWayland(const QString& menuJson) {
         act->setEnabled(obj.value("isActive").toBool(true));
         act->setData(obj.value("itemId").toString());  // 供回调取itemId
     }
+    connect(&menu, &QMenu::triggered, &menu, [&](QAction *action) {
+        if (action)
+            invokedMenuItem(action->data().toString(), action->isChecked());
+        menu.close();
+    });
 
     emit requestWindowAutoHide(false);
-    QAction* chosen = menu.exec(DockSettings::Instance().wlAdjustMenuPos(
-        menu.sizeHint()));
+    QWidget *topLevel = window();
+    const QPoint localAnchor = mapTo(topLevel, rect().center());
+    const QPoint menuPosition =
+        DockSettings::Instance().popupMenuPosition(
+            topLevel, menu.sizeHint(), localAnchor, &menu);
+    if (Wayland::LayerShellHelper::isWayland()) {
+        Wayland::LayerShellHelper::preparePopupLayerShell(
+            &menu, topLevel ? topLevel->screen() : nullptr, menuPosition);
+    }
 
-    if (chosen) {
-        invokedMenuItem(chosen->data().toString(), true);
+    QScopedPointer<MenuDismissMask> menuMask;
+    if (Wayland::LayerShellHelper::isWayland()) {
+        QScreen *menuScreen = topLevel ? topLevel->screen() : nullptr;
+        if (!menuScreen)
+            menuScreen = qApp->screenAt(menuPosition);
+        if (!menuScreen)
+            menuScreen = qApp->primaryScreen();
+        menuMask.reset(new MenuDismissMask(&menu));
+        menuMask->setScreen(menuScreen);
+        Wayland::LayerShellHelper::setMenuMaskRole(menuMask.data());
+        menuMask->show();
+    }
+
+    menu.exec(menuPosition);
+
+    if (menuMask) {
+        menuMask->hide();
     }
 
     emit requestRefreshWindowVisible();
@@ -348,7 +377,7 @@ void DockItem::showPopupWindow(QWidget * const content, const bool model)
     case Left:  popup->setArrowDirection(DockPopupWindow::ArrowLeft);    break;
     case Right: popup->setArrowDirection(DockPopupWindow::ArrowRight);   break;
     }
-    popup->resize(content->sizeHint());
+    content->resize(content->sizeHint());
     popup->setContent(content);
 
     const QPoint p = popupMarkPoint();

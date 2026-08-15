@@ -28,10 +28,10 @@
 
 #include <QLabel>
 
-class ShutdownPlugin : public QObject, PluginsItemInterface
+class ShutdownPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<ShutdownPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "shutdown.json")
 
 public:

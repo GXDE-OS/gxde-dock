@@ -18,14 +18,19 @@
 #include <QDebug>
 #include <QGuiApplication>
 #include <QMargins>
+#include <QMenu>
 #include <QPoint>
+#include <QPointer>
 #include <QScreen>
+#include <QSet>
+#include <QStyle>
 #include <QWidget>
 #include <QWindow>
 
 #include <LayerShellQt/Window>
 #include <dplatformwindowhandle.h>
 
+#include "../util/dockpopupwindow.h"
 #include "../util/waylandhelper.h"
 #include "layershellhelper.h"
 #include "layershell_styler.h"
@@ -33,6 +38,209 @@
 DWIDGET_USE_NAMESPACE
 
 namespace Wayland {
+
+namespace {
+
+QRect dockPopupPanelRect(DockPopupWindow *popup)
+{
+    if (!popup) {
+        return QRect();
+    }
+
+    const QRect widgetRect = popup->rect();
+    if (widgetRect.isEmpty()) {
+        return QRect();
+    }
+
+    // DArrowRectangle paints its rounded body inside the shadow margins.
+    // The arrow triangle protrudes from one edge; exclude both so the
+    // compositor blur is clipped to the actual visible panel instead of
+    // spilling into the transparent margins around it.
+    const int shadow = qRound(popup->shadowBlurRadius());
+    const int arrowHeight = popup->arrowHeight();
+    QRect panel = widgetRect;
+    switch (popup->arrowDirection()) {
+    case DockPopupWindow::ArrowLeft:
+        panel.adjust(shadow + arrowHeight, shadow, -shadow, -shadow);
+        break;
+    case DockPopupWindow::ArrowRight:
+        panel.adjust(shadow, shadow, -(shadow + arrowHeight), -shadow);
+        break;
+    case DockPopupWindow::ArrowTop:
+        panel.adjust(shadow, arrowHeight, -shadow, -shadow);
+        break;
+    case DockPopupWindow::ArrowBottom:
+        panel.adjust(shadow, shadow, -shadow, -(shadow + arrowHeight));
+        break;
+    }
+
+    return panel;
+}
+
+QSet<QWidget *> &preparedPopups()
+{
+    static QSet<QWidget *> popups;
+    return popups;
+}
+
+void registerPreparedPopup(QWidget *popup)
+{
+    if (!popup || preparedPopups().contains(popup)) {
+        return;
+    }
+
+    preparedPopups().insert(popup);
+    QObject::connect(popup, &QObject::destroyed, popup, [popup] {
+        preparedPopups().remove(popup);
+    });
+}
+
+void closeOtherPreparedPopups(QWidget *popup)
+{
+    if (!popup) {
+        return;
+    }
+
+    const QSet<QWidget *> openPopups = preparedPopups();
+    for (QWidget *other : openPopups) {
+        if (other == popup) {
+            continue;
+        }
+
+        if (QMenu *menu = qobject_cast<QMenu *>(other)) {
+            menu->close();
+        } else {
+            other->close();
+        }
+    }
+}
+
+void positionPreparedPopup(QWidget* popup, const QPoint& globalPosition)
+{
+    if (!popup || !popup->windowHandle())
+        return;
+
+    QScreen* screen = popup->windowHandle()->screen();
+    if (!screen)
+        screen = qApp->screenAt(globalPosition);
+    if (!screen)
+        screen = qApp->primaryScreen();
+
+    const QPoint local = screen
+        ? globalPosition - screen->geometry().topLeft()
+        : globalPosition;
+    if (LayerShellQt::Window* layer =
+            LayerShellQt::Window::get(popup->windowHandle())) {
+        layer->setMargins(QMargins(local.x(), local.y(), 0, 0));
+        // A layer surface has no meaningful QWidget global position.  Keep
+        // the requested position so nested menus can be placed relative to
+        // their parent without reading compositor configure feedback.
+        popup->setProperty("_d_layer_popup_global_position", globalPosition);
+    }
+}
+
+class PreparedSubmenuPositioner final : public QObject {
+public:
+    explicit PreparedSubmenuPositioner(QMenu* submenu)
+        : QObject(submenu)
+        , m_submenu(submenu)
+    {
+        setObjectName(QStringLiteral("_d_layer_submenu_positioner"));
+        connect(submenu, &QMenu::aboutToShow, this, [this] {
+            positionSubmenu();
+        });
+    }
+
+    void setAnchor(QMenu* parentMenu, QAction* parentAction)
+    {
+        m_parentMenu = parentMenu;
+        m_parentAction = parentAction;
+    }
+
+private:
+    void positionSubmenu()
+    {
+        if (!m_submenu || !m_parentMenu || !m_parentAction)
+            return;
+
+        const QVariant parentPosition = m_parentMenu->property(
+            "_d_layer_popup_global_position");
+        if (!parentPosition.isValid())
+            return;
+
+        m_parentMenu->ensurePolished();
+        m_submenu->ensurePolished();
+        const QSize submenuSize = m_submenu->sizeHint().expandedTo(QSize(1, 1));
+        m_submenu->resize(submenuSize);
+
+        const QRect actionRect = m_parentMenu->actionGeometry(m_parentAction);
+        if (!actionRect.isValid())
+            return;
+
+        const QPoint parentGlobal = parentPosition.toPoint();
+        int firstActionTop = 0;
+        if (!m_submenu->actions().isEmpty()) {
+            firstActionTop = m_submenu->actionGeometry(
+                m_submenu->actions().constFirst()).top();
+        }
+
+        const QMargins parentMargins = m_parentMenu->contentsMargins();
+        const QMargins submenuMargins = m_submenu->contentsMargins();
+        QPoint requested;
+        requested.setY(parentGlobal.y() + actionRect.top() - firstActionTop);
+
+        const bool leftToRight =
+            m_parentMenu->layoutDirection() == Qt::LeftToRight;
+        const int parentPanelLeft = parentMargins.left();
+        const int parentPanelRight = m_parentMenu->width()
+            - parentMargins.right();
+        if (leftToRight) {
+            // 子菜单可见面板的左边缘贴住母菜单可见面板的右边缘，不留空隙。
+            requested.setX(parentGlobal.x() + parentPanelRight
+                           - submenuMargins.left());
+        } else {
+            // 子菜单可见面板的右边缘贴住母菜单可见面板的左边缘，不留空隙。
+            requested.setX(parentGlobal.x() + parentPanelLeft
+                           - submenuSize.width() + submenuMargins.right());
+        }
+
+        QScreen* screen = m_parentMenu->windowHandle()
+            ? m_parentMenu->windowHandle()->screen() : nullptr;
+        if (!screen && m_submenu->windowHandle())
+            screen = m_submenu->windowHandle()->screen();
+        if (!screen)
+            screen = qApp->screenAt(parentGlobal);
+        if (!screen)
+            screen = qApp->primaryScreen();
+
+        if (screen) {
+            const QRect available = screen->geometry();
+            if (leftToRight
+                    && requested.x() + submenuSize.width() > available.right() + 1) {
+                requested.setX(parentGlobal.x() + parentPanelLeft
+                               - submenuSize.width() + submenuMargins.right());
+            } else if (!leftToRight && requested.x() < available.left()) {
+                requested.setX(parentGlobal.x() + parentPanelRight
+                               - submenuMargins.left());
+            }
+
+            const int maxX = qMax(available.left(),
+                                  available.right() - submenuSize.width() + 1);
+            const int maxY = qMax(available.top(),
+                                  available.bottom() - submenuSize.height() + 1);
+            requested.setX(qBound(available.left(), requested.x(), maxX));
+            requested.setY(qBound(available.top(), requested.y(), maxY));
+        }
+
+        positionPreparedPopup(m_submenu, requested);
+    }
+
+    QPointer<QMenu> m_submenu;
+    QPointer<QMenu> m_parentMenu;
+    QPointer<QAction> m_parentAction;
+};
+
+} // namespace
 
 static LayerShellQt::Window::Anchors anchorsForPosition(
         Dock::Position position) {
@@ -197,6 +405,111 @@ void LayerShellHelper::updateOutput(QWidget* widget, QScreen* screen) {
     }
 }
 
+void LayerShellHelper::preparePopupLayerShell(QWidget* popup, QScreen* screen,
+        const QPoint& globalPosition, bool allowKeyboardFocus,
+        bool closeOtherPopups, QMenu* parentMenuOverride) {
+    if (!popup || !isWayland())
+        return;
+
+    if (closeOtherPopups) {
+        closeOtherPreparedPopups(popup);
+    }
+
+    QMenu* menuWidget = qobject_cast<QMenu*>(popup);
+    QMenu* parentMenu = parentMenuOverride;
+    if (!parentMenu && menuWidget && menuWidget->parentWidget()) {
+        parentMenu = qobject_cast<QMenu*>(menuWidget->parentWidget());
+    }
+    const bool isSubMenu = parentMenu != nullptr;
+
+    popup->ensurePolished();
+    popup->resize(popup->sizeHint());
+
+    const auto menuPanelRect = [](QMenu* menu) {
+        const QMargins margins = menu->contentsMargins();
+        return QRect(QPoint(margins.left(), margins.top()),
+                     QSize(menu->width() - margins.left() - margins.right(),
+                           menu->height() - margins.top() - margins.bottom()));
+    };
+
+    if (!popup->property("_d_layer_popup_prepared").toBool()) {
+        // 根菜单仍然使用 Qt::Tool，避免 QtWayland 把无 transient parent 的
+        // Qt::Popup 猜成最后输入的 Dock 窗口，再被 Treeland 配满整个屏幕。
+        // 子菜单必须保留 QMenu 的 Qt::Popup 类型和 transient parent，这样
+        // QApplication 才能把它纳入 popup 链；否则鼠标进入子菜单时，高亮会
+        // 弹回母菜单。子菜单依旧是 layer surface，位置由
+        // PreparedSubmenuPositioner 在 aboutToShow 时手动摆放。
+        Qt::WindowFlags flags = popup->windowFlags();
+        flags &= ~Qt::WindowFlags(Qt::WindowType_Mask);
+        flags |= (isSubMenu ? Qt::Popup : Qt::Tool) | Qt::FramelessWindowHint;
+        popup->setWindowFlags(flags);
+        if (!isSubMenu)
+            popup->move(globalPosition);
+        popup->setAttribute(Qt::WA_NativeWindow, true);
+
+        QWindow* window = popup->windowHandle();
+        if (!window) {
+            qWarning() << "(LayerShellHelper) invalid prepared popup handle";
+            return;
+        }
+        if (screen)
+            window->setScreen(screen);
+        if (isSubMenu) {
+            if (parentMenu->windowHandle())
+                window->setTransientParent(parentMenu->windowHandle());
+        } else {
+            window->setTransientParent(nullptr);
+        }
+
+        // Window::get creates the native surface immediately in
+        // LayerShellQt 6.3.  The window type, screen and size above therefore
+        // have to be set before this call.
+        LayerShellQt::Window* layer = LayerShellQt::Window::get(window);
+        if (!layer)
+            return;
+
+        LayerShellQt::Window::Anchors anchors;
+        anchors |= LayerShellQt::Window::AnchorTop;
+        anchors |= LayerShellQt::Window::AnchorLeft;
+        layer->setAnchors(anchors);
+        layer->setScreenConfiguration(
+            LayerShellQt::Window::ScreenFromQWindow);
+        layer->setLayer(LayerShellQt::Window::LayerOverlay);
+        layer->setExclusiveZone(0);
+        layer->setKeyboardInteractivity(
+            allowKeyboardFocus && !isSubMenu
+                ? LayerShellQt::Window::KeyboardInteractivityOnDemand
+                : LayerShellQt::Window::KeyboardInteractivityNone);
+        DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
+        LayerShellStyler::apply(window, 8, true,
+                                menuWidget ? menuPanelRect(menuWidget)
+                                           : QRect());
+
+        popup->setProperty("_d_layer_popup_prepared", true);
+    }
+
+    registerPreparedPopup(popup);
+    positionPreparedPopup(popup, globalPosition);
+
+    // 子菜单仍然是独立的 layer surface。提前创建它们，并在 aboutToShow
+    // 时用保存的父菜单位置和 actionGeometry 手动计算 margin。
+    if (menuWidget) {
+        for (QAction* action : menuWidget->actions()) {
+            if (QMenu* submenu = action->menu()) {
+                preparePopupLayerShell(submenu, screen, globalPosition,
+                                       false, false, menuWidget);
+                QObject* object = submenu->findChild<QObject*>(
+                    QStringLiteral("_d_layer_submenu_positioner"),
+                    Qt::FindDirectChildrenOnly);
+                auto* positioner = static_cast<PreparedSubmenuPositioner*>(object);
+                if (!positioner)
+                    positioner = new PreparedSubmenuPositioner(submenu);
+                positioner->setAnchor(menuWidget, action);
+            }
+        }
+    }
+}
+
 static QWindow* configurePopupLayerShell(QWidget* popup,
         bool allowKeyboardFocus) {
     if (popup == nullptr) {
@@ -216,11 +529,6 @@ static QWindow* configurePopupLayerShell(QWidget* popup,
         return nullptr;
     }
 
-    LayerShellQt::Window* layer = LayerShellQt::Window::get(window);
-    if (!layer) {
-        return nullptr;
-    }
-
     // 不设anchor的话Treeland会把弹窗摆到屏幕中间，有时候还会糊屏幕上
     // 改为锚定左上角，再用margin偏移到弹出位置 (popup->pos())
     const QVariant requestedPosition =
@@ -228,7 +536,21 @@ static QWindow* configurePopupLayerShell(QWidget* popup,
     const QPoint pos = requestedPosition.isValid()
         ? requestedPosition.toPoint()
         : popup->pos();
-    QScreen* screen = window->screen();
+    // QMenu is created without a parent window, so on a multi-output
+    // Wayland session Qt initially assigns it to the primary screen even
+    // when exec()/popup() was given a point on another output.  Select the
+    // output from that requested global point before configuring layer-shell.
+    QScreen* screen = qApp->screenAt(pos);
+    if (!screen)
+        screen = window->screen();
+    if (screen && window->screen() != screen)
+        window->setScreen(screen);
+
+    LayerShellQt::Window* layer = LayerShellQt::Window::get(window);
+    if (!layer) {
+        return nullptr;
+    }
+
     const QPoint localPos = screen
         ? pos - screen->geometry().topLeft()
         : pos;
@@ -273,8 +595,17 @@ void LayerShellHelper::styleDockPopupLayerShell(QWidget* popup) {
         return;
     }
 
-    // Apply compositor side corner radius/blur on Wayland.
-    LayerShellStyler::apply(window, 6, true);
+    // Plugin popups are DArrowRectangle windows: the visible rounded panel is
+    // smaller than the toplevel surface because the rectangle reserves room
+    // for its shadow and arrow.  Blur only that panel, otherwise KWin blurs
+    // the transparent shadow margins and the blur visibly overflows the popup.
+    if (DockPopupWindow *dockPopup = qobject_cast<DockPopupWindow *>(popup)) {
+        const QRect panel = dockPopupPanelRect(dockPopup);
+        const bool panelValid = panel.isValid() && !panel.isEmpty();
+        LayerShellStyler::apply(window, dockPopup->radius(), panelValid, panel);
+    } else {
+        LayerShellStyler::apply(window, 6, true);
+    }
     window->setProperty("_d_dock_popup_styled", true);
 }
 

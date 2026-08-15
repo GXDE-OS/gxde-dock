@@ -28,10 +28,10 @@
 
 #include <QLabel>
 
-class OnboardPlugin : public QObject, PluginsItemInterface
+class OnboardPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<OnboardPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "onboard.json")
 
 public:

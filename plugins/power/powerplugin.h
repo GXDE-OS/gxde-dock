@@ -45,10 +45,10 @@ enum BatteryState
     PENDING_DISCHARGE = 6
 };
 
-class PowerPlugin : public QObject, PluginsItemInterface
+class PowerPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<PowerPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "power.json")
 
 public:

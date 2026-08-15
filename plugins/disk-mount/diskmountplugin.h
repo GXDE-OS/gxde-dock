@@ -28,10 +28,10 @@
 #include "diskcontrolwidget.h"
 #include "diskpluginitem.h"
 
-class DiskMountPlugin : public QObject, PluginsItemInterface
+class DiskMountPlugin : public QObject, PluginsItemInterface, PluginsItemFactory<DiskMountPlugin>
 {
     Q_OBJECT
-    Q_INTERFACES(PluginsItemInterface)
+    Q_INTERFACES(PluginsItemInterface PluginsItemFactoryInterface)
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "disk-mount.json")
 
 public:

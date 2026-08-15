@@ -21,13 +21,20 @@
 
 #include "systemtrayitem.h"
 #include "dbus/dbusmenu.h"
+#include "util/menudismissmask.h"
+#include "util/styledmenu.h"
+#include "wayland/layershellhelper.h"
 
 #include <QGraphicsEffect>
 #include <QPainter>
 #include <QProcess>
 #include <QDebug>
 #include <QGuiApplication>
+#include <QScopedPointer>
 #include <QScreen>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <xcb/xproto.h>
 
@@ -419,6 +426,10 @@ void SystemTrayItem::showPopupWindow(QWidget * const content, const bool model)
         emit requestWindowAutoHide(false);
 
     DockPopupWindow *popup = PopupWindow.data();
+    QScreen *targetScreen = window() ? window()->screen() : nullptr;
+    if (targetScreen && popup->screen() != targetScreen)
+        popup->setScreen(targetScreen);
+
     QWidget *lastContent = popup->getContent();
     if (lastContent)
         lastContent->setVisible(false);
@@ -430,7 +441,7 @@ void SystemTrayItem::showPopupWindow(QWidget * const content, const bool model)
     case Dock::Position::Left:  popup->setArrowDirection(DockPopupWindow::ArrowLeft);    break;
     case Dock::Position::Right: popup->setArrowDirection(DockPopupWindow::ArrowRight);   break;
     }
-    popup->resize(content->sizeHint());
+    content->resize(content->sizeHint());
     popup->setContent(content);
 
     QPoint p = popupMarkPoint();
@@ -494,6 +505,12 @@ void SystemTrayItem::showContextMenu()
     if (menuJson.isEmpty())
         return;
 
+    if (QGuiApplication::platformName().contains("wayland",
+                                                 Qt::CaseInsensitive)) {
+        popupMenuWayland(menuJson);
+        return;
+    }
+
     QDBusPendingReply<QDBusObjectPath> result = m_menuManagerInter->RegisterMenu();
 
     result.waitForFinished();
@@ -510,7 +527,6 @@ void SystemTrayItem::showContextMenu()
     menuObject.insert("y", QJsonValue(p.y()));
     menuObject.insert("isDockMenu", QJsonValue(true));
     menuObject.insert("menuJsonContent", QJsonValue(menuJson));
-
     switch (DockPosition)
     {
     case Dock::Position::Top:       menuObject.insert("direction", "top");      break;
@@ -530,6 +546,55 @@ void SystemTrayItem::showContextMenu()
 
     hidePopup();
     emit requestWindowAutoHide(false);
+}
+
+void SystemTrayItem::popupMenuWayland(const QString &menuJson)
+{
+    const QJsonArray items = QJsonDocument::fromJson(menuJson.toUtf8())
+                                 .object().value("items").toArray();
+    if (items.isEmpty())
+        return;
+
+    StyledMenu menu(QStringLiteral("ddark2"));
+
+    for (const QJsonValue &value : items) {
+        const QJsonObject object = value.toObject();
+        QAction *action = menu.addAction(object.value("itemText").toString());
+        action->setEnabled(object.value("isActive").toBool(true));
+        action->setData(object.value("itemId").toString());
+    }
+    connect(&menu, &QMenu::triggered, &menu, [&](QAction *action) {
+        if (action)
+            invokedMenuItem(action->data().toString(), action->isChecked());
+        menu.close();
+    });
+
+    hidePopup();
+    emit requestWindowAutoHide(false);
+    const QPoint menuPosition = popupMenuPosition(menu.sizeHint(), &menu);
+    if (Wayland::LayerShellHelper::isWayland()) {
+        Wayland::LayerShellHelper::preparePopupLayerShell(
+            &menu, window() ? window()->screen() : nullptr, menuPosition);
+
+        QScreen *menuScreen = window() ? window()->screen() : nullptr;
+        if (!menuScreen)
+            menuScreen = qApp->screenAt(menuPosition);
+        if (!menuScreen)
+            menuScreen = qApp->primaryScreen();
+
+        QScopedPointer<MenuDismissMask> menuMask(new MenuDismissMask(&menu));
+        menuMask->setScreen(menuScreen);
+        Wayland::LayerShellHelper::setMenuMaskRole(menuMask.data());
+        menuMask->show();
+
+        menu.exec(menuPosition);
+        menuMask->hide();
+        onContextMenuAccepted();
+        return;
+    }
+
+    menu.exec(menuPosition);
+    onContextMenuAccepted();
 }
 
 void SystemTrayItem::onContextMenuAccepted()

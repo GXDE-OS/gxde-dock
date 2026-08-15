@@ -45,6 +45,7 @@ class DockItemController : public QObject
 public:
     static DockItemController *instanceForScreen(QScreen *screen, QObject *parent = nullptr);
     static DockItemController *instance(QObject *parent = nullptr);
+    static QList<DockItemController *> instances();
 
     QScreen *screen() const;
 
