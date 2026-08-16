@@ -43,10 +43,16 @@
 #include <QTimeLine>
 #include <QDateTime>
 #include <QCursor>
+#include <QFileInfo>
 
 // QX11Info is NOT avaliable in Qt6, using own helper...
 #include "../util/x11helper.h"
 #include "../util/waylandhelper.h"
+#include "../wayland/layershellhelper.h"
+#include "../wayland/ukuiwindowmanagement.h"
+
+#include <qpa/qplatformnativeinterface.h>
+#include <wayland-client.h>
 
 #define APP_DRAG_THRESHOLD      20
 
@@ -109,6 +115,9 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     connect(m_itemEntryInter, &DockEntryInter::IsActiveChanged, this, &AppItem::activeChanged);
     connect(m_itemEntryInter, &DockEntryInter::IsActiveChanged, this, static_cast<void (AppItem::*)()>(&AppItem::update));
     connect(m_itemEntryInter, &DockEntryInter::WindowInfosChanged, this, &AppItem::updateWindowInfos, Qt::QueuedConnection);
+    // desktop file 可能晚于首次几何上报到达，到达后重新下发最小化几何
+    connect(m_itemEntryInter, &DockEntryInter::DesktopFileChanged, this,
+            [this] { m_updateIconGeometryTimer->start(); });
     connect(m_itemEntryInter, &DockEntryInter::IconChanged, this, &AppItem::refershIcon);
 
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateWindowIconGeometries, Qt::QueuedConnection);
@@ -123,12 +132,26 @@ AppItem::~AppItem()
 {
     stopSwingEffect();
 
+    // 移除该图标在合成器侧记录的最小化几何，避免动画落点残留
+    if (Wayland::LayerShellHelper::isWayland()) {
+        UkuiWindowManagement::instance()->unsetMinimizedGeometry(animationAppId());
+    }
+
     m_appNameTips->deleteLater();
 }
 
 const QString AppItem::appId() const
 {
     return m_id;
+}
+
+QString AppItem::animationAppId() const
+{
+    const QString df = m_itemEntryInter->desktopFile();
+    if (df.isEmpty()) {
+        return QString();
+    }
+    return QFileInfo(df).baseName();
 }
 
 const bool AppItem::isValid() const
@@ -142,11 +165,39 @@ const bool AppItem::isValid() const
 void AppItem::updateWindowIconGeometries()
 {
     const QRect r(mapToGlobal(QPoint(0, 0)),
-                  mapToGlobal(QPoint(width(),height())));
-    auto *xcb_misc = XcbMisc::instance();
+                  mapToGlobal(QPoint(width(), height())));
+    // wayland 下走合成器协议
+    if (Wayland::LayerShellHelper::isWayland()) {
+        if (auto *surf = panelSurface()) {
+            const QString aid = animationAppId();
+            const QRect rel(mapTo(window(), QPoint(0, 0)), size());
+            if (!aid.isEmpty()) {
+                UkuiWindowManagement::instance()->setMinimizedGeometry(
+                    aid, surf, rel.x(), rel.y(), rel.width(), rel.height());
+            }
+        }
+    } else {
+        auto *xcb_misc = XcbMisc::instance();
+        for (auto it(m_windowInfos.cbegin()); it != m_windowInfos.cend(); ++it)
+            xcb_misc->set_window_icon_geometry(it.key(), r);
+    }
+}
 
-    for (auto it(m_windowInfos.cbegin()); it != m_windowInfos.cend(); ++it)
-        xcb_misc->set_window_icon_geometry(it.key(), r);
+wl_surface *AppItem::panelSurface() const
+{
+    QWidget *top = window();
+    if (!top) {
+        return nullptr;
+    }
+    QWindow *wh = top->windowHandle();
+    if (!wh) {
+        return nullptr;
+    }
+    auto *native = QGuiApplication::platformNativeInterface();
+    if (!native) {
+        return nullptr;
+    }
+    return static_cast<wl_surface *>(native->nativeResourceForWindow("surface", wh));
 }
 
 void AppItem::setIconBaseSize(const int size)

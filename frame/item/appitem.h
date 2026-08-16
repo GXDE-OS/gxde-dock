@@ -47,6 +47,11 @@ public:
 
     const QString appId() const;
     const bool isValid() const;
+
+    // 用于最小化动画：取条目对应应用的 desktop file 基名作为 app_id，
+    // 以匹配合成器 toplevel 的 app_id。注意 AppItem::appId() 返回的是 Dock
+    // 内部条目序号，不能用于此匹配。
+    QString animationAppId() const;
     void updateWindowIconGeometries();
     static void setIconBaseSize(const int size);
     static int iconBaseSize();
@@ -89,6 +94,10 @@ private:
     bool hasAttention() const;
 
     QPoint appIconPosition() const;
+
+    // 取 Dock 面板（顶层窗口）对应的 wl_surface，用于 ukui_window_management
+    // 的 set_minimized_geometry（几何坐标相对该 surface）。
+    struct wl_surface *panelSurface() const;
 
 private slots:
     void updateWindowInfos(const WindowInfoMap &info);
