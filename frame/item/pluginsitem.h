@@ -58,6 +58,7 @@ public slots:
     void refershIcon() override;
 
 protected:
+    QRect perfectIconRect() const override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;

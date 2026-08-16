@@ -166,7 +166,9 @@ void DockItem::mousePressEvent(QMouseEvent *e)
             // ignore this event to MainPanel/MainWindow to show context menu of MainWindow
             return e->ignore();
         }
-        if (rect().contains(e->pos())) {
+        // 时尚模式下 item 的 widget 比可见图标大，右键应只在图标范围内弹出
+        // item 菜单；图标外区域交给 MainPanel/MainWindow 显示 dock 设置菜单。
+        if (perfectIconRect().contains(e->pos())) {
             return showContextMenu();
         }
     }
@@ -206,7 +208,7 @@ void DockItem::leaveEvent(QEvent *e)
     update();
 }
 
-const QRect DockItem::perfectIconRect() const
+QRect DockItem::perfectIconRect() const
 {
     const QRect itemRect = rect();
     const int iconSize = std::min(itemRect.width(), itemRect.height()) * 0.8;
