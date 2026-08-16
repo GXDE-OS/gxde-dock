@@ -1,3 +1,11 @@
+gxde-dock (6.0.10) UNRELEASED; urgency=medium
+
+  [ shenmo ]
+  * 修复了Wayland下右键菜单弹出后，点击dock范围内、菜单范围外区域菜单不消失的问题
+  * 修复了时尚模式下dock图标、托盘图标、插件右键命中区域过大的问题
+
+ -- shenmo <shenmo@spark-app.store>  Sun, 16 Aug 2026 12:26:57 +0800
+
 gxde-dock (6.0.9) UNRELEASED; urgency=medium
 
   * 修复了Wayland下菜单错位的问题
