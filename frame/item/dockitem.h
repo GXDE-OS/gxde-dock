@@ -78,7 +78,7 @@ protected:
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
 
-    const QRect perfectIconRect() const;
+    virtual QRect perfectIconRect() const;
     const QPoint popupMarkPoint() const;
     const QPoint topleftPoint() const;
 

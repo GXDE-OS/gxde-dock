@@ -638,7 +638,10 @@ void LayerShellHelper::setMenuMaskRole(QWidget* widget) {
     anchors |= LayerShellQt::Window::AnchorRight;
     layer->setAnchors(anchors);
     layer->setLayer(LayerShellQt::Window::LayerTop);
-    layer->setExclusiveZone(0);
+    // exclusive zone 必须为 -1：Treeland/wlroots 对 exclusive_zone >= 0 的
+    // layer surface 会避开 dock 的保留区域（validGeometry），导致 mask 盖不住
+    // dock 自身，点击 dock 范围内、菜单范围外的位置时事件被 dock 收走，菜单无法关闭。
+    layer->setExclusiveZone(-1);
     layer->setKeyboardInteractivity(
         LayerShellQt::Window::KeyboardInteractivityNone);
 

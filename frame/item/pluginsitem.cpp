@@ -119,6 +119,16 @@ QSize PluginsItem::sizeHint() const
     return m_centralWidget->sizeHint();
 }
 
+QRect PluginsItem::perfectIconRect() const
+{
+    // Custom 尺寸策略的插件（如日期时间、系统监控）内容基本填满整个 item，
+    // 右键命中区域保持整个 item；普通图标插件则只命中中间的图标区域。
+    if (pluginSizePolicy() == PluginsItemInterface::PluginSizePolicy::Custom)
+        return rect();
+
+    return DockItem::perfectIconRect();
+}
+
 void PluginsItem::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -232,7 +242,15 @@ bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == m_centralWidget) {
         if (event->type() == QEvent::MouseButtonPress) {
-            mousePressEvent(static_cast<QMouseEvent *>(event));
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            // 右键落在可见图标之外时不要吞掉事件，让 Qt 继续向父级传播，
+            // 最终由 MainWindow 弹出 dock 设置菜单。
+            if (mouseEvent->button() == Qt::RightButton
+                && !perfectIconRect().contains(
+                    m_centralWidget->mapTo(this, mouseEvent->position().toPoint()))) {
+                return false;
+            }
+            mousePressEvent(mouseEvent);
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_hover = false;
