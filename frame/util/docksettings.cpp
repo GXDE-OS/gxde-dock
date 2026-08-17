@@ -467,6 +467,25 @@ const QSize DockSettings::windowSize(QScreen *screen) const
         return size;
     }
 
+    // 主屏沿用全局尺寸（已按主屏计算）。副屏（非主屏）必须按其自身屏幕几何铺满，
+    // 否则在副屏分辨率大于主屏时，任务栏尺寸会被钳制在主屏尺寸而显示不全。
+    if (screen != qApp->primaryScreen()) {
+        const QRect screenGeo = screen->geometry();
+        switch (m_position) {
+        case Top:
+        case Bottom:
+            size.setWidth(screenGeo.width());
+            break;
+        case Left:
+        case Right:
+            size.setHeight(screenGeo.height());
+            break;
+        default:
+            break;
+        }
+        return size;
+    }
+
     if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic) {
         switch (m_position) {
         case Top:

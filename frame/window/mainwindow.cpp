@@ -535,7 +535,7 @@ void MainWindow::updateGeometry()
     m_mainPanel->updateDockDisplayMode(m_settings->displayMode());
     m_mainPanel->updateDockPosition(position);
     // this->setFixedSize has been overridden for size animation
-    m_mainPanel->setFixedSize(m_settings->panelSize());
+    m_mainPanel->setFixedSize(size);
 
     bool animation = true;
     bool isHide = m_settings->hideState() == Hide && !testAttribute(Qt::WA_UnderMouse);
@@ -714,7 +714,7 @@ void MainWindow::expand()
 
 void MainWindow::narrow(const Position prevPos)
 {
-    const QSize size = m_settings->panelSize();
+    const QSize size = m_settings->windowSize(m_screen);
 
     QPoint finishPos(0, 0);
     switch (prevPos)
@@ -747,7 +747,7 @@ void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosit
     const QRect r(m_settings->windowRect(position, false, m_screen));
 
     m_sizeChangeAni->setEndValue(r.size());
-    m_mainPanel->setFixedSize(m_settings->panelSize());
+    m_mainPanel->setFixedSize(m_settings->windowSize(m_screen));
     QWidget::setFixedSize(r.size());
     m_posChangeAni->setEndValue(r.topLeft());
     if (!Wayland::LayerShellHelper::isWayland()) {
