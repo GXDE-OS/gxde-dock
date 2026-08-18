@@ -250,11 +250,21 @@ bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
                     m_centralWidget->mapTo(this, mouseEvent->position().toPoint()))) {
                 return false;
             }
+            // 高效模式下的托盘插件：不吞掉鼠标按下事件，
+            // 让事件直接到达托盘 widget 自身处理，
+            // SystemTray 会自行弹出右键菜单，SNI/XEmbed 会隐藏右键按下状态，
+            // 以便随后的释放事件能够触发 sendClick 弹出应用菜单。
+            if (m_centralWidget->inherits("AbstractTrayWidget"))
+                return false;
             mousePressEvent(mouseEvent);
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_hover = false;
             update();
+            // 同上，托盘插件：让释放事件直接到达托盘 widget，
+            // SystemTray 由此弹出左键 applet，SNI/XEmbed 由此触发 sendClick。
+            if (m_centralWidget->inherits("AbstractTrayWidget"))
+                return false;
             mouseReleaseEvent(static_cast<QMouseEvent *>(event));
             return true;
         } else if (event->type() == QEvent::MouseMove) {
