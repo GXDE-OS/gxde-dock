@@ -1,4 +1,4 @@
-gxde-dock (6.0.12) UNRELEASED; urgency=medium
+gxde-dock (6.0.13) UNRELEASED; urgency=medium
 
   [ CharOfString ]
   * 修复了Wayland下菜单错位的问题
@@ -6,6 +6,7 @@ gxde-dock (6.0.12) UNRELEASED; urgency=medium
 
   [ zeqi ]
   * 修复最小化窗口无动画且无法停靠到 dock 的问题
+  * 修复在 x11 下，dock的空白处的右键菜单样式错误的问题
 
   [ shenmo ]
   * 修复了Wayland下右键菜单弹出后，点击dock范围内、菜单范围外区域菜单不消失的问题
@@ -13,8 +14,9 @@ gxde-dock (6.0.12) UNRELEASED; urgency=medium
 
   [ gfdgd_xi ]
   * 修复特定情况下高效模式任务栏副屏显示过短的问题
+  * 修复任务栏高效模式下tray托盘图标无法打开右键菜单的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Mon, 17 Aug 2026 22:11:38 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Tue, 18 Aug 2026 21:43:05 +0800
 
 gxde-dock (6.0.8) UNRELEASED; urgency=medium
 
