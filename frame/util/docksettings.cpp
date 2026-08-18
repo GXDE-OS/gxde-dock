@@ -36,6 +36,7 @@
 #include <QDBusConnectionInterface>
 
 #include <DApplication>
+#include <QApplication>
 #include <QScreen>
 
 #define ICON_SIZE_LARGE         48
@@ -333,8 +334,21 @@ DockSettings::DockSettings(QWidget *parent)
                 return;
             if (flag != DRegionMonitor::Button_Left && flag != DRegionMonitor::Button_Right)
                 return;
-            const QRect menuRect = QRect(m_settingsMenu.pos(), m_settingsMenu.size());
-            if (!menuRect.contains(mousePos)) {
+            // X11下子菜单(时尚模式、启动器等)是独立的 QMenu 窗口，其坐标不在
+            // 主菜单矩形内。若仅判断主菜单矩形，点击子菜单条目时会被误判为
+            // "点击菜单外部"而立即关闭整个菜单，导致子菜单的 triggered 信号
+            // 无法送达 menuActionClicked，设置无法生效。
+            // 因此统一判断指针下的窗口是否为 dock 菜单相关部件：
+            // 命中任意菜单/子菜单/弹出窗口时忽略，命中菜单外才关闭菜单。
+            QWidget *widgetUnderCursor = QApplication::widgetAt(mousePos);
+            bool hitMenu = false;
+            for (QWidget *w = widgetUnderCursor; w != nullptr; w = w->parentWidget()) {
+                if (w->inherits("QMenu")) {
+                    hitMenu = true;
+                    break;
+                }
+            }
+            if (!hitMenu) {
                 m_menuRegionMonitor->unregisterRegion();
                 QTimer::singleShot(0, this, [this]() {
                     m_settingsMenu.hide();
