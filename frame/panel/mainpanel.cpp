@@ -445,7 +445,10 @@ void MainPanel::adjustItemSize()
     // ensure all item is update, whatever layout is changed
     QTimer::singleShot(1, this, static_cast<void (MainPanel::*)()>(&MainPanel::update));
 
-    const auto ratio = DockSettings::Instance().dockRatio();
+    // 使用与设置 IconBaseSize 时同源的 ratio，避免双屏不同缩放下
+    // DockSettings::dockRatio() 在不同调用时机返回不同屏幕 DPR，导致
+    // IconBaseSize / ratio 不一致、主屏程序图标被算长的问题。
+    const auto ratio = AppItem::iconBaseRatio();
 
     QSize itemSize;
     switch (m_position)

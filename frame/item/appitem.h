@@ -53,8 +53,9 @@ public:
     // 内部条目序号，不能用于此匹配。
     QString animationAppId() const;
     void updateWindowIconGeometries();
-    static void setIconBaseSize(const int size);
+    static void setIconBaseSize(const int size, const qreal ratio = 1.0);
     static int iconBaseSize();
+    static qreal iconBaseRatio();
     static int itemBaseHeight();
     static int itemBaseWidth();
     void undock();
@@ -140,6 +141,7 @@ private:
     QFutureWatcher<QPixmap> *m_largeWatcher;
 
     static int IconBaseSize;
+    static qreal IconBaseRatio;
     static QPoint MousePressPos;
 };
 

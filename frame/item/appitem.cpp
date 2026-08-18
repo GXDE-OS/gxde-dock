@@ -57,6 +57,7 @@
 #define APP_DRAG_THRESHOLD      20
 
 int AppItem::IconBaseSize;
+qreal AppItem::IconBaseRatio = 1.0;
 QPoint AppItem::MousePressPos;
 
 AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
@@ -200,14 +201,25 @@ wl_surface *AppItem::panelSurface() const
     return static_cast<wl_surface *>(native->nativeResourceForWindow("surface", wh));
 }
 
-void AppItem::setIconBaseSize(const int size)
+void AppItem::setIconBaseSize(const int size, const qreal ratio)
 {
     IconBaseSize = size;
+    // 记录设置 IconBaseSize 时使用的缩放比，供 adjustItemSize() 除以同一个
+    // ratio 使用。双屏不同缩放下 DockSettings::dockRatio() 可能在不同调用
+    // 时机返回不同屏幕的 DPR，导致 IconBaseSize 与 adjustItemSize 的 ratio
+    // 不一致，从而把图标尺寸算错（主屏程序图标被拉长）。两者同源即可消除该问题。
+    if (ratio > 0)
+        IconBaseRatio = ratio;
 }
 
 int AppItem::iconBaseSize()
 {
     return IconBaseSize;
+}
+
+qreal AppItem::iconBaseRatio()
+{
+    return IconBaseRatio;
 }
 
 int AppItem::itemBaseWidth()

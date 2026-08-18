@@ -181,7 +181,10 @@ DockSettings::DockSettings(QWidget *parent)
     m_hideState = m_daemonAvailable
         ? Dock::HideState(m_dockInter->hideState()) : Show;
     m_iconSize = currentIconSize();
-    AppItem::setIconBaseSize(m_iconSize * dockRatio());
+    {
+        const qreal ratio = dockRatio();
+        AppItem::setIconBaseSize(m_iconSize * ratio, ratio);
+    }
     DockItem::setDockPosition(m_position);
     qApp->setProperty(PROP_POSITION, QVariant::fromValue(m_position));
     DockItem::setDockDisplayMode(m_displayMode);
@@ -815,7 +818,8 @@ void DockSettings::iconSizeChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
     m_iconSize = currentIconSize();
-    AppItem::setIconBaseSize(m_iconSize * dockRatio());
+    const qreal ratio = dockRatio();
+    AppItem::setIconBaseSize(m_iconSize * ratio, ratio);
 
     calculateWindowConfig();
 
@@ -994,7 +998,8 @@ void DockSettings::calculateWindowConfig()
     // 每次重算窗口配置时都用当前 ratio 刷新 IconBaseSize，
     // 避免 Wayland 启动阶段 DPR 从 2.0 修正到 1.25 后 IconBaseSize 仍是旧值，
     // 导致 adjustItemSize 里 itemSize 被算成负数/超大，图标乱飞、贴左上角。
-    AppItem::setIconBaseSize(m_iconSize * ratio);
+    // 同时传入 ratio，保证 adjustItemSize 用来除以的 ratio 与此处设置时同源。
+    AppItem::setIconBaseSize(m_iconSize * ratio, ratio);
     const int defaultHeight = std::round(AppItem::itemBaseHeight() / ratio);
     const int defaultWidth = std::round(AppItem::itemBaseWidth() / ratio);
 
@@ -1080,7 +1085,12 @@ void DockSettings::gtkIconThemeChanged()
 
 qreal DockSettings::dockRatio() const
 {
-    QScreen const *screen = Utils::screenAtByScaled(m_frontendRect.center());
+    // m_frontendRect 是物理(raw)坐标，必须用物理坐标判定的 screenAt 来匹配屏幕，
+    // 不能误用 screenAtByScaled（它以逻辑 geometry 做 contains 判定）。
+    // 双屏不同缩放下，若主屏 DPR 小于副屏，主屏物理坐标中心换算回逻辑坐标
+    // 会落入副屏区域，screenAtByScaled 会误返回副屏 DPR，导致 IconBaseSize 被错误
+    // 放大、主屏程序图标被算长（高效模式尤为明显）。
+    QScreen const *screen = Utils::screenAt(m_frontendRect.center());
 
     return screen ? screen->devicePixelRatio() : qApp->devicePixelRatio();
 }
