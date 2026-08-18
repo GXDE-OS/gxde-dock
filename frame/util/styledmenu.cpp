@@ -16,6 +16,7 @@
  */
 
 #include "styledmenu.h"
+#include "wayland/layershellhelper.h"
 
 #include <QAction>
 #include <QApplication>
@@ -57,16 +58,18 @@ StyledMenu::StyledMenu(const QString &styleName, QWidget *parent)
         setStyle(m_style);
     }
 
-    setAttribute(Qt::WA_TranslucentBackground);
-    setContentsMargins(kContentInset, kContentInset,
-                       kContentInset, kContentInset);
+    if (Wayland::LayerShellHelper::isWayland()) {
+        setAttribute(Qt::WA_TranslucentBackground);
+        setContentsMargins(kContentInset, kContentInset,
+                           kContentInset, kContentInset);
+    }
 }
 
 void StyledMenu::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    if (!m_style) {
+    if (!m_style || !Wayland::LayerShellHelper::isWayland()) {
         QMenu::paintEvent(event);
         return;
     }
