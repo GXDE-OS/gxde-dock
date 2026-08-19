@@ -14,7 +14,8 @@ add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../)
 target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS}
-                                                 ../../interfaces)
+                                                 ../../interfaces
+                                                 ../../frame)
 target_link_libraries(${PLUGIN_NAME} PRIVATE
     ${dtk2widget_LIBRARIES}
     Qt6::Widgets

@@ -39,6 +39,8 @@
 #include <QGuiApplication>
 #include <QScreen>
 
+#include "util/waylandhelper.h"
+
 DWIDGET_USE_NAMESPACE
 
 const QString TrashDir = QDir::homePath() + "/.local/share/Trash";
@@ -87,6 +89,11 @@ void PopupControlWidget::openTrashFloder()
 
 void PopupControlWidget::clearTrashFloder()
 {
+    if (Wayland::isWaylandSession()) {
+        QProcess::startDetached("gxde-file-manager", QStringList() << "--clear-trash");
+        return;
+    }
+
     QString ClearTrashMutliple = qApp->translate("DialogManager", "Are you sure you want to empty %1 items?");
 
     // show confrim dialog
