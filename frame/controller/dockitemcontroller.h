@@ -85,6 +85,11 @@ private:
     void pluginItemInserted(PluginsItem *item);
     void pluginItemRemoved(PluginsItem *item);
 
+private slots:
+    // 系统休眠唤醒后主动重新同步窗口/条目，修复休眠后状态错乱
+    void connectToLoginManager();
+    void onPrepareForSleep(bool active);
+
 
 private:
     QScreen *m_screen;

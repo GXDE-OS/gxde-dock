@@ -32,6 +32,8 @@
 #include <QGSettings>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
 
 QHash<QScreen *, DockItemController *> DockItemController::INSTANCES;
 
@@ -289,6 +291,10 @@ QDBusConnection::sessionBus(), this)),
     connect(m_appInter, &DBusDock::EntryRemoved, this, static_cast<void (DockItemController::*)(const QString &)>(&DockItemController::appItemRemoved), Qt::QueuedConnection);
     connect(m_appInter, &DBusDock::ServiceRestarted, this, &DockItemController::reloadAppItems);
 
+    // 监听系统休眠/唤醒，唤醒后主动重新同步窗口与条目，
+    // 修复休眠后点击图标错配、新窗口跑到右侧等问题（重启 dock 才恢复的根因）
+    connectToLoginManager();
+
     connect(m_pluginsInter, &DockPluginsController::pluginItemInserted, this, &DockItemController::pluginItemInserted, Qt::QueuedConnection);
     connect(m_pluginsInter, &DockPluginsController::pluginItemRemoved, this, &DockItemController::pluginItemRemoved, Qt::QueuedConnection);
     connect(m_pluginsInter, &DockPluginsController::pluginItemUpdated, this, &DockItemController::itemUpdated, Qt::QueuedConnection);
@@ -467,6 +473,34 @@ void DockItemController::reloadAppItems()
     // append new item
     for (auto path : m_appInter->entries())
         appItemAdded(path, -1);
+}
+
+void DockItemController::connectToLoginManager()
+{
+    QDBusConnection systemBus = QDBusConnection::systemBus();
+    if (!systemBus.isConnected())
+        return;
+
+    // org.freedesktop.login1.Manager.PrepareForSleep(bool active)
+    // active == true  : 即将进入休眠/挂起
+    // active == false : 已从休眠/挂起恢复
+    systemBus.connect("org.freedesktop.login1",
+                      "/org/freedesktop/login1",
+                      "org.freedesktop.login1.Manager",
+                      "PrepareForSleep",
+                      this,
+                      SLOT(onPrepareForSleep(bool)));
+}
+
+void DockItemController::onPrepareForSleep(bool active)
+{
+    // 仅处理唤醒（active == false）；休眠时无需动作
+    if (active)
+        return;
+
+    // 唤醒后窗口/条目需要重新枚举。延迟一段时间等待后端 daemon
+    // 完成窗口重枚举后再重载，避免拉到休眠前的快照。
+    QTimer::singleShot(2000, this, &DockItemController::reloadAppItems);
 }
 
 void DockItemController::sortPluginItems()
