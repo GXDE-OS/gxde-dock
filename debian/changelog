@@ -1,4 +1,4 @@
-gxde-dock (6.0.15) UNRELEASED; urgency=medium
+gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
   [ CharOfString ]
   * 修复了Wayland下菜单错位的问题
@@ -18,7 +18,10 @@ gxde-dock (6.0.15) UNRELEASED; urgency=medium
   * 修复 x11 下右键任务栏点击子菜单的条目设置无效的问题
   * 修复休眠恢复后任务栏异常的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Wed, 19 Aug 2026 18:48:40 +0800
+  [ zeqi ]
+  * 修复 wayland 下 gxde-file-manager 的文件删除进度对话框会铺满全屏的问题
+
+ -- gfdgd_xi <3025613752@qq.com>  Wed, 19 Aug 2026 19:39:26 +0800
 
 gxde-dock (6.0.8) UNRELEASED; urgency=medium
 
