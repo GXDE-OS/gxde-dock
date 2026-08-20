@@ -1,3 +1,10 @@
+gxde-dock (6.0.17) UNRELEASED; urgency=medium
+
+  [ shenmo ]
+  * 修复时尚模式下副屏 dock 被错误拉伸为整屏宽的问题
+
+ -- shenmo <shenmo@spark-app.store>  Thu, 20 Aug 2026 20:10:08 +0800
+
 gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
   [ CharOfString ]
