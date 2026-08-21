@@ -731,7 +731,7 @@ void MainWindow::narrow(const Position prevPos)
     m_panelHideAni->start();
     m_platformWindowHandle.setShadowRadius(0);
 
-    resetPanelEnvironment(false);
+    resetPanelEnvironment(false, false);
 }
 
 void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosition)
