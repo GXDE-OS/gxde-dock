@@ -34,6 +34,7 @@
 #include <QScreen>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <QSet>
 
 QHash<QScreen *, DockItemController *> DockItemController::INSTANCES;
 
@@ -272,16 +273,6 @@ QDBusConnection::sessionBus(), this)),
     m_updatePluginsOrderTimer->setInterval(1000);
 
     m_itemList.append(new LauncherItem);
-    for (auto entry : m_appInter->entries())
-    {
-        AppItem *it = new AppItem(entry);
-
-        connect(it, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
-        connect(it, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
-        connect(it, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
-
-        m_itemList.append(it);
-    }
     m_itemList.append(m_placeholderItem);
     m_itemList.append(m_containerItem);
 
@@ -289,7 +280,11 @@ QDBusConnection::sessionBus(), this)),
 
     connect(m_appInter, &DBusDock::EntryAdded, this, &DockItemController::appItemAdded);
     connect(m_appInter, &DBusDock::EntryRemoved, this, static_cast<void (DockItemController::*)(const QString &)>(&DockItemController::appItemRemoved), Qt::QueuedConnection);
+    connect(m_appInter, &DBusDock::EntriesChanged, this, &DockItemController::syncAppItems, Qt::QueuedConnection);
     connect(m_appInter, &DBusDock::ServiceRestarted, this, &DockItemController::reloadAppItems);
+
+    // Sync signal on initialization!!
+    syncAppItems(m_appInter->entries());
 
     // 监听系统休眠/唤醒，唤醒后主动重新同步窗口与条目，
     // 修复休眠后点击图标错配、新窗口跑到右侧等问题（重启 dock 才恢复的根因）
@@ -303,9 +298,31 @@ QDBusConnection::sessionBus(), this)),
     QMetaObject::invokeMethod(this, "refershItemsIcon", Qt::QueuedConnection);
 }
 
-void DockItemController::appItemAdded(const QDBusObjectPath &path, const int index)
-{
-    AppItem *newItem = new AppItem(path);
+AppItem* DockItemController::createAppItem(const QDBusObjectPath& path) {
+    AppItem *item = new AppItem(path);
+
+    connect(item, &AppItem::requestActivateWindow, m_appInter,
+        &DBusDock::ActivateWindow, Qt::QueuedConnection);
+    connect(item, &AppItem::requestPreviewWindow, m_appInter,
+        &DBusDock::PreviewWindow);
+    connect(item, &AppItem::requestCancelPreview, m_appInter,
+        &DBusDock::CancelPreviewWindow);
+
+    return item;
+}
+
+void DockItemController::appItemAdded(const QDBusObjectPath& path,
+        const int index) {
+    // Ensure the object added is indntical on dock.
+    for (const QPointer<DockItem>& item : m_itemList) {
+        if (!item.isNull() && item->itemType() == DockItem::App
+                && static_cast<AppItem *>(item.data())
+                    ->getEntryPath() == path.path()) {
+            return;
+        }
+    }
+
+    AppItem* newItem = createAppItem(path);
     const QString newName = newItem->accessibleName();
 
     // Replace slate entry w/ same name
@@ -337,11 +354,6 @@ void DockItemController::appItemAdded(const QDBusObjectPath &path, const int ind
             m_itemList[i] = newItem;
             item->deleteLater();
 
-            // So we have a new item, connect the new alive one to D-Bus signals.
-            connect(newItem, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
-            connect(newItem, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
-            connect(newItem, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
-
             // Apply new item.
             emit itemInserted(i, newItem);
             return;
@@ -360,18 +372,12 @@ void DockItemController::appItemAdded(const QDBusObjectPath &path, const int ind
                 ++insertIndex;
     }
 
-    connect(newItem, &AppItem::requestActivateWindow, m_appInter, &DBusDock::ActivateWindow, Qt::QueuedConnection);
-    connect(newItem, &AppItem::requestPreviewWindow, m_appInter, &DBusDock::PreviewWindow);
-    connect(newItem, &AppItem::requestCancelPreview, m_appInter, &DBusDock::CancelPreviewWindow);
-
     m_itemList.insert(insertIndex, newItem);
     emit itemInserted(insertIndex, newItem);
 }
 
-void DockItemController::appItemRemoved(const QString &appId)
-{
-    for (int i(0); i != m_itemList.size(); ++i)
-    {
+void DockItemController::appItemRemoved(const QString& appId) {
+    for (int i = m_itemList.size() - 1; i >= 0; --i) {
         if (m_itemList[i]->itemType() != DockItem::App)
             continue;
 
@@ -473,6 +479,57 @@ void DockItemController::reloadAppItems()
     // append new item
     for (auto path : m_appInter->entries())
         appItemAdded(path, -1);
+}
+
+void DockItemController::syncAppItems(const QList<QDBusObjectPath>& entries) {
+    QSet<AppItem *> retainedItems;
+    // Note index@0 is launcher
+    int targetIndex = 1;
+
+    for (const QDBusObjectPath &path : entries) {
+        AppItem* matchingItem = nullptr;
+
+        for (const QPointer<DockItem> &item : m_itemList) {
+            if (item.isNull() || item->itemType() != DockItem::App) {
+                continue;
+            }
+
+            AppItem* appItem = static_cast<AppItem *>(item.data());
+            if (!retainedItems.contains(appItem)
+                    && appItem->getEntryPath() == path.path()) {
+                matchingItem = appItem;
+                break;
+            }
+        }
+
+        if (!matchingItem) {
+            matchingItem = createAppItem(path);
+            m_itemList.insert(targetIndex, matchingItem);
+            emit itemInserted(targetIndex, matchingItem);
+        } else {
+            const int currentIndex = m_itemList.indexOf(matchingItem);
+            if (currentIndex != targetIndex) {
+                m_itemList.removeAt(currentIndex);
+                m_itemList.insert(targetIndex, matchingItem);
+                emit itemMoved(matchingItem, targetIndex);
+            }
+        }
+
+        retainedItems.insert(matchingItem);
+        ++targetIndex;
+    }
+
+    for (int i = m_itemList.size() - 1; i >= 0; --i) {
+        const QPointer<DockItem> item = m_itemList.at(i);
+        if (item.isNull() || item->itemType() != DockItem::App) {
+            continue;
+        }
+
+        AppItem* appItem = static_cast<AppItem *>(item.data());
+        if (!retainedItems.contains(appItem)) {
+            appItemRemoved(appItem);
+        }
+    }
 }
 
 void DockItemController::connectToLoginManager()

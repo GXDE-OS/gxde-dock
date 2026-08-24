@@ -79,9 +79,11 @@ public slots:
 
 private:
     explicit DockItemController(QScreen *screen, QObject *parent = nullptr);
+    AppItem* createAppItem(const QDBusObjectPath& path);
     void appItemAdded(const QDBusObjectPath &path, const int index);
     void appItemRemoved(const QString &appId);
     void appItemRemoved(AppItem *appItem);
+    void syncAppItems(const QList<QDBusObjectPath>& entries);
     void pluginItemInserted(PluginsItem *item);
     void pluginItemRemoved(PluginsItem *item);
 
