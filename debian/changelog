@@ -1,4 +1,4 @@
-gxde-dock (6.0.18) UNRELEASED; urgency=medium
+gxde-dock (6.0.19) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复时尚模式下副屏 dock 被错误拉伸为整屏宽的问题
@@ -6,7 +6,10 @@ gxde-dock (6.0.18) UNRELEASED; urgency=medium
   [ zeqi ]
   * 修复 dock 在隐藏（智能隐藏或一直隐藏）时会闪一下再隐藏的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Fri, 21 Aug 2026 18:46:18 +0800
+  [ CharOfString ]
+  * 修复Dock启动时item对不上的问题
+
+ -- gfdgd_xi <3025613752@qq.com>  Tue, 25 Aug 2026 10:01:56 +0800
 
 gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
