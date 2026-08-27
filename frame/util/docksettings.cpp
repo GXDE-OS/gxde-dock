@@ -385,9 +385,17 @@ void DockSettings::openSystemMonitor()
     process.startDetached();
 }
 
-// 使用Qt QScreen获取屏幕尺寸作为通用方案，同时保留DBus作为辅助
-// 当com.deepin.daemon.Display不可用(如使用gxde-daemon)时，QScreen是唯一可靠来源
 void DockSettings::updateScreenSize() {
+    if (!Wayland::LayerShellHelper::isWayland() && m_displayInter->isValid()) {
+        const QRect rawRect = m_displayInter->primaryRawRect();
+        if (rawRect.isValid() && !rawRect.isEmpty()) {
+            m_primaryRawRect = rawRect;
+            m_screenRawHeight = m_displayInter->screenRawHeight();
+            m_screenRawWidth = m_displayInter->screenRawWidth();
+            return;
+        }
+    }
+
     QScreen* s = qApp->primaryScreen();
     if (s) {
         const qreal dpr = s->devicePixelRatio();
@@ -436,6 +444,23 @@ const QRect DockSettings::windowRect(const Position position, const bool hide) c
     return windowRect(position, hide, qApp->primaryScreen());
 }
 
+QRect DockSettings::effectiveScreenRect(QScreen *screen) const {
+    if (!screen) {
+        screen = qApp->primaryScreen();
+    }
+    if (!screen) {
+        return QRect();
+    }
+
+    if (!Wayland::LayerShellHelper::isWayland()
+            && screen == qApp->primaryScreen()
+            && m_primaryRawRect.isValid() && !m_primaryRawRect.isEmpty()) {
+        return primaryRect();
+    }
+
+    return screen->geometry();
+}
+
 // 多屏: 在指定屏幕上计算窗口矩形(主窗口尺寸全局一致，全宽模式的宽度按屏幕换算)
 const QRect DockSettings::windowRect(const Position position, const bool hide, QScreen *screen) const
 {
@@ -455,7 +480,7 @@ const QRect DockSettings::windowRect(const Position position, const bool hide, Q
         }
     }
 
-    const QRect screenRect = screen->geometry();
+    const QRect screenRect = effectiveScreenRect(screen);
     const int offsetX = (screenRect.width() - size.width()) / 2;
     const int offsetY = (screenRect.height() - size.height()) / 2;
 
@@ -487,14 +512,15 @@ const QSize DockSettings::windowSize(QScreen *screen) const
     // 只有全宽显示模式（高效/经典）才按屏幕几何铺满；
     // 时尚模式的尺寸必须保持按条目数计算，否则副屏会被错误拉伸成整屏宽。
     if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic) {
+        const QRect screenRect = effectiveScreenRect(screen);
         switch (m_position) {
         case Top:
         case Bottom:
-            size.setWidth(screen->geometry().width());
+            size.setWidth(screenRect.width());
             break;
         case Left:
         case Right:
-            size.setHeight(screen->geometry().height());
+            size.setHeight(screenRect.height());
             break;
         default:
             break;
