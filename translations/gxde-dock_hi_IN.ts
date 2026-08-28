@@ -8,12 +8,12 @@
         <translation type="vanished">प्लगइन %1 सिस्टम के साथ संगत नहीं है।</translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="182"/>
         <source>The incompatible plugin %1 was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="264"/>
         <source>The plugin %1 failed to load and was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78,22 +78,22 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>क्या आप वाकई %1 आइटम्स को खाली करना चाहते हैं?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Cancel</source>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Delete</source>
         <translation>हटाएँ</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="124"/>
         <source>This action cannot be restored</source>
         <translation>इस कार्रवाई को पुनः स्थापित नहीं किया जा सकता है</translation>
     </message>
@@ -132,97 +132,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="154"/>
         <source>Fashion Mode</source>
         <translation>फैशन मोड</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="155"/>
         <source>Efficient Mode</source>
         <translation>कुशल मोड</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="156"/>
         <source>Top</source>
         <translation>ऊपर</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="157"/>
         <source>Bottom</source>
         <translation>नीचे</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="158"/>
         <source>Left</source>
         <translation>बाएँ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="159"/>
         <source>Right</source>
         <translation>दाएँ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="160"/>
         <source>Large</source>
         <translation>बड़ा</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="176"/>
+        <location filename="../frame/util/docksettings.cpp" line="161"/>
         <source>Medium</source>
         <translation>मध्यम</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="177"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Small</source>
         <translation>छोटा</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="178"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Keep Shown</source>
         <translation>दृश्यमान रखें</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="179"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Keep Hidden</source>
         <translation>छिपाएँ रखें</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="180"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Smart Hide</source>
         <translation>उपयोग के अनुरूप छिपाएँ</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="223"/>
+        <location filename="../frame/util/docksettings.cpp" line="211"/>
         <source>Mode</source>
         <translation>मोड </translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="220"/>
         <source>Location</source>
         <translation>स्थान</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="227"/>
         <source>Size</source>
         <translation>आकार</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="246"/>
+        <location filename="../frame/util/docksettings.cpp" line="234"/>
         <source>Status</source>
         <translation>स्थिति</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="250"/>
+        <location filename="../frame/util/docksettings.cpp" line="238"/>
         <source>Plugins</source>
         <translation>प्लगिन</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="181"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>System Monitor</source>
         <translation>सिस्टम मॉनिटर</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="182"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Window Split</source>
         <translation>विंडो स्प्लिट</translation>
     </message>

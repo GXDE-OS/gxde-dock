@@ -209,10 +209,29 @@ void MainWindow::showEvent(QShowEvent *e)
 
     if (m_screenChangeConn)
         QObject::disconnect(m_screenChangeConn);
-    // 多屏: 本窗口固定在自己的屏幕上，只跟随屏幕 DPI/几何变化重排，不再跳到主屏
+    // X11 must rebuild _NET_WM_STRUT_PARTIAL after the output geometry changes.
+    // Do not use that clear/reapply path on Wayland: clearStrutPartial() sets
+    // the exclusive zone to zero temporarily, which lets the desktop-icons
+    // layer surface expand into the dock area.  Some compositors do not shrink
+    // it again after the positive zone is restored.
     m_screenChangeConn = connect(m_screen, &QScreen::geometryChanged,
             windowHandle(), [this] (const QRect &) {
-        updateGeometry();
+        if (Wayland::LayerShellHelper::isWayland()) {
+            updateGeometry();
+
+            // Keep the reservation positive throughout the resize and commit
+            // the value calculated from the new dock geometry in place.
+            if (m_settings->hideMode() == Dock::KeepShowing) {
+                const Position side = m_settings->position();
+                const QSize size = m_settings->windowSize(m_screen);
+                const int zone = (side == Position::Top || side == Position::Bottom)
+                    ? size.height() : size.width();
+                Wayland::LayerShellHelper::updateExclusiveZone(this, zone);
+            }
+            return;
+        }
+
+        m_positionUpdateTimer->start();
     });
 
     windowHandle()->setScreen(m_screen);

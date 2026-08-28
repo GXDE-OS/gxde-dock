@@ -135,6 +135,7 @@ private:
     DockSettings operator =(DockSettings const &) = delete;
 
     bool test(const Position pos, const QList<QRect> &otherScreens) const;
+    QRect effectiveScreenRect(QScreen *screen) const;
     void calculateWindowConfig();
     void updateScreenSize();
     void gtkIconThemeChanged();

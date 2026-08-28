@@ -8,12 +8,12 @@
         <translation type="vanished">Priključak %1 nije kompatibilan s sustavom.</translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="182"/>
         <source>The incompatible plugin %1 was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="264"/>
         <source>The plugin %1 failed to load and was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78,22 +78,22 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Jeste li sigurni da želite isprazniti %1 stavki?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Cancel</source>
         <translation>Otkaži</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Delete</source>
         <translation>Obriši</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="124"/>
         <source>This action cannot be restored</source>
         <translation>Ova se radnja ne može obnoviti</translation>
     </message>
@@ -132,97 +132,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="154"/>
         <source>Fashion Mode</source>
         <translation>Popularan način</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="155"/>
         <source>Efficient Mode</source>
         <translation>Efikasan način</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="156"/>
         <source>Top</source>
         <translation>Gore</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="157"/>
         <source>Bottom</source>
         <translation>Dolje</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="158"/>
         <source>Left</source>
         <translation>Lijevo</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="159"/>
         <source>Right</source>
         <translation>Desno</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="160"/>
         <source>Large</source>
         <translation>Veliko</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="176"/>
+        <location filename="../frame/util/docksettings.cpp" line="161"/>
         <source>Medium</source>
         <translation>Srednje</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="177"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Small</source>
         <translation>Maleno</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="178"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Keep Shown</source>
         <translation>Drži prikazano</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="179"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Keep Hidden</source>
         <translation>Drži skriveno</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="180"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Smart Hide</source>
         <translation>Pametno skrivanje</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="223"/>
+        <location filename="../frame/util/docksettings.cpp" line="211"/>
         <source>Mode</source>
         <translation>Način</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="220"/>
         <source>Location</source>
         <translation>Lokacija</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="227"/>
         <source>Size</source>
         <translation>Veličina</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="246"/>
+        <location filename="../frame/util/docksettings.cpp" line="234"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="250"/>
+        <location filename="../frame/util/docksettings.cpp" line="238"/>
         <source>Plugins</source>
         <translation>Priključci</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="181"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>System Monitor</source>
         <translation>Sustavski nadzor</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="182"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Window Split</source>
         <translation>Prozor podijeljen</translation>
     </message>

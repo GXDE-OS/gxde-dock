@@ -8,12 +8,12 @@
         <translation type="vanished">Плагин %1 не совместим с системой.</translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="176"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="182"/>
         <source>The incompatible plugin %1 was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="187"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="264"/>
         <source>The plugin %1 failed to load and was skipped.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78,22 +78,22 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="90"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Вы уверены, что хотите очистить %1 объектов?</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="97"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="104"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="117"/>
+        <location filename="../plugins/trash/popupcontrolwidget.cpp" line="124"/>
         <source>This action cannot be restored</source>
         <translation>Это действие необратимо</translation>
     </message>
@@ -132,97 +132,97 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="169"/>
+        <location filename="../frame/util/docksettings.cpp" line="154"/>
         <source>Fashion Mode</source>
         <translation>Современный Режим</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="170"/>
+        <location filename="../frame/util/docksettings.cpp" line="155"/>
         <source>Efficient Mode</source>
         <translation>Эффективный Режим</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="171"/>
+        <location filename="../frame/util/docksettings.cpp" line="156"/>
         <source>Top</source>
         <translation>Сверху</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="172"/>
+        <location filename="../frame/util/docksettings.cpp" line="157"/>
         <source>Bottom</source>
         <translation>Снизу</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="173"/>
+        <location filename="../frame/util/docksettings.cpp" line="158"/>
         <source>Left</source>
         <translation>Слева</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="159"/>
         <source>Right</source>
         <translation>Справа</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="160"/>
         <source>Large</source>
         <translation>Большой</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="176"/>
+        <location filename="../frame/util/docksettings.cpp" line="161"/>
         <source>Medium</source>
         <translation>Средний</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="177"/>
+        <location filename="../frame/util/docksettings.cpp" line="162"/>
         <source>Small</source>
         <translation>Маленький</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="178"/>
+        <location filename="../frame/util/docksettings.cpp" line="163"/>
         <source>Keep Shown</source>
         <translation>Отображать Всегда</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="179"/>
+        <location filename="../frame/util/docksettings.cpp" line="164"/>
         <source>Keep Hidden</source>
         <translation>Держать Скрытым</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="180"/>
+        <location filename="../frame/util/docksettings.cpp" line="165"/>
         <source>Smart Hide</source>
         <translation>Умное Скрытие</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="223"/>
+        <location filename="../frame/util/docksettings.cpp" line="211"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="232"/>
+        <location filename="../frame/util/docksettings.cpp" line="220"/>
         <source>Location</source>
         <translation>Местонахождение</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="239"/>
+        <location filename="../frame/util/docksettings.cpp" line="227"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="246"/>
+        <location filename="../frame/util/docksettings.cpp" line="234"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="250"/>
+        <location filename="../frame/util/docksettings.cpp" line="238"/>
         <source>Plugins</source>
         <translation>Плагины</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="181"/>
+        <location filename="../frame/util/docksettings.cpp" line="166"/>
         <source>System Monitor</source>
         <translation>Системный монитор</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="182"/>
+        <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Window Split</source>
         <translation>Окно Разделено</translation>
     </message>
