@@ -1,4 +1,4 @@
-gxde-dock (6.0.19) UNRELEASED; urgency=medium
+gxde-dock (6.0.20) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复时尚模式下副屏 dock 被错误拉伸为整屏宽的问题
@@ -8,8 +8,9 @@ gxde-dock (6.0.19) UNRELEASED; urgency=medium
 
   [ CharOfString ]
   * 修复Dock启动时item对不上的问题
+  * 修复desktop panel的显示区域在VBox下不随分辨率变化的问题（限X11）
 
- -- gfdgd_xi <3025613752@qq.com>  Tue, 25 Aug 2026 10:01:56 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Fri, 28 Aug 2026 11:16:48 +0800
 
 gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
