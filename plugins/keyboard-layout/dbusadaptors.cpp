@@ -19,6 +19,7 @@
 
 #include "dbusadaptors.h"
 #include <QDebug>
+#include <QProcess>
 
 DBusAdaptors::DBusAdaptors(QObject *parent)
     : QDBusAbstractAdaptor(parent),
@@ -150,9 +151,12 @@ void DBusAdaptors::refreshMenuSelection()
 void DBusAdaptors::handleActionTriggered(QAction *action)
 {
     if (action == m_addLayoutAction) {
-        QProcess::startDetached("dbus-send --print-reply --dest=com.deepin.dde.ControlCenter "
-                                "/com/deepin/dde/ControlCenter "
-                                "com.deepin.dde.ControlCenter.ShowModule string:keyboard");
+        QProcess::startDetached("dbus-send", QStringList()
+                                << "--print-reply"
+                                << "--dest=com.deepin.dde.ControlCenter"
+                                << "/com/deepin/dde/ControlCenter"
+                                << "com.deepin.dde.ControlCenter.ShowModule"
+                                << "string:keyboard");
     }
 
     const QString layout = action->objectName();

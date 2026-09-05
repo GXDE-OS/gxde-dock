@@ -24,6 +24,7 @@
 
 #include <QIcon>
 #include <QSettings>
+#include <QProcess>
 
 #define PLUGIN_STATE_KEY    "enable"
 
@@ -189,7 +190,12 @@ void ShutdownPlugin::invokedMenuItem(const QString &itemKey, const QString &menu
     Q_UNUSED(checked)
 
     if (menuId == "power")
-        QProcess::startDetached("dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.ShowModule \"string:power\"");
+        QProcess::startDetached("dbus-send", QStringList()
+                                << "--print-reply"
+                                << "--dest=com.deepin.dde.ControlCenter"
+                                << "/com/deepin/dde/ControlCenter"
+                                << "com.deepin.dde.ControlCenter.ShowModule"
+                                << "string:power");
     else if (menuId == "Lock")
         QProcess::startDetached("dbus-send", QStringList() << "--print-reply"
                                                            << "--dest=com.deepin.dde.lockFront"

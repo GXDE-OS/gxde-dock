@@ -32,7 +32,6 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QProcess>
-#include <QRegularExpression>
 
 #define PLUGIN_ITEM_DRAG_THRESHOLD      20
 
@@ -332,9 +331,7 @@ void PluginsItem::mouseClicked()
     const QString command = m_pluginInter->itemCommand(m_itemKey);
     if (!command.isEmpty())
     {
-        // Qt6: startDetached() with program name only has been depreciated,
-        // and it always return false, hence using program + args
-        const QStringList args = command.split(QRegularExpression("[ \t]+"), Qt::SkipEmptyParts);
+        const QStringList args = QProcess::splitCommand(command);
         if (!args.isEmpty()) {
             const QString program = args.first();
             const QStringList arguments = args.mid(1);

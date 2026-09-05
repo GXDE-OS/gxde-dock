@@ -24,6 +24,8 @@
 #include "dbus/dbusaccount.h"
 
 #include <QIcon>
+#include <QProcess>
+
 #undef None
 
 #define PLUGIN_STATE_KEY    "enable"
@@ -129,7 +131,12 @@ void PowerPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId,
     Q_UNUSED(checked)
 
     if (menuId == "power")
-        QProcess::startDetached("dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.ShowModule \"string:power\"");
+        QProcess::startDetached("dbus-send", QStringList()
+                                << "--print-reply"
+                                << "--dest=com.deepin.dde.ControlCenter"
+                                << "/com/deepin/dde/ControlCenter"
+                                << "com.deepin.dde.ControlCenter.ShowModule"
+                                << "string:power");
 }
 
 void PowerPlugin::refreshIcon(const QString &itemKey)

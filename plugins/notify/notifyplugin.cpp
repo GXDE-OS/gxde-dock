@@ -23,6 +23,7 @@
 #include "dbus/dbusaccount.h"
 
 #include <QIcon>
+#include <QProcess>
 #include <QSettings>
 
 #define PLUGIN_STATE_KEY    "enable"
@@ -128,7 +129,12 @@ void NotifyPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId
     Q_UNUSED(checked)
 
     if (menuId == "controlCenter") {
-        QProcess::startDetached("dbus-send --session --print-reply=literal --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.Show");
+        QProcess::startDetached("dbus-send", QStringList()
+                                << "--session"
+                                << "--print-reply=literal"
+                                << "--dest=com.deepin.dde.ControlCenter"
+                                << "/com/deepin/dde/ControlCenter"
+                                << "com.deepin.dde.ControlCenter.Show");
     }
 }
 
