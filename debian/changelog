@@ -1,16 +1,17 @@
-gxde-dock (6.0.20) UNRELEASED; urgency=medium
+gxde-dock (6.0.21) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复时尚模式下副屏 dock 被错误拉伸为整屏宽的问题
 
   [ zeqi ]
   * 修复 dock 在隐藏（智能隐藏或一直隐藏）时会闪一下再隐藏的问题
+  * 修复点击有线网络、电量图标及部分右键菜单无法打开控制中心的问题
 
   [ CharOfString ]
   * 修复Dock启动时item对不上的问题
   * 修复desktop panel的显示区域在VBox下不随分辨率变化的问题（限X11）
 
- -- gfdgd_xi <3025613752@qq.com>  Fri, 28 Aug 2026 11:16:48 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 05 Sep 2026 21:23:58 +0800
 
 gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
