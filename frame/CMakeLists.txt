@@ -10,6 +10,9 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "*.c" "../widgets/*.h" "../widgets/*.cpp")
 # Find the library
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent DBus Gui)
+if(NOT TARGET Qt6::GuiPrivate)
+    find_package(Qt6GuiPrivate REQUIRED)
+endif()
 find_package(LayerShellQt REQUIRED)
 
 pkg_check_modules(dtk2widget REQUIRED dtk2widget)

@@ -24,6 +24,9 @@ file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
 
 find_package(PkgConfig REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus Gui)
+if(NOT TARGET Qt6::GuiPrivate)
+    find_package(Qt6GuiPrivate REQUIRED)
+endif()
 pkg_check_modules(dtk2widget REQUIRED dtk2widget)
 find_package(DFrameworkdbusQt6 REQUIRED)
 
