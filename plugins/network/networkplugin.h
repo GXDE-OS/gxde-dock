@@ -63,6 +63,7 @@ private slots:
     void refreshWiredItemVisible();
     void onItemRequestSetAppletVisible(const bool visible);
     void refreshPluginItemsVisible();
+    void onCheckTimerTimeout();
 
 private:
     DeviceItem *itemByPath(const QString &path);
@@ -74,6 +75,7 @@ private:
 
     QMap<QString, DeviceItem *> m_itemsMap;
     QTimer *m_delayRefreshTimer;
+    QTimer *m_checkTimer;
 
     bool m_pluginLoaded;
 };

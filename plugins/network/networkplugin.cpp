@@ -35,6 +35,7 @@ NetworkPlugin::NetworkPlugin(QObject *parent)
       m_networkModel(nullptr),
       m_networkWorker(nullptr),
       m_delayRefreshTimer(new QTimer),
+      m_checkTimer(new QTimer),
       m_pluginLoaded(false)
 {
 }
@@ -57,6 +58,15 @@ void NetworkPlugin::init(PluginProxyInterface *proxyInter)
     m_delayRefreshTimer->setInterval(2000);
 
     connect(m_delayRefreshTimer, &QTimer::timeout, this, &NetworkPlugin::refreshWiredItemVisible);
+
+    // Periodically re-check the real internet connectivity. Some networks can
+    // only access the internet after a captive-portal / web authentication, and
+    // NetworkManager may not emit a ConnectivityChanged signal afterwards, so
+    // the tray icon would keep showing "no internet". A periodic check fixes
+    // the stale icon by refreshing the connectivity state.
+    m_checkTimer->setInterval(30 * 1000);
+    connect(m_checkTimer, &QTimer::timeout, this, &NetworkPlugin::onCheckTimerTimeout);
+    m_checkTimer->start();
 
     if (!pluginIsDisable()) {
         loadPlugin();
@@ -338,4 +348,20 @@ void NetworkPlugin::refreshPluginItemsVisible()
     }
 
     onDeviceListChanged(m_networkModel->devices());
+}
+
+void NetworkPlugin::onCheckTimerTimeout()
+{
+    if (!m_pluginLoaded || pluginIsDisable()) {
+        return;
+    }
+
+    // Only re-check when there is at least one active connection, otherwise the
+    // connectivity is already known to be offline and a network request would be
+    // wasted.
+    if (m_networkModel->activeConns().isEmpty()) {
+        return;
+    }
+
+    m_networkModel->checkConnectivity();
 }

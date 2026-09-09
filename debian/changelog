@@ -1,4 +1,4 @@
-gxde-dock (6.0.21-1) UNRELEASED; urgency=medium
+gxde-dock (6.0.22) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复时尚模式下副屏 dock 被错误拉伸为整屏宽的问题
@@ -12,7 +12,10 @@ gxde-dock (6.0.21-1) UNRELEASED; urgency=medium
   * 修复desktop panel的显示区域在VBox下不随分辨率变化的问题（限X11）
   * Build against both Qt 6.8 and Qt 6.10.
 
- -- CharOfString <root@charofstring.cc>  Sun, 06 Sep 2026 17:18:42 -0500
+  [ gfdgd_xi ]
+  * 新增定期重新检测网络是否可用的功能
+
+ -- gfdgd_xi <3025613752@qq.com>  Wed, 09 Sep 2026 19:54:58 +0800
 
 gxde-dock (6.0.16) UNRELEASED; urgency=medium
 
