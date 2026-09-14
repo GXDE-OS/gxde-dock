@@ -1,3 +1,15 @@
+gxde-dock (6.0.23) UNRELEASED; urgency=medium
+
+  [ CharOfString ]
+  * 修复了Wayland下模糊效果会被应用两次的问题
+  * 修复闪退问题
+  * 更新翻译
+
+  [ gfdgd_xi ]
+  * 新增定期重新检测网络是否可用的功能
+
+ -- CharOfString <root@charofstring.cc>  Mon, 14 Sep 2026 15:32:21 -0500
+
 gxde-dock (6.0.22-1) UNRELEASED; urgency=medium
 
   * 修复了pupup定位在顶栏存在时有偏移的问题
