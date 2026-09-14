@@ -216,6 +216,16 @@ void MainWindow::showEvent(QShowEvent *e)
     // it again after the positive zone is restored.
     m_screenChangeConn = connect(m_screen, &QScreen::geometryChanged,
             windowHandle(), [this] (const QRect &) {
+        // QtWayland can temporarily invalidate a QScreen while outputs are
+        // being rebuilt.  Sending a zero-sized layer-shell update during that
+        // interval can make the compositor disconnect the entire client.
+        if (!m_screen || !m_screen->geometry().isValid()
+                || m_screen->geometry().isEmpty()
+                || (Wayland::LayerShellHelper::isWayland()
+                    && m_screen->name().isEmpty())) {
+            return;
+        }
+
         if (Wayland::LayerShellHelper::isWayland()) {
             updateGeometry();
 

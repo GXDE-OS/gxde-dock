@@ -23,6 +23,10 @@
 #include "item/wireditem.h"
 #include "item/wirelessitem.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+
 using namespace dde::network;
 
 #define WIRED_ITEM      "wired"
@@ -34,9 +38,10 @@ NetworkPlugin::NetworkPlugin(QObject *parent)
 
       m_networkModel(nullptr),
       m_networkWorker(nullptr),
-      m_delayRefreshTimer(new QTimer),
-      m_checkTimer(new QTimer),
-      m_pluginLoaded(false)
+      m_delayRefreshTimer(new QTimer(this)),
+      m_checkTimer(new QTimer(this)),
+      m_pluginLoaded(false),
+      m_connectivityCheckPending(false)
 {
 }
 
@@ -352,7 +357,7 @@ void NetworkPlugin::refreshPluginItemsVisible()
 
 void NetworkPlugin::onCheckTimerTimeout()
 {
-    if (!m_pluginLoaded || pluginIsDisable()) {
+    if (!m_pluginLoaded || pluginIsDisable() || m_connectivityCheckPending) {
         return;
     }
 
@@ -363,5 +368,31 @@ void NetworkPlugin::onCheckTimerTimeout()
         return;
     }
 
-    m_networkModel->checkConnectivity();
+    // Do not call NetworkModel::checkConnectivity() here.  That method only
+    // exists in newer libgxde-network-utils releases; referencing it from the
+    // plugin leaves an unresolved ELF symbol on older releases.  With lazy
+    // binding the plugin still loads, but the dynamic linker terminates the
+    // entire dock the first time this 30-second timer fires.
+    //
+    // NetworkManager exposes the same operation as a stable D-Bus method.  A
+    // successful check updates its Connectivity property, which is already
+    // observed by NetworkModel, so no library-version-specific API is needed.
+    QDBusMessage message = QDBusMessage::createMethodCall(
+        QStringLiteral("org.freedesktop.NetworkManager"),
+        QStringLiteral("/org/freedesktop/NetworkManager"),
+        QStringLiteral("org.freedesktop.NetworkManager"),
+        QStringLiteral("CheckConnectivity"));
+    QDBusPendingCall call = QDBusConnection::systemBus().asyncCall(message);
+    auto *watcher = new QDBusPendingCallWatcher(call, this);
+    m_connectivityCheckPending = true;
+
+    connect(watcher, &QDBusPendingCallWatcher::finished, this,
+            [this](QDBusPendingCallWatcher *finishedWatcher) {
+        m_connectivityCheckPending = false;
+        if (finishedWatcher->isError()) {
+            qWarning() << "Failed to refresh network connectivity:"
+                       << finishedWatcher->error().message();
+        }
+        finishedWatcher->deleteLater();
+    });
 }

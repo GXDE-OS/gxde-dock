@@ -78,6 +78,7 @@ private:
     QTimer *m_checkTimer;
 
     bool m_pluginLoaded;
+    bool m_connectivityCheckPending;
 };
 
 #endif // NETWORKPLUGIN_H

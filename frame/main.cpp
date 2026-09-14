@@ -214,6 +214,10 @@ int main(int argc, char *argv[])
     }
 
     DApplication app(argc, argv);
+    // The dock is a session service, not a document-style application.  During
+    // output hotplug Qt can temporarily have no real screen/window; that must
+    // not make QApplication quit before the replacement output appears.
+    app.setQuitOnLastWindowClosed(false);
 
     if (waylandSession) {
         // 默认情况下，图标是从XSETTINGS的Net/IconThemeName读出来的
@@ -381,8 +385,21 @@ int main(int argc, char *argv[])
     const bool dockHidden = QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/dock-hide");
     const bool macMode = QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode");
 
+    const auto isUsableScreen = [waylandSession](QScreen *screen) {
+        if (!screen || !screen->geometry().isValid()
+                || screen->geometry().isEmpty()) {
+            return false;
+        }
+
+        // QtWayland creates an unnamed 0-output placeholder QScreen while the
+        // compositor rebuilds its outputs.  Creating a layer surface for that
+        // placeholder produces a protocol error and disconnects the whole
+        // dock from Wayland.
+        return !waylandSession || !screen->name().isEmpty();
+    };
+
     auto createDockForScreen = [&](QScreen *screen) {
-        if (dockHidden) {
+        if (dockHidden || !isUsableScreen(screen)) {
             return;
         }
 
@@ -405,7 +422,19 @@ int main(int argc, char *argv[])
             return;
         }
 
-        QList<QScreen *> screens = qApp->screens();
+        const QList<QScreen *> allScreens = qApp->screens();
+        QList<QScreen *> screens = allScreens;
+        screens.erase(std::remove_if(screens.begin(), screens.end(),
+                                     [&](QScreen *screen) {
+            if (isUsableScreen(screen)) {
+                return false;
+            }
+            qInfo() << "(Dock) ignore transient placeholder screen"
+                    << (screen ? screen->name() : QString())
+                    << (screen ? screen->geometry() : QRect());
+            return true;
+        }), screens.end());
+
         std::sort(screens.begin(), screens.end(), [](QScreen *a, QScreen *b) {
             if (a == b) {
                 return false;
@@ -423,6 +452,15 @@ int main(int argc, char *argv[])
         QSet<QRect> coveredGeometries;
 
         QList<QScreen *> stale;
+        for (auto it = dockWindows.cbegin(); it != dockWindows.cend(); ++it) {
+            // An existing output may report an empty geometry for a moment.
+            // Keep its window/controller alive until screenRemoved arrives so
+            // a rapid invalid -> valid transition cannot reuse a controller
+            // whose old MainWindow is only queued for deletion.
+            if (!allScreens.contains(it.key())) {
+                stale.append(it.key());
+            }
+        }
         for (QScreen *s : screens) {
             if (!dockWindows.contains(s)) {
                 continue;

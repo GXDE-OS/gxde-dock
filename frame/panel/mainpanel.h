@@ -29,6 +29,7 @@
 #include "item/showdesktopitem.h"
 
 #include <QFrame>
+#include <QPointer>
 #include <QTimer>
 #include <QBoxLayout>
 
@@ -61,7 +62,7 @@ public:
 
     void setEffectEnabled(const bool enabled);
 
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
     void setFixedSize(const QSize &size);
     void setComposite(const bool hasComposite);
@@ -103,7 +104,7 @@ private:
     QBoxLayout *m_itemLayout;
     QTimer *m_itemAdjustTimer;
     QTimer *m_checkMouseLeaveTimer;
-    QWidget *m_appDragWidget;
+    QPointer<QWidget> m_appDragWidget;
     QVariantAnimation *m_sizeChangeAni;
 
     ShowDesktopItem *m_showDesktopItem;

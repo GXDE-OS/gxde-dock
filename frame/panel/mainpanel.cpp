@@ -240,19 +240,28 @@ void MainPanel::showEvent(QShowEvent *e)
 
 bool MainPanel::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == static_cast<QGraphicsView *>(m_appDragWidget)->viewport()) {
-        QDropEvent *e = static_cast<QDropEvent *>(event);
-        bool isContains = rect().contains(mapFromGlobal(m_appDragWidget->mapToGlobal(e->pos())));
-        if (isContains) {
-            if (event->type() == QEvent::DragMove) {
-                handleDragMove(static_cast<QDragMoveEvent *>(event), true);
-            } else if (event->type() == QEvent::Drop) {
-                m_appDragWidget->hide();
-                return true;
-            }
+    if (event->type() != QEvent::DragMove && event->type() != QEvent::Drop) {
+        return DBlurEffectWidget::eventFilter(watched, event);
+    }
+
+    auto *dragView = qobject_cast<QGraphicsView *>(m_appDragWidget.data());
+    if (!dragView || watched != dragView->viewport()) {
+        return DBlurEffectWidget::eventFilter(watched, event);
+    }
+
+    auto *dropEvent = static_cast<QDropEvent *>(event);
+    const QPoint globalPos = dragView->viewport()->mapToGlobal(
+        dropEvent->position().toPoint());
+    if (rect().contains(mapFromGlobal(globalPos))) {
+        if (event->type() == QEvent::DragMove) {
+            handleDragMove(static_cast<QDragMoveEvent *>(event), true);
+        } else {
+            dragView->hide();
+            return true;
         }
     }
-    return false;
+
+    return DBlurEffectWidget::eventFilter(watched, event);
 }
 
 void MainPanel::setFixedSize(const QSize &size)
@@ -731,14 +740,22 @@ void MainPanel::itemMoved(DockItem *item, const int index)
 void MainPanel::itemDragStarted()
 {
     DraggingItem = qobject_cast<DockItem *>(sender());
+    if (!DraggingItem) {
+        return;
+    }
 
     DockItem::ItemType draggingTyep = DraggingItem->itemType();
     if (draggingTyep == DockItem::App)
     {
         AppItem *appItem = qobject_cast<AppItem *>(DraggingItem);
+        if (!appItem) {
+            return;
+        }
         m_appDragWidget = appItem->appDragWidget();
         appItem->setDockInfo(m_position, QRect(mapToGlobal(pos()), size()));
-        static_cast<QGraphicsView *>(m_appDragWidget)->viewport()->installEventFilter(this);
+        if (auto *dragView = qobject_cast<QGraphicsView *>(m_appDragWidget.data())) {
+            dragView->viewport()->installEventFilter(this);
+        }
     }
 
     if (draggingTyep == DockItem::Plugins || draggingTyep == DockItem::TrayPlugin)
@@ -798,7 +815,16 @@ void MainPanel::handleDragMove(QDragMoveEvent *e, bool isFilter)
 {
     e->accept();
 
-    DockItem *dst = itemAt(isFilter ? mapFromGlobal(m_appDragWidget->mapToGlobal(e->pos())) : e->pos());
+    QPoint panelPos = e->position().toPoint();
+    if (isFilter) {
+        auto *dragView = qobject_cast<QGraphicsView *>(m_appDragWidget.data());
+        if (!dragView) {
+            return;
+        }
+        panelPos = mapFromGlobal(dragView->viewport()->mapToGlobal(panelPos));
+    }
+
+    DockItem *dst = itemAt(panelPos);
 
     if (!dst)
         return;
