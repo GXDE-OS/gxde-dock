@@ -29,7 +29,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
         <source>Add keyboard layout</source>
         <translation>Pridať rozloženie klávesnice</translation>
     </message>
@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
         <source>Network</source>
         <translation>Sieť</translation>
     </message>
@@ -250,13 +250,13 @@
         <translation type="obsolete">Napájanie</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="49"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="65"/>
         <source>Notify</source>
         <translation>Oznámiť</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="114"/>
         <source>Open Control Center</source>
         <translation>Otvoriť Control Center</translation>
     </message>
@@ -282,12 +282,12 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="50"/>
         <source>Power</source>
         <translation>Napájanie</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="116"/>
         <source>Power settings</source>
         <translation>Nastavenia napájania</translation>
     </message>
@@ -296,27 +296,27 @@
         <translation type="vanished">Nabité %1</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="318"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>Kapacita %1, zostáva %2 min, Zdravie: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>Kapacita %1, %2 hod %3 min zostáva, Zdravie: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="328"/>
         <source>Charged %1, Health: %2%</source>
         <translation>Nabité %1, Zdravie: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="339"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>Nabíjať %1, %2 min do plného nabitia, stav: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="342"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>Nabíjať %1, %2 hod %3 min do plnej, stav: %4%</translation>
     </message>
@@ -324,48 +324,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
         <source>Power</source>
         <translation>Napájanie</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
         <source>Shut down</source>
         <translation>Vypnúť</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
         <source>Restart</source>
         <translation>Reštartovať</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
         <source>Suspend</source>
         <translation>Uspať</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
         <source>Hibernate</source>
         <translation>Hibernácia</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
         <source>Lock</source>
         <translation>Zamknúť</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
         <source>Log out</source>
         <translation>Odhlásiť</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
         <source>Switch account</source>
         <translation>Prepnúť používateľa</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
         <source>Power settings</source>
         <translation>Nastavenia napájania</translation>
     </message>

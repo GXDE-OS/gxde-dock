@@ -29,7 +29,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
         <source>Add keyboard layout</source>
         <translation>افزودن طرح کلیدبورد</translation>
     </message>
@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
         <source>Network</source>
         <translation>شبکه</translation>
     </message>
@@ -250,13 +250,13 @@
         <translation type="obsolete">منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="49"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="65"/>
         <source>Notify</source>
         <translation>آگاه سازید</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="114"/>
         <source>Open Control Center</source>
         <translation>مرکز کنترل باز شود</translation>
     </message>
@@ -282,37 +282,37 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="50"/>
         <source>Power</source>
         <translation>منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="116"/>
         <source>Power settings</source>
         <translation>تنظیمات قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="318"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>ظرفیت %1، %2 دقیقه باقی مانده، سلامت: %3٪</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>ظرفیت %1، %2 ساعت %3 دقیقه باقی مانده، سلامت: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="328"/>
         <source>Charged %1, Health: %2%</source>
         <translation>%1 شارژ شده، سلامت: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="339"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>شارژ %1، %2 دقیقه تا کامل، سلامت: %3%%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="342"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>شارژ %1، %2 ساعت %3 دقیقه تا کامل شدن، سلامت: %4%%</translation>
     </message>
@@ -320,48 +320,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
         <source>Power</source>
         <translation>منبع قدرت</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
         <source>Shut down</source>
         <translation>خاموش شدن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
         <source>Restart</source>
         <translation>راه اندازی مجدد</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
         <source>Suspend</source>
         <translation>معلق کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
         <source>Hibernate</source>
         <translation>هیبرنت</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
         <source>Lock</source>
         <translation>قفل کردن</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
         <source>Log out</source>
         <translation>خارج شدن از حساب کاربری</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
         <source>Switch account</source>
         <translation>شخصیت خود را تغییر دهید</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
         <source>Power settings</source>
         <translation>تنظیمات قدرت</translation>
     </message>

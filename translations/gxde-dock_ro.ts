@@ -29,7 +29,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
         <source>Add keyboard layout</source>
         <translation>Adăugare aspect  tastatură</translation>
     </message>
@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
         <source>Network</source>
         <translation>Reţea</translation>
     </message>
@@ -250,13 +250,13 @@
         <translation type="obsolete">Energie</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="49"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="65"/>
         <source>Notify</source>
         <translation>Notifică</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="114"/>
         <source>Open Control Center</source>
         <translation>Deschide Centrul de Control</translation>
     </message>
@@ -282,12 +282,12 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="50"/>
         <source>Power</source>
         <translation>Energie</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="116"/>
         <source>Power settings</source>
         <translation>Setări pentru administrare de energie</translation>
     </message>
@@ -296,27 +296,27 @@
         <translation type="vanished">Încărcat %1</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="318"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>Capacitate %1, %2 min rămas, Sănătate: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>Capacitate %1, %2 ore %3 min rămasă, Sănătate: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="328"/>
         <source>Charged %1, Health: %2%</source>
         <translation>%1 încarcat, Sănătate: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="339"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>Încărcare %1, %2 min până la complet, stare: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="342"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>Încărcare %1, %2 h %3 min până la plin, stare: %4%</translation>
     </message>
@@ -324,48 +324,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
         <source>Power</source>
         <translation>Energie</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
         <source>Shut down</source>
         <translation>Închidere</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
         <source>Restart</source>
         <translation>Repornire</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
         <source>Suspend</source>
         <translation>Suspendare</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
         <source>Hibernate</source>
         <translation>Hibernare</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
         <source>Lock</source>
         <translation>Blocare</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
         <source>Log out</source>
         <translation>Ieșire</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
         <source>Switch account</source>
         <translation>Schimbă conturile</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
         <source>Power settings</source>
         <translation>Setări pentru administrare de energie</translation>
     </message>

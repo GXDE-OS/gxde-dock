@@ -29,7 +29,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
         <source>Add keyboard layout</source>
         <translation>কীবোর্ড লেআউট যোগ করুন</translation>
     </message>
@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
         <source>Network</source>
         <translation>নেটওয়ার্ক</translation>
     </message>
@@ -250,13 +250,13 @@
         <translation type="obsolete">পাওয়ার</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="49"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="65"/>
         <source>Notify</source>
         <translation>বিজ্ঞপ্তি দিন</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="114"/>
         <source>Open Control Center</source>
         <translation>কন্ট্রোল সেন্টার খোলুন</translation>
     </message>
@@ -282,12 +282,12 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="50"/>
         <source>Power</source>
         <translation>পাওয়ার</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="116"/>
         <source>Power settings</source>
         <translation>পাওয়ার সেটিংস</translation>
     </message>
@@ -312,27 +312,27 @@
         <translation type="vanished">%1 চার্জ হচ্ছে, সম্পূর্ণ হতে %2 hr %3 min বাকি আছে</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="318"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>ক্যাপাসিটি %1, %2 মিনিট বাকি আছে, স্বাস্থ্য: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>ক্যাপাসিটি %1, %2 ঘন্টা %3 মিনিট বাকি, স্বাস্থ্য: %4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="328"/>
         <source>Charged %1, Health: %2%</source>
         <translation>চার্জড %1, স্বাস্থ্য: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="339"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>চার্জিং %1, %2 মিনিট পর্যন্ত পূর্ণ, স্বাস্থ্য: %3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="342"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>চার্জিং %1, %2 ঘন্টা %3 মিনিট পর্যন্ত পূর্ণ, স্বাস্থ্য: %4%</translation>
     </message>
@@ -340,48 +340,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
         <source>Power</source>
         <translation>পাওয়ার</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
         <source>Shut down</source>
         <translation>বন্ধ করুন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
         <source>Restart</source>
         <translation> রিস্টার্ট দিন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
         <source>Suspend</source>
         <translation>সাময়িক ভাবে বন্ধ করুন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
         <source>Hibernate</source>
         <translation>হায়বারনেট</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
         <source>Lock</source>
         <translation>লক করুন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
         <source>Log out</source>
         <translation>লগ আউট করুন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
         <source>Switch account</source>
         <translation>অ্যাকাউন্ট স্যুইচ করুন</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
         <source>Power settings</source>
         <translation>পাওয়ার সেটিংস</translation>
     </message>

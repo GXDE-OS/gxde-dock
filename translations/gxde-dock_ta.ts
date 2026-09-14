@@ -29,7 +29,7 @@
 <context>
     <name>DBusAdaptors</name>
     <message>
-        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="138"/>
+        <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
         <source>Add keyboard layout</source>
         <translation>விசைப்பலகை அமைப்பைச் சேர்க்கவும்</translation>
     </message>
@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="49"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
         <source>Network</source>
         <translation>பிணையம்</translation>
     </message>
@@ -250,13 +250,13 @@
         <translation type="obsolete">மின்திறன்</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="48"/>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="64"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="49"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="65"/>
         <source>Notify</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../plugins/notify/notifyplugin.cpp" line="113"/>
+        <location filename="../plugins/notify/notifyplugin.cpp" line="114"/>
         <source>Open Control Center</source>
         <translation>打开控制中心</translation>
     </message>
@@ -282,37 +282,37 @@
 <context>
     <name>PowerPlugin</name>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="48"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="50"/>
         <source>Power</source>
         <translation>மின்திறன்</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="114"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="116"/>
         <source>Power settings</source>
         <translation>電源設定</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="311"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="318"/>
         <source>Capacity %1, %2 min remaining, Health: %3%</source>
         <translation>容量 %1，剩餘 %2 分鐘，健康狀態：%3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="314"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
         <source>Capacity %1, %2 hr %3 min remaining, Health: %4%</source>
         <translation>容量 %1，剩餘 %2 小時 %3 分鐘，健康狀態：%4%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="321"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="328"/>
         <source>Charged %1, Health: %2%</source>
         <translation>Charged %1, Health: %2%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="332"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="339"/>
         <source>Charging %1, %2 min until full, health: %3%</source>
         <translation>充电 %1, 剩余 %2 分钟至满电，电池健康度：%3%</translation>
     </message>
     <message>
-        <location filename="../plugins/power/powerplugin.cpp" line="335"/>
+        <location filename="../plugins/power/powerplugin.cpp" line="342"/>
         <source>Charging %1, %2 hr %3 min until full, health: %4%</source>
         <translation>充电 %1, %2 小時 %3 分後滿電，健康度：%4%</translation>
     </message>
@@ -320,48 +320,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="58"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="74"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
         <source>Power</source>
         <translation>மின்திறன்</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="123"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
         <source>Shut down</source>
         <translation>நிறுத்து</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
         <source>Restart</source>
         <translation>மறுதொடக்கம்</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="136"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
         <source>Suspend</source>
         <translation>தற்காலிகமாக நிறுத்தம் செய்தல்</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="143"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
         <source>Hibernate</source>
         <translation>Hibernate</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="151"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
         <source>Lock</source>
         <translation>பூட்டு</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
         <source>Log out</source>
         <translation>வெளியேறு</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="165"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
         <source>Switch account</source>
         <translation>切换账号</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="173"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
         <source>Power settings</source>
         <translation>電源設定</translation>
     </message>
