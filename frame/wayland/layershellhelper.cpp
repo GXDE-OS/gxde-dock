@@ -475,7 +475,7 @@ void LayerShellHelper::preparePopupLayerShell(QWidget* popup, QScreen* screen,
         layer->setScreenConfiguration(
             LayerShellQt::Window::ScreenFromQWindow);
         layer->setLayer(LayerShellQt::Window::LayerOverlay);
-        layer->setExclusiveZone(0);
+        layer->setExclusiveZone(-1);
         layer->setKeyboardInteractivity(
             allowKeyboardFocus && !isSubMenu
                 ? LayerShellQt::Window::KeyboardInteractivityOnDemand
@@ -561,7 +561,7 @@ static QWindow* configurePopupLayerShell(QWidget* popup,
     layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
     layer->setMargins(QMargins(localPos.x(), localPos.y(), 0, 0));
     layer->setLayer(LayerShellQt::Window::LayerOverlay);
-    layer->setExclusiveZone(0);
+    layer->setExclusiveZone(-1);
 
     // 子菜单 (如「位置/大小」展开项) 不要键盘交互
     // 否则它会requestActive抢走激活态，Treeland 把父菜单设为非激活
