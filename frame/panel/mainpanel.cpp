@@ -60,11 +60,19 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
 
     setBlurRectXRadius(0);
     setBlurRectYRadius(0);
-    setBlendMode(BehindWindowBlend);
 
     if (Wayland::LayerShellHelper::isWayland()) {
+        // LayerShellStyler owns the org_kde_kwin_blur object for the dock.
+        // Newer DTK also submits KDE blur for BehindWindowBlend; enabling both
+        // creates two blur objects for the same wl_surface.  The compositor can
+        // then render an over-blurred frame until a pointer-triggered repaint.
+        // InWindowBlend keeps DBlurEffectWidget out of the native blur path;
+        // paintEvent() below still draws the translucent panel mask.
+        setBlendMode(InWindowBlend);
         setBlurRectXRadius(5);
         setBlurRectYRadius(5);
+    } else {
+        setBlendMode(BehindWindowBlend);
     }
 
     setAcceptDrops(true);
