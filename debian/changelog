@@ -1,3 +1,9 @@
+gxde-dock (6.0.22-1) UNRELEASED; urgency=medium
+
+  * 修复了pupup定位在顶栏存在时有偏移的问题
+
+ -- CharOfString <root@charofstring.cc>  Mon, 14 Sep 2026 08:14:12 -0500
+
 gxde-dock (6.0.22) UNRELEASED; urgency=medium
 
   [ shenmo ]
