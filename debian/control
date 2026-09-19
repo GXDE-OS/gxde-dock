@@ -20,7 +20,7 @@ Build-Depends: debhelper (>= 8.0.0),
  libdframeworkdbus-qt6-dev,
  libgsettings-qt6-dev,
  cmake,
- libgxde-network-utils-qt6-dev,
+ libgxde-network-utils-qt6-dev (>= 6.0.1),
  libdframeworkdbus-qt6-dev,
  liblayershellqtinterface-dev,
  libwayland-dev,
@@ -30,7 +30,7 @@ Homepage: https://www.gxde.top/
 
 Package: gxde-dock
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-menu, layer-shell-qt, qt6-wayland, gxde-sni-server
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgxde-network-utils-qt6 (>= 6.0.1), deepin-menu, layer-shell-qt, qt6-wayland, gxde-sni-server
 Recommends: gxde-dock-onboard-plugin
 Breaks: gxde-wlcom (<< 2.2.0-gxde1)
 Conflicts:

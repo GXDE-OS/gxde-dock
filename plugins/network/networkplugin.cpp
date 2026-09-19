@@ -23,10 +23,6 @@
 #include "item/wireditem.h"
 #include "item/wirelessitem.h"
 
-#include <QDBusConnection>
-#include <QDBusMessage>
-#include <QDBusPendingCallWatcher>
-
 using namespace dde::network;
 
 #define WIRED_ITEM      "wired"
@@ -40,8 +36,7 @@ NetworkPlugin::NetworkPlugin(QObject *parent)
       m_networkWorker(nullptr),
       m_delayRefreshTimer(new QTimer(this)),
       m_checkTimer(new QTimer(this)),
-      m_pluginLoaded(false),
-      m_connectivityCheckPending(false)
+      m_pluginLoaded(false)
 {
 }
 
@@ -357,7 +352,7 @@ void NetworkPlugin::refreshPluginItemsVisible()
 
 void NetworkPlugin::onCheckTimerTimeout()
 {
-    if (!m_pluginLoaded || pluginIsDisable() || m_connectivityCheckPending) {
+    if (!m_pluginLoaded || pluginIsDisable()) {
         return;
     }
 
@@ -368,31 +363,17 @@ void NetworkPlugin::onCheckTimerTimeout()
         return;
     }
 
-    // Do not call NetworkModel::checkConnectivity() here.  That method only
-    // exists in newer libgxde-network-utils releases; referencing it from the
-    // plugin leaves an unresolved ELF symbol on older releases.  With lazy
-    // binding the plugin still loads, but the dynamic linker terminates the
-    // entire dock the first time this 30-second timer fires.
+    // Use the library's secondary connectivity checker instead of
+    // NetworkManager's D-Bus CheckConnectivity method.  The D-Bus method is
+    // guarded by the polkit action
+    // "org.freedesktop.NetworkManager.network-control", whose implicit_any
+    // authorization is auth_admin.  In remote/non-local sessions (for example
+    // VNC) polkit therefore asks for interactive authentication on every call,
+    // so a 30-second timer produces a password/pkexec dialog every 30 seconds.
     //
-    // NetworkManager exposes the same operation as a stable D-Bus method.  A
-    // successful check updates its Connectivity property, which is already
-    // observed by NetworkModel, so no library-version-specific API is needed.
-    QDBusMessage message = QDBusMessage::createMethodCall(
-        QStringLiteral("org.freedesktop.NetworkManager"),
-        QStringLiteral("/org/freedesktop/NetworkManager"),
-        QStringLiteral("org.freedesktop.NetworkManager"),
-        QStringLiteral("CheckConnectivity"));
-    QDBusPendingCall call = QDBusConnection::systemBus().asyncCall(message);
-    auto *watcher = new QDBusPendingCallWatcher(call, this);
-    m_connectivityCheckPending = true;
-
-    connect(watcher, &QDBusPendingCallWatcher::finished, this,
-            [this](QDBusPendingCallWatcher *finishedWatcher) {
-        m_connectivityCheckPending = false;
-        if (finishedWatcher->isError()) {
-            qWarning() << "Failed to refresh network connectivity:"
-                       << finishedWatcher->error().message();
-        }
-        finishedWatcher->deleteLater();
-    });
+    // NetworkModel::checkConnectivity() performs the check locally with
+    // QNetworkAccessManager and emits connectivityChanged, so it needs no
+    // privileged D-Bus call.  It was added in libgxde-network-utils-qt6 6.0.1;
+    // debian/control enforces that minimum runtime version.
+    m_networkModel->checkConnectivity();
 }
