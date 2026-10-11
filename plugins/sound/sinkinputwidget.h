@@ -26,16 +26,21 @@
 #include "componments/volumeslider.h"
 
 #include <QFrame>
+#include <QResizeEvent>
 
 #include <dimagebutton.h>
 #include <QPainter>
 
+class TipsWidget;
 class SinkInputWidget : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit SinkInputWidget(const QString &inputPath, QWidget *parent = 0);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void setVolume(const int value);
@@ -44,10 +49,14 @@ private slots:
     void onPlaySoundEffect();
 
 private:
+    void updateTitle();
+
     DBusSinkInput *m_inputInter;
 
     Dtk::Widget::DImageButton *m_volumeIcon;
     VolumeSlider *m_volumeSlider;
+    TipsWidget *m_volumeLabel;
+    TipsWidget *m_titleLabel;
 };
 
 #endif // SINKINPUTWIDGET_H

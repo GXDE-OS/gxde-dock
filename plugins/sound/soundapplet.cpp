@@ -41,6 +41,7 @@ SoundApplet::SoundApplet(QWidget *parent)
       m_applicationTitle(new QWidget),
       m_volumeBtn(new DImageButton),
       m_volumeSlider(new VolumeSlider),
+      m_soundShow(new TipsWidget),
 
       m_audioInter(new DBusAudio(this)),
       m_defSinkInter(nullptr)
@@ -53,10 +54,13 @@ SoundApplet::SoundApplet(QWidget *parent)
     TipsWidget *deviceLabel = new TipsWidget;
     deviceLabel->setText(tr("Device"));
 
+    m_soundShow->setText(QString("%1%").arg(0));
+
     QHBoxLayout *deviceLineLayout = new QHBoxLayout;
     deviceLineLayout->addWidget(deviceLabel);
 //    deviceLineLayout->addSpacing(12);
     deviceLineLayout->addWidget(new HorizontalSeparator);
+    deviceLineLayout->addWidget(m_soundShow);
     deviceLineLayout->setContentsMargins(0, 0, 0, 0);
     deviceLineLayout->setSpacing(10);
 
@@ -164,11 +168,15 @@ void SoundApplet::onVolumeChanged()
     QPixmap pix = Utils::renderSVG(iconName, QSize(24, 24), devicePixelRatioF());
 
     m_volumeBtn->setPixmap(pix);
+
+    m_soundShow->setText(QString::number(volume * 100) + '%');
 }
 
 void SoundApplet::volumeSliderValueChanged()
 {
     m_defSinkInter->SetVolumeQueued(m_volumeSlider->value() / 1000.0f, false);
+
+    m_soundShow->setText(QString("%1%").arg(m_volumeSlider->value() / 10));
 }
 
 void SoundApplet::sinkInputsChanged()

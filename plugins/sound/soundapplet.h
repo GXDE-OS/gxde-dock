@@ -32,6 +32,7 @@
 #include <QSlider>
 #include <dimagebutton.h>
 
+class TipsWidget;
 class SoundApplet : public QScrollArea
 {
     Q_OBJECT
@@ -59,6 +60,7 @@ private:
     QWidget *m_applicationTitle;
     Dtk::Widget::DImageButton *m_volumeBtn;
     VolumeSlider *m_volumeSlider;
+    TipsWidget *m_soundShow;
     QVBoxLayout *m_centralLayout;
 
     DBusAudio *m_audioInter;

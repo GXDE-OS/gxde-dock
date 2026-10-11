@@ -20,6 +20,7 @@
  */
 
 #include "sinkinputwidget.h"
+#include "../widgets/tipswidget.h"
 
 #include <QHBoxLayout>
 #include <QIcon>
@@ -27,6 +28,8 @@
 #include <DHiDPIHelper>
 
 DWIDGET_USE_NAMESPACE
+
+#define ICON_SIZE   24
 
 const QPixmap getIconFromTheme(const QString &name, const QSize &size, const qreal ratio)
 {
@@ -40,19 +43,45 @@ SinkInputWidget::SinkInputWidget(const QString &inputPath, QWidget *parent)
       m_inputInter(new DBusSinkInput(inputPath, this)),
 
       m_volumeIcon(new DImageButton),
-      m_volumeSlider(new VolumeSlider)
+      m_volumeSlider(new VolumeSlider),
+      m_volumeLabel(new TipsWidget),
+      m_titleLabel(new TipsWidget)
 {
     const QString iconName = m_inputInter->icon();
     m_volumeIcon->setAccessibleName("app-" + iconName + "-icon");
-    m_volumeIcon->setPixmap(getIconFromTheme(iconName, QSize(24, 24), devicePixelRatioF()));
+    m_volumeIcon->setPixmap(getIconFromTheme(iconName, QSize(ICON_SIZE, ICON_SIZE), devicePixelRatioF()));
+    m_volumeIcon->setFixedSize(ICON_SIZE, ICON_SIZE);
     m_volumeSlider->setAccessibleName("app-" + iconName + "-slider");
     m_volumeSlider->setMinimum(0);
     m_volumeSlider->setMaximum(1000);
 
-    QHBoxLayout *centralLayout = new QHBoxLayout;
-    centralLayout->addWidget(m_volumeIcon);
-    centralLayout->addSpacing(10);
-    centralLayout->addWidget(m_volumeSlider);
+    m_volumeLabel->setText(QString("%1%").arg(int(m_inputInter->volume() * 100)));
+    m_titleLabel->setText(m_inputInter->name());
+
+    // 应用图标 + 名称 + 音量数值（单独一行）
+    QHBoxLayout *appLayout = new QHBoxLayout;
+    appLayout->setAlignment(Qt::AlignLeft);
+    // 与下方拖动条的缩进对齐（图标 24 + 间距 10）
+    appLayout->addSpacing(2);
+    appLayout->addWidget(m_volumeIcon);
+    appLayout->addSpacing(10);
+    appLayout->addWidget(m_titleLabel);
+    appLayout->addStretch();
+    appLayout->addWidget(m_volumeLabel, 0, Qt::AlignRight);
+    appLayout->setSpacing(0);
+    appLayout->setContentsMargins(0, 0, 0, 0);
+
+    // 拖动条（单独一行）
+    QHBoxLayout *volumeCtrlLayout = new QHBoxLayout;
+    volumeCtrlLayout->addSpacing(2);
+    volumeCtrlLayout->addWidget(m_volumeSlider);
+    volumeCtrlLayout->setSpacing(0);
+    volumeCtrlLayout->setContentsMargins(0, 0, 0, 0);
+
+    QVBoxLayout *centralLayout = new QVBoxLayout;
+    centralLayout->addLayout(appLayout);
+    centralLayout->addSpacing(6);
+    centralLayout->addLayout(volumeCtrlLayout);
     centralLayout->setSpacing(2);
     centralLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -60,20 +89,40 @@ SinkInputWidget::SinkInputWidget(const QString &inputPath, QWidget *parent)
     connect(m_volumeSlider, &VolumeSlider::requestPlaySoundEffect, this, &SinkInputWidget::onPlaySoundEffect);
     connect(m_volumeIcon, &DImageButton::clicked, this, &SinkInputWidget::setMute);
     connect(m_inputInter, &DBusSinkInput::MuteChanged, this, &SinkInputWidget::setMuteIcon);
-    connect(m_inputInter, &DBusSinkInput::VolumeChanged, this, [=] { m_volumeSlider->setValue(m_inputInter->volume() * 1000); });
+    connect(m_inputInter, &DBusSinkInput::VolumeChanged, this, [=] {
+        m_volumeSlider->setValue(m_inputInter->volume() * 1000);
+        m_volumeLabel->setText(QString::number(int(m_inputInter->volume() * 100)) + '%');
+        updateTitle();
+    });
 
     setLayout(centralLayout);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    setFixedHeight(30);
+    setFixedHeight(60);
 
     setMuteIcon();
 
     emit m_inputInter->VolumeChanged();
 }
 
+void SinkInputWidget::updateTitle()
+{
+    // 应用名按标题控件自己的字体、这一行实际剩余的宽度截断，
+    // 否则会和右侧的百分比重叠
+    const int available = width() - 2 - ICON_SIZE - 10 - m_volumeLabel->width() - 8;
+    m_titleLabel->setText(m_titleLabel->fontMetrics().elidedText(
+        m_inputInter->name(), Qt::ElideRight, qMax(0, available)));
+}
+
+void SinkInputWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    updateTitle();
+}
+
 void SinkInputWidget::setVolume(const int value)
 {
     m_inputInter->SetVolumeQueued(double(value) / 1000.0, false);
+    m_volumeLabel->setText(QString("%1%").arg(value / 10));
 }
 
 void SinkInputWidget::setMute()
