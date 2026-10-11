@@ -27,9 +27,9 @@
 
 #include <QLabel>
 #include <QIcon>
+#include <QApplication>
 
 #define WIDTH       200
-#define MAX_HEIGHT  200
 #define ICON_SIZE   24
 
 DWIDGET_USE_NAMESPACE
@@ -200,7 +200,11 @@ void SoundApplet::sinkInputsChanged()
     const int contentHeight = m_centralWidget->sizeHint().height();
     m_centralWidget->setFixedHeight(contentHeight);
     m_centralWidget->setVisible(true);
-    setFixedHeight(std::min(contentHeight, MAX_HEIGHT));
+
+    // 根据应用数量自动延长悬浮窗，避免滚动；
+    // 上限取屏幕可用高度，防止窗口超出屏幕导致无法操作
+    const int maxHeight = QApplication::primaryScreen()->availableGeometry().height();
+    setFixedHeight(std::min(contentHeight, maxHeight));
 }
 
 void SoundApplet::toggleMute()
