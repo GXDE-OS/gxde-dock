@@ -1,0 +1,55 @@
+# Maintainer: CharOfString <root@charofstring.cc>
+pkgbase=gxde-dock-git
+pkgname=('gxde-dock-git' 'gxde-dock-onboard-plugin-git')
+pkgver=6.0.25
+pkgrel=1
+pkgdesc='GXDE dock'
+arch=('x86_64' 'aarch64')
+url="https://github.com/GXDE-OS/gxde-dock"
+license=('GPL-3.0-or-later')
+_depends=('dtk2widget-qt6-git' 'dtk6core-git' 'dframework-dbus-qt6-git' 'gxde-network-utils-qt6-git'
+          'gsettings-qt6' 'layer-shell-qt' 'qt6-base' 'qt6-svg' 'wayland' 'libx11' 'libxcb'
+          'xcb-util-image' 'xcb-util-wm' 'libxtst' 'libgcc' 'libstdc++' 'glibc')
+makedepends=('git' 'cmake' 'ninja' 'qt6-tools' "${_depends[@]}")
+source=()
+sha512sums=()
+
+# 直接使用 PKGBUILD 所在的 git 仓库作为源码 ・ Build from the git checkout this PKGBUILD lives in.
+_srcroot() {
+  git -C "$startdir" rev-parse --show-toplevel
+}
+
+build() {
+  cmake -B build -S "$(_srcroot)" -GNinja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib
+  ninja -C build
+  DESTDIR="$srcdir/root" ninja -C build install
+}
+
+package_gxde-dock-git() {
+  depends=("${_depends[@]}" 'deepin-menu-git' 'qt6-wayland' 'gxde-sni-server-git')
+  optdepends=('gxde-dock-onboard-plugin-git: on-screen keyboard plugin')
+  # 与 debian/control 的 Breaks: gxde-wlcom (<< 2.2.0-gxde1) 相同
+  # Same as Breaks: gxde-wlcom (<< 2.2.0-gxde1) in debian/control.
+  # Debian 把开发文件拆到 -dev 包，这里没有文件冲突，按 Arch 惯例合并
+  # Debian splits the development files into a -dev package; nothing collides
+  # here, so they stay in the main package as usual on Arch.
+  provides=('gxde-dock' 'deepin-dock')
+  conflicts=('gxde-dock' 'deepin-dock' 'gxde-wlcom<2.2.0')
+
+  cp -r "$srcdir/root/." "$pkgdir/"
+  rm "$pkgdir/usr/lib/gxde-dock/plugins/libonboard.so"
+}
+
+package_gxde-dock-onboard-plugin-git() {
+  pkgdesc='GXDE dock on-screen keyboard plugin'
+  depends=("gxde-dock-git=$pkgver-$pkgrel" 'onboard' 'dtk2widget-qt6-git' 'dtk6core-git' 'qt6-base'
+           'libgcc' 'libstdc++' 'glibc')
+  provides=('gxde-dock-onboard-plugin')
+  conflicts=('gxde-dock-onboard-plugin')
+
+  install -Dm755 "$srcdir/root/usr/lib/gxde-dock/plugins/libonboard.so" \
+    "$pkgdir/usr/lib/gxde-dock/plugins/libonboard.so"
+}
