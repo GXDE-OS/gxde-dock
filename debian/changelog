@@ -1,13 +1,14 @@
-gxde-dock (6.0.25) UNRELEASED; urgency=medium
+gxde-dock (6.0.26) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复 VNC 等非本地会话下网络插件频繁触发 polkit 弹窗的问题
 
   [ gfdgd_xi ]
-  * sound插件支持显示具体的音量数值
-  * sound插件支持根据播放音频应用数量自动调整大小
+  * feat: sound插件支持显示具体的音量数值
+  * feat: sound插件支持根据播放音频应用数量自动调整大小
+  * feat: 支持在sound插件快速修改音频播放设备
 
- -- gfdgd_xi <3025613752@qq.com>  Sun, 11 Oct 2026 22:53:05 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 12 Oct 2026 17:21:53 +0800
 
 gxde-dock (6.0.23) UNRELEASED; urgency=medium
 
