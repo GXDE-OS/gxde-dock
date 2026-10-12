@@ -238,7 +238,7 @@
 <context>
     <name>NetworkPlugin</name>
     <message>
-        <location filename="../plugins/network/networkplugin.cpp" line="55"/>
+        <location filename="../plugins/network/networkplugin.cpp" line="50"/>
         <source>Network</source>
         <translation>Sieť</translation>
     </message>
@@ -277,6 +277,14 @@
         <location filename="../plugins/onboard/onboardplugin.cpp" line="35"/>
         <source>Onboard</source>
         <translation>Na palube</translation>
+    </message>
+</context>
+<context>
+    <name>OutputDeviceWidget</name>
+    <message>
+        <location filename="../plugins/sound/outputdevicewidget.cpp" line="93"/>
+        <source>Output Device</source>
+        <translation>Výstupné zariadenie</translation>
     </message>
 </context>
 <context>
@@ -373,12 +381,12 @@
 <context>
     <name>SoundApplet</name>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="54"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="57"/>
         <source>Device</source>
         <translation>Zariadenie</translation>
     </message>
     <message>
-        <location filename="../plugins/sound/soundapplet.cpp" line="72"/>
+        <location filename="../plugins/sound/soundapplet.cpp" line="78"/>
         <source>Application</source>
         <translation>Aplikácia</translation>
     </message>
@@ -497,48 +505,64 @@
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="17"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="130"/>
         <source>系统监控插件设置</source>
         <translation>Systémový monitorovací plugin nastavenie</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="41"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="132"/>
         <source>只显示网速</source>
         <translation>Zobraziť len rýchlosť internetu</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="48"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="133"/>
         <source>只显示CPU、内存</source>
         <translation>CPU, pamäť</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="55"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="134"/>
         <source>显示CP&amp;U、内存和网速</source>
         <translation>Zobraziť CP&amp;U, pamäť a rýchlosť siete</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="79"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="137"/>
         <source>行高：</source>
         <translation>Výška riadku:</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="89"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="138"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="138"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="138"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="26"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="131"/>
         <source>显示内容设置</source>
         <translation>Zobraziť nastavenia obsahu</translation>
     </message>
     <message>
         <location filename="../plugins/dde-sys-monitor-plugin/pluginsettingdialog.ui" line="62"/>
         <location filename="../build/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="135"/>
+        <location filename="../build/unknown_b17c65-Debug/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="135"/>
+        <location filename="../obj-x86_64-linux-gnu/plugins/dde-sys-monitor-plugin/sys_monitor_autogen/include/ui_pluginsettingdialog.h" line="135"/>
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation>Zobraziť CPU, pamäť, rýchlosť siete,

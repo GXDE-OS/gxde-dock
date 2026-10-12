@@ -369,4 +369,12 @@
         <translation>Rede inalámbrica %1</translation>
     </message>
 </context>
+<context>
+    <name>OutputDeviceWidget</name>
+    <message>
+        <location filename="../plugins/sound/outputdevicewidget.cpp" line="93"/>
+        <source>Output Device</source>
+        <translation>Preséu de salida</translation>
+    </message>
+</context>
 </TS>
