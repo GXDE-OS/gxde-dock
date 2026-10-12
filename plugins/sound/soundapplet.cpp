@@ -21,6 +21,7 @@
 
 #include "soundapplet.h"
 #include "sinkinputwidget.h"
+#include "outputdevicewidget.h"
 #include "componments/horizontalseparator.h"
 #include "../widgets/tipswidget.h"
 #include "util/utils.h"
@@ -28,6 +29,7 @@
 #include <QLabel>
 #include <QIcon>
 #include <QApplication>
+#include <QShowEvent>
 
 #define WIDTH       200
 #define ICON_SIZE   24
@@ -100,6 +102,17 @@ SoundApplet::SoundApplet(QWidget *parent)
     m_centralLayout->addLayout(volumeCtrlLayout);
     m_centralLayout->addWidget(m_applicationTitle);
 
+    // 应用音量列表（动态增删），独立成一个布局，避免影响底部固定控件
+    m_appLayout = new QVBoxLayout;
+    m_appLayout->setSpacing(10);
+    m_appLayout->setContentsMargins(0, 0, 0, 0);
+    m_centralLayout->addLayout(m_appLayout);
+
+    // 最下方：输出设备切换控件
+    m_outputDeviceWidget = new OutputDeviceWidget(m_audioInter);
+    m_centralLayout->addSpacing(10);
+    m_centralLayout->addWidget(m_outputDeviceWidget);
+
     m_centralWidget->setLayout(m_centralLayout);
     m_centralWidget->setFixedWidth(WIDTH);
     m_centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
@@ -117,6 +130,7 @@ SoundApplet::SoundApplet(QWidget *parent)
     connect(m_audioInter, &DBusAudio::SinkInputsChanged, this, &SoundApplet::sinkInputsChanged);
     connect(m_audioInter, &DBusAudio::DefaultSinkChanged, this, static_cast<void (SoundApplet::*)()>(&SoundApplet::defaultSinkChanged));
     connect(this, static_cast<void (SoundApplet::*)(DBusSink*) const>(&SoundApplet::defaultSinkChanged), this, &SoundApplet::onVolumeChanged);
+    connect(m_outputDeviceWidget, &OutputDeviceWidget::contentChanged, this, &SoundApplet::adjustHeight);
 
     QMetaObject::invokeMethod(this, "defaultSinkChanged", Qt::QueuedConnection);
     QMetaObject::invokeMethod(this, "sinkInputsChanged", Qt::QueuedConnection);
@@ -182,8 +196,8 @@ void SoundApplet::volumeSliderValueChanged()
 void SoundApplet::sinkInputsChanged()
 {
     m_centralWidget->setVisible(false);
-    QVBoxLayout *appLayout = m_centralLayout;
-    while (QLayoutItem *item = appLayout->takeAt(4))
+    QVBoxLayout *appLayout = m_appLayout;
+    while (QLayoutItem *item = appLayout->takeAt(0))
     {
         delete item->widget();
         delete item;
@@ -197,11 +211,16 @@ void SoundApplet::sinkInputsChanged()
         appLayout->addWidget(si);
     }
 
+    m_centralWidget->setVisible(true);
+    adjustHeight();
+}
+
+void SoundApplet::adjustHeight()
+{
     const int contentHeight = m_centralWidget->sizeHint().height();
     m_centralWidget->setFixedHeight(contentHeight);
-    m_centralWidget->setVisible(true);
 
-    // 根据应用数量自动延长悬浮窗，避免滚动；
+    // 根据内容自动延长悬浮窗，避免滚动；
     // 上限取屏幕可用高度，防止窗口超出屏幕导致无法操作
     const int maxHeight = QApplication::primaryScreen()->availableGeometry().height();
     setFixedHeight(std::min(contentHeight, maxHeight));
@@ -210,6 +229,15 @@ void SoundApplet::sinkInputsChanged()
 void SoundApplet::toggleMute()
 {
     m_defSinkInter->SetMuteQueued(!m_defSinkInter->mute());
+}
+
+void SoundApplet::showEvent(QShowEvent *event)
+{
+    QScrollArea::showEvent(event);
+
+    // 每次打开悬浮窗时重新枚举输出设备，及时反映新插入/拔出的设备
+    if (m_outputDeviceWidget)
+        m_outputDeviceWidget->refreshSinks();
 }
 
 void SoundApplet::onPlaySoundEffect()
