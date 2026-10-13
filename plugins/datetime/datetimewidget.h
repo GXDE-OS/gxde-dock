@@ -49,16 +49,21 @@ private:
     // 高效/经典模式下，任务栏尺寸设为"小"时条目尺寸不足以容纳
     // 两行文字，时间与日期需要合并为一行显示(左右方向则只显示时间)
     bool panelIsSmallSize() const;
-    // 计算高效/经典模式下需要显示的文字行，保证每行都能完整显示在条目中
-    QStringList textLines() const;
+    // 计算给定字体下需要显示的文字行，保证每行都能完整显示在条目中
+    QStringList textLinesFor(const QFont &font) const;
     // 判断一行文字是否能完整显示在当前条目宽度内
-    bool textFits(const QString &text) const;
+    bool textFits(const QString &text, const QFont &font) const;
+    // 在基准字号上适当放大字体(系统默认字体偏小)，但保证文字仍能完整显示
+    QFont fitFont() const;
+    // 判断给定字体下的文字行是否能完整显示在条目中
+    bool linesFit(const QStringList &lines, const QFont &font) const;
 
 private:
     QPixmap m_cachedIcon;
     QString m_cachedTime;
     bool m_24HourFormat;
     int m_lineCount;
+    QFont m_font;
 };
 
 #endif // DATETIMEWIDGET_H

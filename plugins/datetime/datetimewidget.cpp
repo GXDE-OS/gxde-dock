@@ -67,8 +67,9 @@ void DatetimeWidget::set24HourFormat(const bool value)
 
 QSize DatetimeWidget::sizeHint() const
 {
-    const QStringList lines = textLines();
-    const QFontMetrics fm(font());
+    const QFont font = fitFont();
+    const QFontMetrics fm(font);
+    const QStringList lines = textLinesFor(font);
 
     int maxWidth = 0;
     for (const QString &line : lines)
@@ -85,6 +86,60 @@ QSize DatetimeWidget::sizeHint() const
     return QSize(maxWidth + 20, height);
 }
 
+QFont DatetimeWidget::fitFont() const
+{
+    QFont font = this->font();
+
+    // 时尚模式使用图标而非文字，保持基准字体即可
+    const Dock::DisplayMode displayMode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
+    if (displayMode != Dock::Efficient && displayMode != Dock::Classic)
+        return font;
+
+    const bool usePointSize = font.pointSize() > 0;
+    const int baseSize = usePointSize ? font.pointSize() : font.pixelSize();
+    if (baseSize <= 0)
+        return font;
+
+    // 系统默认字体在任务栏里偏小，在基准字号上适当放大(最多2号)，
+    // 但必须保证所有文字行仍能完整显示在条目中，放不下则保持基准字号
+    int bestSize = baseSize;
+    for (int size = baseSize + 1; size <= baseSize + 2; ++size) {
+        if (usePointSize) font.setPointSize(size);
+        else font.setPixelSize(size);
+        if (!linesFit(textLinesFor(font), font))
+            break;
+        bestSize = size;
+    }
+
+    if (usePointSize) font.setPointSize(bestSize);
+    else font.setPixelSize(bestSize);
+    return font;
+}
+
+bool DatetimeWidget::linesFit(const QStringList &lines, const QFont &font) const
+{
+    const QFontMetrics fm(font);
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+
+    if (position == Dock::Top || position == Dock::Bottom) {
+        // 上下方向条目高度由面板强制指定，所有行必须能在高度内显示
+        // (宽度取 sizeHint，会随字号自适应)。多行文字实际占位高度约为
+        // 行数 × (行距+1)
+        return height() <= 0 || lines.count() * (fm.lineSpacing() + 1) <= height() - 1;
+    }
+
+    // 左右方向条目宽度由面板强制指定，每一行必须能在宽度内显示
+    // (高度取 sizeHint，会随字号自适应)
+    if (width() <= 0)
+        return true;
+
+    for (const QString &line : lines) {
+        if (fm.boundingRect(line).width() > width() - 2)
+            return false;
+    }
+    return true;
+}
+
 bool DatetimeWidget::panelIsSmallSize() const
 {
     const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
@@ -96,12 +151,12 @@ bool DatetimeWidget::panelIsSmallSize() const
     return width() > 0 && width() <= SMALL_PANEL_WIDTH;
 }
 
-bool DatetimeWidget::textFits(const QString &text) const
+bool DatetimeWidget::textFits(const QString &text, const QFont &font) const
 {
-    return QFontMetrics(font()).boundingRect(text).width() <= width();
+    return QFontMetrics(font).boundingRect(text).width() <= width() - 2;
 }
 
-QStringList DatetimeWidget::textLines() const
+QStringList DatetimeWidget::textLinesFor(const QFont &font) const
 {
     const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
     const QDateTime current = QDateTime::currentDateTime();
@@ -123,7 +178,7 @@ QStringList DatetimeWidget::textLines() const
     // 任务栏位于左右两侧时条目很窄
     if (panelIsSmallSize()) {
         // 小尺寸只显示时间，12小时制的上下午标记放不下时单独一行
-        if (m_24HourFormat || textFits(timeText))
+        if (m_24HourFormat || textFits(timeText, font))
             lines << timeText;
         else
             lines << current.toString("hh:mm") << current.toString("AP");
@@ -131,12 +186,12 @@ QStringList DatetimeWidget::textLines() const
     }
 
     // 中/大尺寸显示时间和日期，放不下的行自动拆分，保证显示完整
-    if (m_24HourFormat || textFits(timeText))
+    if (m_24HourFormat || textFits(timeText, font))
         lines << timeText;
     else
         lines << current.toString("hh:mm") << current.toString("AP");
 
-    if (textFits(dateText))
+    if (textFits(dateText, font))
         lines << dateText;
     else
         lines << current.toString("yyyy") << current.toString("/MM/dd");
@@ -148,13 +203,15 @@ void DatetimeWidget::resizeEvent(QResizeEvent *e)
 {
     m_cachedTime.clear();
 
-    // 条目尺寸变化时(如切换任务栏大小、位置、显示模式)，文字行数可能发生
-    // 改变，此时需要通知面板重新计算条目尺寸，避免文字被裁剪。
+    // 条目尺寸变化时(如切换任务栏大小、位置、显示模式)，字体大小与文字行数
+    // 可能发生改变，此时需要通知面板重新计算条目尺寸，避免文字被裁剪。
     // updateGeometry() 用于失效 sizeHint 缓存(Qt 不会因控件尺寸变化而自动失效)，
     // 否则面板拿到的仍是旧的条目尺寸
-    const int lineCount = textLines().count();
-    if (lineCount != m_lineCount) {
+    const QFont font = fitFont();
+    const int lineCount = textLinesFor(font).count();
+    if (lineCount != m_lineCount || font != m_font) {
         m_lineCount = lineCount;
+        m_font = font;
         updateGeometry();
         emit requestUpdateGeometry();
     }
@@ -175,8 +232,10 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
 
     if (displayMode == Dock::Efficient || displayMode == Dock::Classic)
     {
+        const QFont font = fitFont();
+        painter.setFont(font);
         painter.setPen(Qt::white);
-        painter.drawText(rect(), Qt::AlignCenter, textLines().join("\n"));
+        painter.drawText(rect(), Qt::AlignCenter, textLinesFor(font).join("\n"));
         return;
     }
 
