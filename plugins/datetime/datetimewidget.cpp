@@ -30,8 +30,17 @@
 
 #define PLUGIN_STATE_KEY    "enable"
 
+// 高效/经典模式下，任务栏条目尺寸由 dock 的"大小"设置决定：
+// 上下方向的条目高度：小(30) -> 36，中(36) -> 43，大(48) -> 58；
+// 左右方向的条目宽度：小(30) -> 50，中(36) -> 60，大(48) -> 80。
+// 条目尺寸小于下列阈值时视为"小"尺寸。
+#define SMALL_PANEL_HEIGHT  40
+#define SMALL_PANEL_WIDTH   55
+
 DatetimeWidget::DatetimeWidget(QWidget *parent)
     : QWidget(parent)
+    , m_24HourFormat(true)
+    , m_lineCount(0)
 {
 
 }
@@ -47,6 +56,10 @@ void DatetimeWidget::set24HourFormat(const bool value)
     m_cachedTime.clear();
     update();
 
+    // 12/24小时制的文字宽度不同，需要失效 sizeHint 缓存(Qt 不会因内容变化
+    // 自动失效)，否则面板拿到的仍是旧的条目尺寸
+    updateGeometry();
+
     if (isVisible()) {
         emit requestUpdateGeometry();
     }
@@ -54,18 +67,97 @@ void DatetimeWidget::set24HourFormat(const bool value)
 
 QSize DatetimeWidget::sizeHint() const
 {
-    QFontMetrics fm(qApp->font());
+    const QStringList lines = textLines();
+    const QFontMetrics fm(font());
 
-    if (m_24HourFormat)
-        return fm.boundingRect("2024/10/24").size() + QSize(20, 10);
-        //return fm.boundingRect("10:24\n2024/10/24").size() + QSize(20, 10);
+    int maxWidth = 0;
+    for (const QString &line : lines)
+        maxWidth = qMax(maxWidth, fm.boundingRect(line).width());
+
+    // 上下方向条目的高度由面板按任务栏大小强制指定，这里只需给出一行文字的
+    // 高度；左右方向条目的高度取 sizeHint，必须能容纳所有文字行，否则多行
+    // 文字会被裁剪导致显示不完整
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+    const bool horizontal = (position == Dock::Top || position == Dock::Bottom);
+    const int height = horizontal ? fm.height() + 10
+                                  : lines.count() * fm.lineSpacing() + 10;
+
+    return QSize(maxWidth + 20, height);
+}
+
+bool DatetimeWidget::panelIsSmallSize() const
+{
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+
+    // 上下方向由条目高度判断，左右方向由条目宽度判断
+    if (position == Dock::Top || position == Dock::Bottom)
+        return height() > 0 && height() <= SMALL_PANEL_HEIGHT;
+
+    return width() > 0 && width() <= SMALL_PANEL_WIDTH;
+}
+
+bool DatetimeWidget::textFits(const QString &text) const
+{
+    return QFontMetrics(font()).boundingRect(text).width() <= width();
+}
+
+QStringList DatetimeWidget::textLines() const
+{
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+    const QDateTime current = QDateTime::currentDateTime();
+    // 按当前语言环境取实际渲染的文字，保证宽度测量准确
+    const QString timeText = current.toString(m_24HourFormat ? "hh:mm" : "hh:mm AP");
+    const QString dateText = current.toString("yyyy/MM/dd");
+
+    QStringList lines;
+    if (position == Dock::Top || position == Dock::Bottom) {
+        // 任务栏尺寸为"小"时条目高度不足以容纳两行文字，
+        // 日期与时间在一行显示，避免文字互相挤压、显得丑陋
+        if (panelIsSmallSize())
+            lines << dateText + " " + timeText;
+        else
+            lines << timeText << dateText;
+        return lines;
+    }
+
+    // 任务栏位于左右两侧时条目很窄
+    if (panelIsSmallSize()) {
+        // 小尺寸只显示时间，12小时制的上下午标记放不下时单独一行
+        if (m_24HourFormat || textFits(timeText))
+            lines << timeText;
+        else
+            lines << current.toString("hh:mm") << current.toString("AP");
+        return lines;
+    }
+
+    // 中/大尺寸显示时间和日期，放不下的行自动拆分，保证显示完整
+    if (m_24HourFormat || textFits(timeText))
+        lines << timeText;
     else
-        return fm.boundingRect("10:24 A.A.").size() + QSize(20, 20);
+        lines << current.toString("hh:mm") << current.toString("AP");
+
+    if (textFits(dateText))
+        lines << dateText;
+    else
+        lines << current.toString("yyyy") << current.toString("/MM/dd");
+
+    return lines;
 }
 
 void DatetimeWidget::resizeEvent(QResizeEvent *e)
 {
     m_cachedTime.clear();
+
+    // 条目尺寸变化时(如切换任务栏大小、位置、显示模式)，文字行数可能发生
+    // 改变，此时需要通知面板重新计算条目尺寸，避免文字被裁剪。
+    // updateGeometry() 用于失效 sizeHint 缓存(Qt 不会因控件尺寸变化而自动失效)，
+    // 否则面板拿到的仍是旧的条目尺寸
+    const int lineCount = textLines().count();
+    if (lineCount != m_lineCount) {
+        m_lineCount = lineCount;
+        updateGeometry();
+        emit requestUpdateGeometry();
+    }
 
     QWidget::resizeEvent(e);
 }
@@ -76,7 +168,6 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
 
     const auto ratio = devicePixelRatioF();
     const Dock::DisplayMode displayMode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
-    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
     const QDateTime current = QDateTime::currentDateTime();
 
     QPainter painter(this);
@@ -84,22 +175,8 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
 
     if (displayMode == Dock::Efficient || displayMode == Dock::Classic)
     {
-        QString format;
-        if (m_24HourFormat)
-            if (position == Dock::Top || position == Dock::Bottom)
-                format = "hh:mm\nyyyy/MM/dd";
-            else
-                format = "hh:mm\nyyyy\n/MM/dd";
-        else
-        {
-            if (position == Dock::Top || position == Dock::Bottom)
-                format = "hh:mm AP\nyyyy/MM/dd";
-            else
-                format = "hh:mm\nAP\nyyyy/MM/dd";
-        }
-
         painter.setPen(Qt::white);
-        painter.drawText(rect(), Qt::AlignCenter, current.currentDateTime().toString(format));
+        painter.drawText(rect(), Qt::AlignCenter, textLines().join("\n"));
         return;
     }
 

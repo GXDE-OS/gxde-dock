@@ -46,10 +46,19 @@ private:
 
     const QPixmap loadSvg(const QString &fileName, const QSize size);
 
+    // 高效/经典模式下，任务栏尺寸设为"小"时条目尺寸不足以容纳
+    // 两行文字，时间与日期需要合并为一行显示(左右方向则只显示时间)
+    bool panelIsSmallSize() const;
+    // 计算高效/经典模式下需要显示的文字行，保证每行都能完整显示在条目中
+    QStringList textLines() const;
+    // 判断一行文字是否能完整显示在当前条目宽度内
+    bool textFits(const QString &text) const;
+
 private:
     QPixmap m_cachedIcon;
     QString m_cachedTime;
     bool m_24HourFormat;
+    int m_lineCount;
 };
 
 #endif // DATETIMEWIDGET_H
