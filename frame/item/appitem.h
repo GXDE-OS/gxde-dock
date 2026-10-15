@@ -32,6 +32,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsItemAnimation>
+#include <QSet>
 
 #include "dbus/dockentryinterface.h"
 
@@ -42,11 +43,19 @@ class AppItem : public DockItem
     Q_OBJECT
 
 public:
-    explicit AppItem(const QDBusObjectPath &entry, QWidget *parent = nullptr);
+    explicit AppItem(const QDBusObjectPath &entry, QWidget *parent = nullptr,
+                     const quint32 windowId = 0, const bool windowSplit = false);
     ~AppItem();
 
     const QString appId() const;
     const bool isValid() const;
+
+    // 不合并图标（窗口拆分）模式下，每个图标代表一个窗口：
+    // windowId 非 0 时该图标只负责这一个窗口，为 0 时代表整个条目
+    // （仅用于条目没有任何窗口时，如仅驻留未启动的应用）。
+    bool isSplitWindow() const { return m_windowId != 0; }
+    quint32 windowId() const { return m_windowId; }
+    const WindowInfoMap &windowInfos() const { return m_windowInfos; }
 
     // 用于最小化动画：取条目对应应用的 desktop file 基名作为 app_id，
     // 以匹配合成器 toplevel 的 app_id。注意 AppItem::appId() 返回的是 Dock
@@ -71,6 +80,9 @@ signals:
     void requestPreviewWindow(const WId wid) const;
     void requestCancelPreview() const;
     void dragReady(QWidget *dragWidget);
+    // 不合并图标模式下条目窗口列表发生变化
+    void windowAppeared(const quint32 winId) const;
+    void windowClosed(const quint32 winId) const;
 
 private:
     void moveEvent(QMoveEvent *e) override;
@@ -128,6 +140,10 @@ private:
 
     WindowInfoMap m_windowInfos;
     QString m_id;
+    // 不合并图标（窗口拆分）模式
+    bool m_windowSplit;
+    quint32 m_windowId;
+    QSet<quint32> m_knownWindows;
     QPixmap m_appIcon;
     QPixmap m_horizontalIndicator;
     QPixmap m_verticalIndicator;

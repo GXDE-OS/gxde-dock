@@ -259,13 +259,11 @@ DockSettings::DockSettings(QWidget *parent)
     connect(m_dockInter, &DBusDock::ServiceRestarted, this, &DockSettings::resetFrontendGeometry);
     connect(m_dockInter, &DBusDock::OpacityChanged, this, &DockSettings::onOpacityChanged);
 
-    // WindowSplit 变更后需要重启dock才能生效
-    // deepin-daemon 在 WindowSplit 变更后重启自身进程使dock被SM重新拉起
-    // gxde-daemon 不重启自身，因此前端需要自行重启
-    connect(m_dockInter, &DBusDock::WindowSplitChanged, this, [this](bool) {
-        qInfo() << "(Dock) WindowSplit changed, restarting dock...";
-        QProcess::startDetached(QStringLiteral("/usr/bin/gxde-dock"), QStringList());
-        qApp->quit();
+    // WindowSplit 变更后由 DockItemController 立即重建图标，
+    // 无需重启任务栏（daemon 侧是否实现拆分都不影响前端生效）
+    connect(m_dockInter, &DBusDock::WindowSplitChanged, this, [this](bool split) {
+        qInfo() << "(Dock) WindowSplit changed to" << split;
+        m_windowSplit.setChecked(split);
     });
 
     connect(m_itemController, &DockItemController::itemInserted, this, &DockSettings::dockItemCountChanged, Qt::QueuedConnection);

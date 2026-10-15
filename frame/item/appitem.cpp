@@ -60,7 +60,8 @@ int AppItem::IconBaseSize;
 qreal AppItem::IconBaseRatio = 1.0;
 QPoint AppItem::MousePressPos;
 
-AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
+AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent,
+                 const quint32 windowId, const bool windowSplit)
     : DockItem(parent),
       m_appNameTips(new TipsWidget(this)),
       m_appPreviewTips(nullptr),
@@ -88,7 +89,10 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
       m_retryObtainIconTimer(new QTimer(this)),
 
       m_smallWatcher(new QFutureWatcher<QPixmap>(this)),
-      m_largeWatcher(new QFutureWatcher<QPixmap>(this))
+      m_largeWatcher(new QFutureWatcher<QPixmap>(this)),
+
+      m_windowSplit(windowSplit),
+      m_windowId(windowId)
 {
     QHBoxLayout *centralLayout = new QHBoxLayout;
     centralLayout->setContentsMargins(0, 0, 0, 0);
@@ -101,6 +105,8 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
 
     m_id = m_itemEntryInter->id();
     m_active = m_itemEntryInter->isActive();
+    if (m_windowId != 0)
+        m_active = m_active && m_itemEntryInter->currentWindow() == m_windowId;
 
     m_appNameTips->setObjectName("AppItemTips");
     m_appNameTips->setAccessibleName(m_itemEntryInter->name() + "-tips");
@@ -116,6 +122,9 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent)
     connect(m_itemEntryInter, &DockEntryInter::IsActiveChanged, this, &AppItem::activeChanged);
     connect(m_itemEntryInter, &DockEntryInter::IsActiveChanged, this, static_cast<void (AppItem::*)()>(&AppItem::update));
     connect(m_itemEntryInter, &DockEntryInter::WindowInfosChanged, this, &AppItem::updateWindowInfos, Qt::QueuedConnection);
+    // 不合并图标时按当前窗口判断高亮
+    connect(m_itemEntryInter, &DockEntryInter::CurrentWindowChanged, this, &AppItem::activeChanged);
+    connect(m_itemEntryInter, &DockEntryInter::CurrentWindowChanged, this, static_cast<void (AppItem::*)()>(&AppItem::update));
     // desktop file 可能晚于首次几何上报到达，到达后重新下发最小化几何
     connect(m_itemEntryInter, &DockEntryInter::DesktopFileChanged, this,
             [this] { m_updateIconGeometryTimer->start(); });
@@ -386,7 +395,12 @@ void AppItem::mouseReleaseEvent(QMouseEvent *e)
         qDebug() << "app item clicked, name:" << m_itemEntryInter->name()
             << "id:" << m_itemEntryInter->id() << "my-id:" << m_id << "icon:" << m_itemEntryInter->icon();
 
-        m_itemEntryInter->Activate(e->timestamp());
+        // 不合并图标时，点击只激活该图标对应的窗口
+        if (m_windowId != 0) {
+            emit requestActivateWindow(m_windowId);
+        } else {
+            m_itemEntryInter->Activate(e->timestamp());
+        }
 
         // play launch effect
         if (m_windowInfos.isEmpty())
@@ -423,7 +437,7 @@ void AppItem::mouseMoveEvent(QMouseEvent *e)
         return;
 
     const QPoint distance = pos - MousePressPos;
-    if (distance.manhattanLength() > APP_DRAG_THRESHOLD)
+    if (distance.manhattanLength() > APP_DRAG_THRESHOLD && m_windowId == 0)
         return startDrag();
 }
 
@@ -534,6 +548,14 @@ QWidget *AppItem::popupTips()
     if (m_dragging)
         return nullptr;
 
+    // 不合并图标时提示对应窗口的标题
+    if (m_windowId != 0)
+    {
+        const QString title = m_windowInfos.value(m_windowId).title;
+        m_appNameTips->setText(title.isEmpty() ? m_itemEntryInter->name() : title);
+        return m_appNameTips;
+    }
+
     if (!m_windowInfos.isEmpty())
     {
         const quint32 currentWindow = m_itemEntryInter->currentWindow();
@@ -607,7 +629,48 @@ QPoint AppItem::appIconPosition() const
 
 void AppItem::updateWindowInfos(const WindowInfoMap &info)
 {
-    m_windowInfos = info;
+    if (m_windowSplit)
+    {
+        // 记录已知窗口，向控制器报告新增/关闭的窗口
+        for (auto it(info.cbegin()); it != info.cend(); ++it)
+        {
+            if (!m_knownWindows.contains(it.key()))
+            {
+                m_knownWindows.insert(it.key());
+                emit windowAppeared(it.key());
+            }
+        }
+        for (auto it(m_knownWindows.begin()); it != m_knownWindows.end(); )
+        {
+            if (!info.contains(*it))
+            {
+                const quint32 closedId = *it;
+                it = m_knownWindows.erase(it);
+                emit windowClosed(closedId);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        // 拆分图标只关心自己窗口的信息（指示点、注意力效果等）
+        if (m_windowId != 0)
+        {
+            m_windowInfos.clear();
+            if (info.contains(m_windowId))
+                m_windowInfos.insert(m_windowId, info.value(m_windowId));
+        }
+        else
+        {
+            m_windowInfos = info;
+        }
+    }
+    else
+    {
+        m_windowInfos = info;
+    }
+
     if (m_appPreviewTips) m_appPreviewTips->setWindowInfos(m_windowInfos, m_itemEntryInter->GetAllowedCloseWindows().value());
     m_updateIconGeometryTimer->start();
 
@@ -661,6 +724,9 @@ void AppItem::refershIcon()
 void AppItem::activeChanged()
 {
     m_active = m_itemEntryInter->isActive();
+    // 不合并图标时，只有当前窗口对应的图标高亮
+    if (m_windowId != 0)
+        m_active = m_active && m_itemEntryInter->currentWindow() == m_windowId;
 }
 
 void AppItem::showPreview()

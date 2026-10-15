@@ -220,7 +220,7 @@
     <message>
         <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Window Split</source>
-        <translation>合并图标</translation>
+        <translation>不合并图标</translation>
     </message>
 </context>
 <context>

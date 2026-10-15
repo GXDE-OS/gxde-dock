@@ -27,6 +27,7 @@
 #include "item/traypluginitem.h"
 #include "util/docksettings.h"
 #include "dbus/dockdbusnames.h"
+#include "dbus/dockentryinterface.h"
 
 #include <QDebug>
 #include <QGSettings>
@@ -34,6 +35,7 @@
 #include <QScreen>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <QDBusObjectPath>
 #include <QSet>
 
 QHash<QScreen *, DockItemController *> DockItemController::INSTANCES;
@@ -172,10 +174,78 @@ void DockItemController::itemMove(DockItem * const moveItem, DockItem * const re
         m_updatePluginsOrderTimer->start();
 
     // for app move, index 0 is launcher item, need to pass it.
-    if (moveType == DockItem::App && replaceType == DockItem::App)
+    // 不合并图标时一个条目对应多个图标，图标下标与条目下标不再一一对应，
+    // 此时不调整 daemon 侧条目顺序，仅做界面移动
+    AppItem *moveApp = qobject_cast<AppItem *>(moveItem);
+    AppItem *replaceApp = qobject_cast<AppItem *>(replaceItem);
+    const bool moveSplit = moveApp && moveApp->isSplitWindow();
+    const bool replaceSplit = replaceApp && replaceApp->isSplitWindow();
+    if (moveType == DockItem::App && replaceType == DockItem::App
+            && !moveSplit && !replaceSplit)
         m_appInter->MoveEntry(moveIndex - 1, replaceIndex - 1);
 
     refreshFSTItemSpliterVisible();
+}
+
+void DockItemController::onSplitWindowAppeared(const quint32 winId)
+{
+    AppItem *from = qobject_cast<AppItem *>(sender());
+    if (!from || winId == 0)
+        return;
+
+    const QString entryPath = from->getEntryPath();
+
+    // 同一窗口的图标可能已被其它图标抢先创建
+    if (findSplitItem(entryPath, winId))
+        return;
+
+    // 插入位置：紧跟在上报图标之后；若上报者是占位图标则占用其位置
+    int insertIndex = m_itemList.indexOf(from);
+    if (insertIndex < 0)
+        return;
+    if (from->windowId() != 0)
+        ++insertIndex;
+
+    // 条目从“无窗口”转为“有窗口”时移除占位图标
+    removeEntryPlaceholder(entryPath);
+    if (from->windowId() == 0)
+        appItemRemoved(from);
+
+    AppItem *item = createAppItem(QDBusObjectPath(entryPath), winId);
+    insertIndex = qBound(1, insertIndex, m_itemList.size());
+    m_itemList.insert(insertIndex, item);
+    emit itemInserted(insertIndex, item);
+}
+
+void DockItemController::onSplitWindowClosed(const quint32 winId)
+{
+    AppItem *from = qobject_cast<AppItem *>(sender());
+    if (!from || winId == 0)
+        return;
+
+    const QString entryPath = from->getEntryPath();
+    int insertIndex = m_itemList.indexOf(from);
+    if (insertIndex < 0)
+        return;
+
+    // 自己的窗口被关闭时移除该图标
+    if (from->windowId() == winId)
+        appItemRemoved(from);
+
+    // 条目已没有任何窗口时补充一个占位图标（驻留但未启动的应用）
+    if (findSplitItem(entryPath, 0))
+        return;
+    for (const QPointer<DockItem> &item : m_itemList) {
+        if (item.isNull() || item->itemType() != DockItem::App)
+            continue;
+        if (static_cast<AppItem *>(item.data())->getEntryPath() == entryPath)
+            return;
+    }
+
+    AppItem *placeholder = createAppItem(QDBusObjectPath(entryPath));
+    insertIndex = qBound(1, insertIndex, m_itemList.size());
+    m_itemList.insert(insertIndex, placeholder);
+    emit itemInserted(insertIndex, placeholder);
 }
 
 void DockItemController::itemDroppedIntoContainer(DockItem * const item)
@@ -282,6 +352,11 @@ QDBusConnection::sessionBus(), this)),
     connect(m_appInter, &DBusDock::EntryRemoved, this, static_cast<void (DockItemController::*)(const QString &)>(&DockItemController::appItemRemoved), Qt::QueuedConnection);
     connect(m_appInter, &DBusDock::EntriesChanged, this, &DockItemController::syncAppItems, Qt::QueuedConnection);
     connect(m_appInter, &DBusDock::ServiceRestarted, this, &DockItemController::reloadAppItems);
+    // 不合并图标开关变更后立即重建图标，无需重启任务栏
+    connect(m_appInter, &DBusDock::WindowSplitChanged, this, [this](bool split) {
+        qInfo() << "(Dock) WindowSplit changed to" << split << ", reloading app items...";
+        reloadAppItems();
+    });
 
     // Sync signal on initialization!!
     syncAppItems(m_appInter->entries());
@@ -298,8 +373,9 @@ QDBusConnection::sessionBus(), this)),
     QMetaObject::invokeMethod(this, "refershItemsIcon", Qt::QueuedConnection);
 }
 
-AppItem* DockItemController::createAppItem(const QDBusObjectPath& path) {
-    AppItem *item = new AppItem(path);
+AppItem* DockItemController::createAppItem(const QDBusObjectPath& path,
+        const quint32 windowId) {
+    AppItem *item = new AppItem(path, nullptr, windowId, windowSplitEnabled());
 
     connect(item, &AppItem::requestActivateWindow, m_appInter,
         &DBusDock::ActivateWindow, Qt::QueuedConnection);
@@ -308,7 +384,107 @@ AppItem* DockItemController::createAppItem(const QDBusObjectPath& path) {
     connect(item, &AppItem::requestCancelPreview, m_appInter,
         &DBusDock::CancelPreviewWindow);
 
+    if (windowSplitEnabled()) {
+        // 拆分模式下由控制器统一处理窗口的新增与关闭
+        connect(item, &AppItem::windowAppeared, this,
+                &DockItemController::onSplitWindowAppeared, Qt::QueuedConnection);
+        connect(item, &AppItem::windowClosed, this,
+                &DockItemController::onSplitWindowClosed, Qt::QueuedConnection);
+    }
+
     return item;
+}
+
+bool DockItemController::windowSplitEnabled() const
+{
+    // 没有 daemon 时没有任何条目，拆分无意义
+    return m_appInter->windowSplit();
+}
+
+WindowInfoMap DockItemController::entryWindowInfos(const QString &entryPath) const
+{
+    DockEntryInter entryInter(dockDBusService(), entryPath,
+            QDBusConnection::sessionBus());
+    return entryInter.windowInfos();
+}
+
+// 计算新条目图标应插入的位置（1 为启动器图标之后）
+int DockItemController::appAreaInsertIndex(const int entryIndex) const
+{
+    if (entryIndex < 0) {
+        int index = 1;
+        for (const QPointer<DockItem> &item : m_itemList)
+            if (!item.isNull() && item->itemType() == DockItem::App)
+                ++index;
+        return index;
+    }
+
+    // 不合并图标时同一条目可能对应多个图标，
+    // 需要按条目在 daemon 中的序号换算成图标位置
+    const QList<QDBusObjectPath> entries = m_appInter->entries();
+    QSet<QString> entriesBefore;
+    for (int i = 0; i < entryIndex && i < entries.size(); ++i)
+        entriesBefore.insert(entries.at(i).path());
+
+    int index = 1;
+    for (const QPointer<DockItem> &item : m_itemList) {
+        if (item.isNull() || item->itemType() != DockItem::App)
+            continue;
+        if (entriesBefore.contains(static_cast<AppItem *>(item.data())->getEntryPath()))
+            ++index;
+    }
+    return index;
+}
+
+// 为一个条目创建图标（拆分模式下每个窗口一个），返回插入的图标数量
+int DockItemController::insertAppItemsForEntry(const QDBusObjectPath &path,
+        const int insertIndex)
+{
+    QList<AppItem *> items;
+    if (windowSplitEnabled()) {
+        const WindowInfoMap infos = entryWindowInfos(path.path());
+        for (auto it(infos.cbegin()); it != infos.cend(); ++it)
+            items << createAppItem(path, it.key());
+    }
+    // 没有窗口（仅驻留）或未开启拆分时，整个条目一个图标
+    if (items.isEmpty())
+        items << createAppItem(path);
+
+    int index = insertIndex;
+    for (AppItem *item : items) {
+        m_itemList.insert(index, item);
+        emit itemInserted(index, item);
+        ++index;
+    }
+    return items.size();
+}
+
+AppItem *DockItemController::findSplitItem(const QString &entryPath,
+        const quint32 windowId) const
+{
+    for (const QPointer<DockItem> &item : m_itemList) {
+        if (item.isNull() || item->itemType() != DockItem::App)
+            continue;
+        AppItem *app = static_cast<AppItem *>(item.data());
+        if (app->getEntryPath() == entryPath && app->windowId() == windowId)
+            return app;
+    }
+    return nullptr;
+}
+
+void DockItemController::removeEntryPlaceholder(const QString &entryPath)
+{
+    for (int i = 0; i < m_itemList.size(); ) {
+        const QPointer<DockItem> item = m_itemList.at(i);
+        if (!item.isNull() && item->itemType() == DockItem::App) {
+            AppItem *app = static_cast<AppItem *>(item.data());
+            if (app->getEntryPath() == entryPath && app->windowId() == 0) {
+                appItemRemoved(app);
+                continue;
+            }
+        }
+        ++i;
+    }
 }
 
 void DockItemController::appItemAdded(const QDBusObjectPath& path,
@@ -320,6 +496,13 @@ void DockItemController::appItemAdded(const QDBusObjectPath& path,
                     ->getEntryPath() == path.path()) {
             return;
         }
+    }
+
+    // 不合并图标时同一条目的多个图标共享名称，无法按名称替换失效条目，
+    // 失效条目交由 EntryRemoved / reloadAppItems 清理
+    if (windowSplitEnabled()) {
+        insertAppItemsForEntry(path, appAreaInsertIndex(index));
+        return;
     }
 
     AppItem* newItem = createAppItem(path);
@@ -487,36 +670,56 @@ void DockItemController::syncAppItems(const QList<QDBusObjectPath>& entries) {
     int targetIndex = 1;
 
     for (const QDBusObjectPath &path : entries) {
-        AppItem* matchingItem = nullptr;
-
+        // 同一条目在拆分模式下可能已有多个图标，按整组处理
+        QList<AppItem *> group;
         for (const QPointer<DockItem> &item : m_itemList) {
-            if (item.isNull() || item->itemType() != DockItem::App) {
+            if (item.isNull() || item->itemType() != DockItem::App)
                 continue;
-            }
+            AppItem *appItem = static_cast<AppItem *>(item.data());
+            if (appItem->getEntryPath() == path.path())
+                group << appItem;
+        }
 
-            AppItem* appItem = static_cast<AppItem *>(item.data());
-            if (!retainedItems.contains(appItem)
-                    && appItem->getEntryPath() == path.path()) {
-                matchingItem = appItem;
+        if (group.isEmpty()) {
+            const int inserted = insertAppItemsForEntry(path, targetIndex);
+            for (int i = 0; i < inserted; ++i) {
+                DockItem *item = m_itemList.at(targetIndex + i).data();
+                if (item && item->itemType() == DockItem::App)
+                    retainedItems.insert(static_cast<AppItem *>(item));
+            }
+            targetIndex += inserted;
+            continue;
+        }
+
+        // 整组已就位则无需移动
+        bool inPlace = true;
+        for (int i = 0; i < group.size(); ++i) {
+            const int idx = targetIndex + i;
+            if (idx >= m_itemList.size()
+                    || m_itemList.at(idx).data() != group.at(i)) {
+                inPlace = false;
                 break;
             }
         }
 
-        if (!matchingItem) {
-            matchingItem = createAppItem(path);
-            m_itemList.insert(targetIndex, matchingItem);
-            emit itemInserted(targetIndex, matchingItem);
-        } else {
-            const int currentIndex = m_itemList.indexOf(matchingItem);
-            if (currentIndex != targetIndex) {
-                m_itemList.removeAt(currentIndex);
-                m_itemList.insert(targetIndex, matchingItem);
-                emit itemMoved(matchingItem, targetIndex);
+        if (!inPlace) {
+            // 先移除整组，再按目标位置重新插入
+            for (int i = m_itemList.size() - 1; i >= 0; --i) {
+                AppItem *app = qobject_cast<AppItem *>(m_itemList.at(i).data());
+                if (app && group.contains(app))
+                    m_itemList.removeAt(i);
+            }
+            int insertAt = qBound(1, targetIndex, m_itemList.size());
+            for (AppItem *app : group) {
+                m_itemList.insert(insertAt, app);
+                emit itemMoved(app, insertAt);
+                ++insertAt;
             }
         }
 
-        retainedItems.insert(matchingItem);
-        ++targetIndex;
+        for (AppItem *app : group)
+            retainedItems.insert(app);
+        targetIndex += group.size();
     }
 
     for (int i = m_itemList.size() - 1; i >= 0; --i) {

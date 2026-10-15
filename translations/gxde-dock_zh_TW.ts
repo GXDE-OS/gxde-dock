@@ -224,7 +224,7 @@
     <message>
         <location filename="../frame/util/docksettings.cpp" line="167"/>
         <source>Window Split</source>
-        <translation>合併圖標</translation>
+        <translation>不合併圖標</translation>
     </message>
 </context>
 <context>

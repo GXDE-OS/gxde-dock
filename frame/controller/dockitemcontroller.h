@@ -25,6 +25,8 @@
 #include <QObject>
 #include <QHash>
 
+#include <types/windowinfomap.h>
+
 #include "dockpluginscontroller.h"
 #include "pluginsiteminterface.h"
 #include "item/dockitem.h"
@@ -79,18 +81,28 @@ public slots:
 
 private:
     explicit DockItemController(QScreen *screen, QObject *parent = nullptr);
-    AppItem* createAppItem(const QDBusObjectPath& path);
+    AppItem* createAppItem(const QDBusObjectPath& path, const quint32 windowId = 0);
     void appItemAdded(const QDBusObjectPath &path, const int index);
     void appItemRemoved(const QString &appId);
     void appItemRemoved(AppItem *appItem);
     void syncAppItems(const QList<QDBusObjectPath>& entries);
     void pluginItemInserted(PluginsItem *item);
     void pluginItemRemoved(PluginsItem *item);
+    // 不合并图标（窗口拆分）辅助函数
+    bool windowSplitEnabled() const;
+    WindowInfoMap entryWindowInfos(const QString &entryPath) const;
+    int appAreaInsertIndex(const int entryIndex) const;
+    int insertAppItemsForEntry(const QDBusObjectPath &path, const int insertIndex);
+    AppItem *findSplitItem(const QString &entryPath, const quint32 windowId) const;
+    void removeEntryPlaceholder(const QString &entryPath);
 
 private slots:
     // 系统休眠唤醒后主动重新同步窗口/条目，修复休眠后状态错乱
     void connectToLoginManager();
     void onPrepareForSleep(bool active);
+    // 不合并图标模式下条目窗口列表变化
+    void onSplitWindowAppeared(const quint32 winId);
+    void onSplitWindowClosed(const quint32 winId);
 
 
 private:
