@@ -1,4 +1,4 @@
-gxde-dock (6.0.27) UNRELEASED; urgency=medium
+gxde-dock (6.0.28) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 修复 VNC 等非本地会话下网络插件频繁触发 polkit 弹窗的问题
@@ -9,8 +9,9 @@ gxde-dock (6.0.27) UNRELEASED; urgency=medium
   * feat: 支持在sound插件快速修改音频播放设备
   * feat: 优化任务栏高效模式时间插件在左右以及上下小的UI显示
   * feat: 优化资源监视器插件在小任务栏显示不全的问题
+  * fix: 修复无法不合并图标的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Thu, 15 Oct 2026 08:31:26 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Thu, 15 Oct 2026 16:54:44 +0800
 
 gxde-dock (6.0.23) UNRELEASED; urgency=medium
 
