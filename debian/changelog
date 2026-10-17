@@ -1,3 +1,10 @@
+gxde-dock (6.0.29) UNRELEASED; urgency=medium
+
+  [ shenmo ]
+  * 修复资源监视器插件文字被挤成一团的问题
+
+ -- shenmo <shenmo@spark-app.store>  Sat, 17 Oct 2026 12:35:00 +0800
+
 gxde-dock (6.0.28) UNRELEASED; urgency=medium
 
   [ shenmo ]

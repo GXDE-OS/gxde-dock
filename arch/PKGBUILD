@@ -1,7 +1,7 @@
 # Maintainer: CharOfString <root@charofstring.cc>
 pkgbase=gxde-dock-git
 pkgname=('gxde-dock-git' 'gxde-dock-onboard-plugin-git')
-pkgver=6.0.28
+pkgver=6.0.29
 pkgrel=1
 pkgdesc='GXDE dock'
 arch=('x86_64' 'aarch64')
