@@ -25,6 +25,10 @@ public:
     explicit InformationWidget(QWidget *parent = nullptr);
     void UpdateData(const Info& info,Dock::DisplayMode dismode,const Settings& settings);
 
+signals:
+    // 文字内容变化导致 sizeHint 改变时发出，通知面板重新计算条目尺寸
+    void requestUpdateGeometry() const;
+
 protected:
     // 条目尺寸变化时(切换任务栏大小/位置/显示模式)调整字体与边距
     void resizeEvent(QResizeEvent *event) override;

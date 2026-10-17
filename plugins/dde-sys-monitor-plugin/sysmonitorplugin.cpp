@@ -202,6 +202,11 @@ void SysMonitorPlugin::init(PluginProxyInterface *proxyInter)
     m_proxyInter = proxyInter;
 
     m_pluginWidget = new InformationWidget;
+    // 文字宽度变化时通知面板重新计算条目尺寸，避免文字被截断/挤在一起
+    connect(m_pluginWidget, &InformationWidget::requestUpdateGeometry, this, [this] {
+        if (m_proxyInter)
+            m_proxyInter->itemUpdate(this, pluginName());
+    });
     m_tipsWidget = new QLabel;
     m_appletWidget = new QLabel;
 	font.setFamily("Noto Mono");
@@ -216,6 +221,10 @@ void SysMonitorPlugin::init(PluginProxyInterface *proxyInter)
 
     // 如果插件没有被禁用则在初始化插件时才添加主控件到面板上
     if (!pluginIsDisable()) {
+        // 先把数据填进标签再添加条目：面板是按控件的 sizeHint 分配尺寸的，
+        // 空标签的 sizeHint 很小，若此时插入条目，之后即使文字变宽，
+        // 面板也不会再把条目放大，文字就会被挤在很小的条目里。
+        refreshInfo();
         m_proxyInter->itemAdded(this, pluginName());
     }
 
