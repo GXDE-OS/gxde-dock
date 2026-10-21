@@ -1,3 +1,10 @@
+gxde-dock (6.0.30) UNRELEASED; urgency=medium
+
+  * 修复启动器「开始」图标在HDPI下大锯齿的问题
+  * 修复高效模式在Wayland下莫名地有圆角和padding的问题
+
+ -- CharOfString <root@charofstring.cc>  Tue, 21 Oct 2026 00:17:03 -0500
+
 gxde-dock (6.0.29) UNRELEASED; urgency=medium
 
   [ shenmo ]
