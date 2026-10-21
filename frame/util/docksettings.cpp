@@ -107,6 +107,10 @@ QString displayModeToString(const DisplayMode m) {
     }
 }
 
+QString v23FlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-mode";
+}
+
 HideMode hideModeFromString(const QString& s) {
     if (s == "keep-hidden") {
         return KeepHidden;
@@ -153,6 +157,7 @@ DockSettings::DockSettings(QWidget *parent)
     , m_fashionTraySize(QSize(0, 0))
     , m_fashionModeAct(tr("Fashion Mode"), this)
     , m_efficientModeAct(tr("Efficient Mode"), this)
+    , m_v23ModeAct(tr("Deepin V23 Mode"), this)
     , m_topPosAct(tr("Top"), this)
     , m_bottomPosAct(tr("Bottom"), this)
     , m_leftPosAct(tr("Left"), this)
@@ -193,6 +198,7 @@ DockSettings::DockSettings(QWidget *parent)
 
     m_fashionModeAct.setCheckable(true);
     m_efficientModeAct.setCheckable(true);
+    m_v23ModeAct.setCheckable(true);
     m_topPosAct.setCheckable(true);
     m_bottomPosAct.setCheckable(true);
     m_leftPosAct.setCheckable(true);
@@ -208,6 +214,7 @@ DockSettings::DockSettings(QWidget *parent)
     WhiteMenu *modeSubMenu = new WhiteMenu(&m_settingsMenu);
     modeSubMenu->addAction(&m_fashionModeAct);
     modeSubMenu->addAction(&m_efficientModeAct);
+    modeSubMenu->addAction(&m_v23ModeAct);
     QAction *modeSubMenuAct = new QAction(tr("Mode"), this);
     modeSubMenuAct->setMenu(modeSubMenu);
     modeSubMenuAct->setDisabled(QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode"));
@@ -507,9 +514,10 @@ const QSize DockSettings::windowSize(QScreen *screen) const
         return size;
     }
 
-    // 只有全宽显示模式（高效/经典）才按屏幕几何铺满；
+    // 只有全宽显示模式（高效/经典/V23）才按屏幕几何铺满；
     // 时尚模式的尺寸必须保持按条目数计算，否则副屏会被错误拉伸成整屏宽。
-    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic) {
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic
+        || m_displayMode == Dock::V23) {
         const QRect screenRect = effectiveScreenRect(screen);
         switch (m_position) {
         case Top:
@@ -553,7 +561,7 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
         const QString &display = p->pluginDisplayName();
 
         // do not show trash in context menu under Efficient mode
-        if (m_displayMode == Efficient && name == "trash") {
+        if ((m_displayMode == Efficient || m_displayMode == V23) && name == "trash") {
             continue;
         }
 
@@ -577,6 +585,7 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
 
     m_fashionModeAct.setChecked(m_displayMode == Fashion);
     m_efficientModeAct.setChecked(m_displayMode == Efficient);
+    m_v23ModeAct.setChecked(m_displayMode == V23);
     m_topPosAct.setChecked(m_position == Top);
     m_topPosAct.setEnabled(!m_forbidPositions.contains(Top));
     m_bottomPosAct.setChecked(m_position == Bottom);
@@ -770,6 +779,8 @@ void DockSettings::menuActionClicked(QAction *action)
         return writeDisplayMode(Fashion);
     if (action == &m_efficientModeAct)
         return writeDisplayMode(Efficient);
+    if (action == &m_v23ModeAct)
+        return writeDisplayMode(V23);
 
     if (action == &m_topPosAct)
         return writePosition(Top);
@@ -850,7 +861,15 @@ void DockSettings::iconSizeChanged()
 void DockSettings::onDisplayModeChanged()
 {
 //    qDebug() << Q_FUNC_INFO;
-    m_displayMode = currentDisplayMode();
+    applyDisplayMode(currentDisplayMode());
+}
+
+void DockSettings::applyDisplayMode(const DisplayMode mode)
+{
+    if (m_displayMode == mode)
+        return;
+
+    m_displayMode = mode;
     DockItem::setDockDisplayMode(m_displayMode);
     qApp->setProperty(PROP_DISPLAY_MODE, QVariant::fromValue(m_displayMode));
 
@@ -888,7 +907,7 @@ void DockSettings::hideStateChanged()
 
 void DockSettings::dockItemCountChanged()
 {
-    if (m_displayMode == Dock::Efficient)
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::V23)
         return;
 
     calculateWindowConfig();
@@ -1000,7 +1019,7 @@ void DockSettings::onOpacityChanged(const double value)
 
 void DockSettings::onFashionTraySizeChanged(const QSize &traySize)
 {
-    if (m_displayMode == Dock::Efficient)
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::V23)
         return;
 
     if (m_fashionTraySize == traySize)
@@ -1024,7 +1043,29 @@ void DockSettings::calculateWindowConfig()
     const int defaultHeight = std::round(AppItem::itemBaseHeight() / ratio);
     const int defaultWidth = std::round(AppItem::itemBaseWidth() / ratio);
 
-    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic)
+    if (m_displayMode == Dock::V23)
+    {
+        // Duplicated from the Efficient branch on purpose: V23 layout will
+        // diverge from Efficient as the mode is rebuilt.
+        switch (m_position)
+        {
+        case Top:
+        case Bottom:
+            m_mainWindowSize.setHeight(defaultHeight + PANEL_BORDER);
+            m_mainWindowSize.setWidth(primaryRect().width());
+            break;
+
+        case Left:
+        case Right:
+            m_mainWindowSize.setHeight(primaryRect().height());
+            m_mainWindowSize.setWidth(defaultWidth + PANEL_BORDER);
+            break;
+
+        default:
+            Q_ASSERT(false);
+        }
+    }
+    else if (m_displayMode == Dock::Efficient || m_displayMode == Dock::Classic)
     {
         switch (m_position)
         {
@@ -1125,6 +1166,11 @@ Position DockSettings::currentPosition() const {
 }
 
 DisplayMode DockSettings::currentDisplayMode() const {
+    // V23 is frontend-local: the daemon and gsettings keep the mode that was
+    // active before V23 was selected; the flag file takes precedence.
+    if (QFile::exists(v23FlagPath())) {
+        return V23;
+    }
     if (m_daemonAvailable) {
         return Dock::DisplayMode(m_dockInter->displayMode());
     } else {
@@ -1167,10 +1213,30 @@ void DockSettings::writePosition(const Position position) {
 }
 
 void DockSettings::writeDisplayMode(const DisplayMode mode) {
+    if (mode == V23) {
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile flag(v23FlagPath());
+        if (flag.open(QIODevice::WriteOnly))
+            flag.close();
+        applyDisplayMode(V23);
+        return;
+    }
+
+    const bool leavingV23 = QFile::exists(v23FlagPath());
+    if (leavingV23) {
+        QFile::remove(v23FlagPath());
+    }
+
     if (m_daemonAvailable) {
         m_dockInter->setDisplayMode(mode);
     } else {
         m_dockGsettings->set("display-mode", displayModeToString(mode));
+    }
+
+    // The daemon emits no DisplayModeChanged when the stored value already
+    // equals the written one, so apply the transition when leaving V23.
+    if (leavingV23) {
+        applyDisplayMode(mode);
     }
 }
 

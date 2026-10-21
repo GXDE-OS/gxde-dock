@@ -55,6 +55,9 @@ enum DisplayMode {
     Efficient   = 1,
     // deprecreated
     Classic     = 2,
+    // Frontend-local mode; not representable in the daemon or the gsettings
+    // DisplayMode enum, persisted via a flag file (see DockSettings).
+    V23         = 3,
 };
 
 #define PROP_HIDE_MODE      "HideMode"

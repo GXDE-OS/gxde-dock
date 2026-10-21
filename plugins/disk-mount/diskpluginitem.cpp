@@ -78,7 +78,7 @@ QSize DiskPluginItem::sizeHint() const
 
 void DiskPluginItem::updateIcon()
 {
-    if (m_displayMode == Dock::Efficient)
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::V23)
 //        m_icon = ImageUtil::loadSvg(":/icons/resources/icon-small.svg", 16);
         m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16, 16);
     else

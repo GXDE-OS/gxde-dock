@@ -46,7 +46,7 @@ void OnboardItem::paintEvent(QPaintEvent *e)
     int iconSize;
     const Dock::DisplayMode displayMode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
 
-    if (displayMode == Dock::Efficient) {
+    if (displayMode == Dock::Efficient || displayMode == Dock::V23) {
         iconName = iconName + "-symbolic";
         iconSize = 16;
     } else {
