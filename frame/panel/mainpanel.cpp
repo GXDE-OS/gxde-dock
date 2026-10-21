@@ -167,7 +167,8 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
 
     const auto &itemList = m_itemController->itemList();
 
-    m_showDesktopItem->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic);
+    m_showDesktopItem->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic
+        || displayMode == Dock::V23);
 
     for (auto item : itemList)
     {
@@ -175,7 +176,8 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
         switch (item->itemType())
         {
         case DockItem::Container:
-            item->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic);
+            item->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic
+                || displayMode == Dock::V23);
             break;
         default:;
         }

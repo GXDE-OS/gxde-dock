@@ -271,12 +271,12 @@ void AppItem::moveEvent(QMoveEvent *e)
     m_updateIconGeometryTimer->start();
 }
 
-int AppItem::itemBaseHeight()
-{
-    if (DockDisplayMode == Efficient || DockDisplayMode == Classic)
+int AppItem::itemBaseHeight() {
+    if (DockDisplayMode == Efficient || DockDisplayMode == Classic || DockDisplayMode == V23) {
         return IconBaseSize * 1.2;
-    else
+    } else {
         return IconBaseSize * 1.5;
+    }
 }
 
 void AppItem::paintEvent(QPaintEvent *e)
@@ -297,12 +297,10 @@ void AppItem::paintEvent(QPaintEvent *e)
     // draw background
     QRectF backgroundRect = itemRect;
 
-    if (DockDisplayMode == Efficient)
-    {
+    if (DockDisplayMode == Efficient || DockDisplayMode == V23) {
         backgroundRect = itemRect.marginsRemoved(QMargins(1, 1, 1, 1));
 
-        if (m_active)
-        {
+        if (m_active) {
             painter.fillRect(backgroundRect, QColor(44, 167, 248, 255 * 0.3));
 
             const int activeLineWidth = itemRect.height() > 50 ? 4 : 2;
@@ -316,9 +314,7 @@ void AppItem::paintEvent(QPaintEvent *e)
             }
 
             painter.fillRect(activeRect, QColor(44, 167, 248, 255));
-        }
-        else if (!m_windowInfos.isEmpty())
-        {
+        } else if (!m_windowInfos.isEmpty()) {
             if (hasAttention())
                 painter.fillRect(backgroundRect, QColor(241, 138, 46, 255 * .8));
             else
@@ -699,7 +695,7 @@ void AppItem::refershIcon()
     const QString icon = m_itemEntryInter->icon();
     const int iconSize = qMin(width(), height());
 
-    if (DockDisplayMode == Efficient)
+    if (DockDisplayMode == Efficient || DockDisplayMode == V23)
         m_appIcon = ThemeAppIcon::getIcon(icon, iconSize * 0.7, devicePixelRatioF());
     else
         m_appIcon = ThemeAppIcon::getIcon(icon, iconSize * 0.8, devicePixelRatioF());

@@ -147,6 +147,7 @@ private:
     double currentOpacity() const;
     void writePosition(const Position position);
     void writeDisplayMode(const DisplayMode mode);
+    void applyDisplayMode(const DisplayMode mode);
     void writeHideMode(const HideMode mode);
     void writeIconSize(const int size);
     void onGsettingsChanged();
@@ -175,6 +176,7 @@ private:
     QWidget *m_menuMask = nullptr;
     QAction m_fashionModeAct;
     QAction m_efficientModeAct;
+    QAction m_v23ModeAct;
     QAction m_topPosAct;
     QAction m_bottomPosAct;
     QAction m_leftPosAct;

@@ -404,7 +404,7 @@ void TrayPlugin::addTrayWidget(const QString &itemKey, AbstractTrayWidget *trayW
 
     m_trayMap.insert(itemKey, trayWidget);
 
-    if (displayMode() == Dock::Efficient) {
+    if (displayMode() == Dock::Efficient || displayMode() == Dock::V23) {
         m_proxyInter->itemAdded(this, itemKey);
     } else {
         m_proxyInter->itemAdded(this, FASHION_MODE_ITEM_KEY);
@@ -489,7 +489,7 @@ void TrayPlugin::trayRemoved(const QString &itemKey, const bool deleteObject)
 
     AbstractTrayWidget *widget = m_trayMap.take(itemKey);
 
-    if (displayMode() == Dock::Efficient) {
+    if (displayMode() == Dock::Efficient || displayMode() == Dock::V23) {
         m_proxyInter->itemRemoved(this, itemKey);
     } else {
         m_fashionItem->trayWidgetRemoved(widget);

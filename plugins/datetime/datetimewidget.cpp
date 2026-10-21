@@ -230,7 +230,8 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if (displayMode == Dock::Efficient || displayMode == Dock::Classic)
+    if (displayMode == Dock::Efficient || displayMode == Dock::Classic
+        || displayMode == Dock::V23)
     {
         const QFont font = fitFont();
         painter.setFont(font);

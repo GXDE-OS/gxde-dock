@@ -51,7 +51,7 @@ LauncherItem::LauncherItem(QWidget *parent)
 void LauncherItem::refershIcon() {
     const int iconSize = qMin(width(), height());
     m_iconDpr = devicePixelRatioF();
-    if (DockDisplayMode == Efficient) {
+    if (DockDisplayMode == Efficient || DockDisplayMode == V23) {
         m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.7, m_iconDpr);
         m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.9, m_iconDpr);
     } else {
