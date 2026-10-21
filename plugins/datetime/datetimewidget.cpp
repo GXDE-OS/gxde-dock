@@ -41,6 +41,7 @@ DatetimeWidget::DatetimeWidget(QWidget *parent)
     : QWidget(parent)
     , m_24HourFormat(true)
     , m_lineCount(0)
+    , m_v23Width(0)
 {
 
 }
@@ -67,6 +68,9 @@ void DatetimeWidget::set24HourFormat(const bool value)
 
 QSize DatetimeWidget::sizeHint() const
 {
+    if (isV23Horizontal())
+        return QSize(v23Width(), height());
+
     const QFont font = fitFont();
     const QFontMetrics fm(font);
     const QStringList lines = textLinesFor(font);
@@ -92,7 +96,8 @@ QFont DatetimeWidget::fitFont() const
 
     // 时尚模式使用图标而非文字，保持基准字体即可
     const Dock::DisplayMode displayMode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
-    if (displayMode != Dock::Efficient && displayMode != Dock::Classic)
+    if (displayMode != Dock::Efficient && displayMode != Dock::Classic
+        && displayMode != Dock::V23)
         return font;
 
     const bool usePointSize = font.pointSize() > 0;
@@ -209,8 +214,10 @@ void DatetimeWidget::resizeEvent(QResizeEvent *e)
     // 否则面板拿到的仍是旧的条目尺寸
     const QFont font = fitFont();
     const int lineCount = textLinesFor(font).count();
-    if (lineCount != m_lineCount || font != m_font) {
+    const int v23ItemWidth = isV23Horizontal() ? v23Width() : 0;
+    if (lineCount != m_lineCount || font != m_font || v23ItemWidth != m_v23Width) {
         m_lineCount = lineCount;
+        m_v23Width = v23ItemWidth;
         m_font = font;
         updateGeometry();
         emit requestUpdateGeometry();
@@ -230,12 +237,17 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    if (isV23Horizontal()) {
+        paintV23(painter);
+        return;
+    }
+
     if (displayMode == Dock::Efficient || displayMode == Dock::Classic
         || displayMode == Dock::V23)
     {
         const QFont font = fitFont();
         painter.setFont(font);
-        painter.setPen(Qt::white);
+        painter.setPen(Dock::isV23Light() ? QColor(0x1f, 0x1f, 0x1f) : QColor(Qt::white));
         painter.drawText(rect(), Qt::AlignCenter, textLinesFor(font).join("\n"));
         return;
     }
@@ -345,4 +357,77 @@ const QPixmap DatetimeWidget::loadSvg(const QString &fileName, const QSize size)
     pixmap.setDevicePixelRatio(ratio);
 
     return pixmap;
+}
+
+bool DatetimeWidget::isV23Horizontal() const
+{
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+    return Dock::isV23Mode() && (position == Dock::Top || position == Dock::Bottom);
+}
+
+bool DatetimeWidget::v23TwoRows() const
+{
+    return height() <= 0 || height() >= 30;
+}
+
+QFont DatetimeWidget::v23TimeFont() const
+{
+    // V23 taskbar: medium-weight time above a smaller date
+    QFont font = this->font();
+    const int h = height() > 0 ? height() : 40;
+    font.setPixelSize(qBound(12, qRound(h * 0.34), 16));
+    font.setWeight(QFont::Medium);
+    return font;
+}
+
+QFont DatetimeWidget::v23DateFont() const
+{
+    QFont font = this->font();
+    font.setPixelSize(v23TimeFont().pixelSize() - 3);
+    return font;
+}
+
+QString DatetimeWidget::v23TimeText() const
+{
+    return QDateTime::currentDateTime().toString(m_24HourFormat ? "hh:mm" : "hh:mm AP");
+}
+
+QString DatetimeWidget::v23DateText() const
+{
+    return QDateTime::currentDateTime().toString("yyyy/MM/dd");
+}
+
+int DatetimeWidget::v23Width() const
+{
+    int width = QFontMetrics(v23TimeFont()).horizontalAdvance(v23TimeText());
+    if (v23TwoRows())
+        width = qMax(width, QFontMetrics(v23DateFont()).horizontalAdvance(v23DateText()));
+
+    return width + 16;
+}
+
+void DatetimeWidget::paintV23(QPainter &painter)
+{
+    const QColor textColor = Dock::isV23Light() ? QColor(0x1f, 0x1f, 0x1f) : QColor(Qt::white);
+    const QFont timeFont = v23TimeFont();
+    const QFont dateFont = v23DateFont();
+
+    painter.setPen(textColor);
+
+    if (!v23TwoRows()) {
+        painter.setFont(timeFont);
+        painter.drawText(rect(), Qt::AlignCenter, v23TimeText());
+        return;
+    }
+
+    const int timeHeight = QFontMetrics(timeFont).height();
+    const int dateHeight = QFontMetrics(dateFont).height();
+    const int top = (height() - timeHeight - dateHeight) / 2;
+
+    painter.setFont(timeFont);
+    painter.drawText(QRect(0, top, width(), timeHeight), Qt::AlignCenter, v23TimeText());
+
+    painter.setFont(dateFont);
+    painter.setOpacity(0.8);
+    painter.drawText(QRect(0, top + timeHeight, width(), dateHeight), Qt::AlignCenter, v23DateText());
 }

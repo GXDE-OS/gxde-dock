@@ -142,7 +142,8 @@ BindContext displayBindings(wl_display *display)
     return ctx;
 }
 
-void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect) {
+void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect,
+           int blurStrength) {
     if (!window || radius < 0) {
         return;
     }
@@ -254,7 +255,7 @@ void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect) 
 
             if (regionApplied) {
                 blurObjects().insert(window, blur);
-                org_kde_kwin_blur_set_strength(blur, 300);
+                org_kde_kwin_blur_set_strength(blur, blurStrength);
                 org_kde_kwin_blur_commit(blur);
                 blurApplied = true;
             }

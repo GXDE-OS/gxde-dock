@@ -59,6 +59,8 @@ PluginsItem::PluginsItem(PluginsItemInterface* const pluginInter, const QString 
     setLayout(hLayout);
     setAccessibleName(pluginInter->pluginName() + "-" + m_itemKey);
     setAttribute(Qt::WA_TranslucentBackground);
+
+    m_hoverEffect->setTintMonochrome(true);
 }
 
 PluginsItem::~PluginsItem()
@@ -138,6 +140,11 @@ void PluginsItem::paintEvent(QPaintEvent *event)
         return;
     }
     if (!m_hover || m_dragging) {
+        return;
+    }
+
+    if (DockDisplayMode == Dock::V23) {
+        paintV23Hover();
         return;
     }
 
@@ -346,4 +353,25 @@ void PluginsItem::mouseClicked()
     QWidget *w = m_pluginInter->itemPopupApplet(m_itemKey);
     if (w)
         showPopupApplet(w);
+}
+
+void PluginsItem::paintV23Hover()
+{
+    QRectF plateRect = rect();
+    if (DockPosition == Dock::Top || DockPosition == Dock::Bottom) {
+        const int plateHeight = qBound(20, height() - 4, 30);
+        plateRect.setTop((height() - plateHeight) / 2.0);
+        plateRect.setHeight(plateHeight);
+    } else {
+        const int plateWidth = qBound(20, width() - 4, 30);
+        plateRect.setLeft((width() - plateWidth) / 2.0);
+        plateRect.setWidth(plateWidth);
+    }
+
+    QPainterPath path;
+    path.addRoundedRect(plateRect, 8, 8);
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.fillPath(path, v23PlateColor(V23PlateRunningHover));
 }

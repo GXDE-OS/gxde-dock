@@ -36,6 +36,7 @@
 #include <QDBusConnectionInterface>
 
 #include <DApplication>
+#include <DGuiApplicationHelper>
 #include <QApplication>
 #include <QScreen>
 
@@ -111,6 +112,10 @@ QString v23FlagPath() {
     return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-mode";
 }
 
+QString v23ThemeFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-theme";
+}
+
 HideMode hideModeFromString(const QString& s) {
     if (s == "keep-hidden") {
         return KeepHidden;
@@ -158,6 +163,9 @@ DockSettings::DockSettings(QWidget *parent)
     , m_fashionModeAct(tr("Fashion Mode"), this)
     , m_efficientModeAct(tr("Efficient Mode"), this)
     , m_v23ModeAct(tr("Deepin V23 Mode"), this)
+    , m_themeFollowAct(tr("Follow System Theme"), this)
+    , m_themeDarkAct(tr("Force Dark"), this)
+    , m_themeLightAct(tr("Force Light"), this)
     , m_topPosAct(tr("Top"), this)
     , m_bottomPosAct(tr("Bottom"), this)
     , m_leftPosAct(tr("Left"), this)
@@ -196,9 +204,17 @@ DockSettings::DockSettings(QWidget *parent)
     DockItem::setDockDisplayMode(m_displayMode);
     qApp->setProperty(PROP_DISPLAY_MODE, QVariant::fromValue(m_displayMode));
 
+    m_v23Theme = currentV23Theme();
+    applyV23Theme();
+    connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
+            this, &DockSettings::applyV23Theme);
+
     m_fashionModeAct.setCheckable(true);
     m_efficientModeAct.setCheckable(true);
     m_v23ModeAct.setCheckable(true);
+    m_themeFollowAct.setCheckable(true);
+    m_themeDarkAct.setCheckable(true);
+    m_themeLightAct.setCheckable(true);
     m_topPosAct.setCheckable(true);
     m_bottomPosAct.setCheckable(true);
     m_leftPosAct.setCheckable(true);
@@ -218,6 +234,13 @@ DockSettings::DockSettings(QWidget *parent)
     QAction *modeSubMenuAct = new QAction(tr("Mode"), this);
     modeSubMenuAct->setMenu(modeSubMenu);
     modeSubMenuAct->setDisabled(QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode"));
+
+    WhiteMenu *themeSubMenu = new WhiteMenu(&m_settingsMenu);
+    themeSubMenu->addAction(&m_themeFollowAct);
+    themeSubMenu->addAction(&m_themeDarkAct);
+    themeSubMenu->addAction(&m_themeLightAct);
+    m_themeSubMenuAct = new QAction(tr("Theme"), this);
+    m_themeSubMenuAct->setMenu(themeSubMenu);
 
     WhiteMenu *locationSubMenu = new WhiteMenu(&m_settingsMenu);
     locationSubMenu->addAction(&m_topPosAct);
@@ -246,6 +269,7 @@ DockSettings::DockSettings(QWidget *parent)
     hideSubMenuAct->setMenu(m_hideSubMenu);
 
     m_settingsMenu.addAction(modeSubMenuAct);
+    m_settingsMenu.addAction(m_themeSubMenuAct);
     m_settingsMenu.addAction(locationSubMenuAct);
     m_settingsMenu.addAction(sizeSubMenuAct);
     m_settingsMenu.addAction(statusSubMenuAct);
@@ -586,6 +610,10 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
     m_fashionModeAct.setChecked(m_displayMode == Fashion);
     m_efficientModeAct.setChecked(m_displayMode == Efficient);
     m_v23ModeAct.setChecked(m_displayMode == V23);
+    m_themeFollowAct.setChecked(m_v23Theme == V23ThemeFollowSystem);
+    m_themeDarkAct.setChecked(m_v23Theme == V23ThemeDark);
+    m_themeLightAct.setChecked(m_v23Theme == V23ThemeLight);
+    m_themeSubMenuAct->setVisible(m_displayMode == V23);
     m_topPosAct.setChecked(m_position == Top);
     m_topPosAct.setEnabled(!m_forbidPositions.contains(Top));
     m_bottomPosAct.setChecked(m_position == Bottom);
@@ -781,6 +809,12 @@ void DockSettings::menuActionClicked(QAction *action)
         return writeDisplayMode(Efficient);
     if (action == &m_v23ModeAct)
         return writeDisplayMode(V23);
+    if (action == &m_themeFollowAct)
+        return writeV23Theme(V23ThemeFollowSystem);
+    if (action == &m_themeDarkAct)
+        return writeV23Theme(V23ThemeDark);
+    if (action == &m_themeLightAct)
+        return writeV23Theme(V23ThemeLight);
 
     if (action == &m_topPosAct)
         return writePosition(Top);
@@ -1045,8 +1079,7 @@ void DockSettings::calculateWindowConfig()
 
     if (m_displayMode == Dock::V23)
     {
-        // Duplicated from the Efficient branch on purpose: V23 layout will
-        // diverge from Efficient as the mode is rebuilt.
+        // V23 is a full-width taskbar, sharing the Efficient layout.
         switch (m_position)
         {
         case Top:
@@ -1238,6 +1271,70 @@ void DockSettings::writeDisplayMode(const DisplayMode mode) {
     if (leavingV23) {
         applyDisplayMode(mode);
     }
+}
+
+V23Theme DockSettings::currentV23Theme() const {
+    QFile file(v23ThemeFlagPath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return V23ThemeFollowSystem;
+    }
+    const QByteArray value = file.readAll().trimmed();
+    if (value == "dark") {
+        return V23ThemeDark;
+    }
+    if (value == "light") {
+        return V23ThemeLight;
+    }
+    return V23ThemeFollowSystem;
+}
+
+void DockSettings::writeV23Theme(const V23Theme theme) {
+    m_v23Theme = theme;
+
+    if (theme == V23ThemeFollowSystem) {
+        QFile::remove(v23ThemeFlagPath());
+    } else {
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile file(v23ThemeFlagPath());
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(theme == V23ThemeDark ? "dark" : "light");
+            file.close();
+        }
+    }
+
+    applyV23Theme();
+}
+
+void DockSettings::applyV23Theme()
+{
+    // The V23 color theme only drives the dock's own painting (panel, item
+    // plates, tray icons, datetime); the application palette is left alone so
+    // menus and popup applets keep following the system.
+    bool light = false;
+    switch (m_v23Theme) {
+    case V23ThemeLight:
+        light = true;
+        break;
+    case V23ThemeDark:
+        light = false;
+        break;
+    default:
+        light = Dtk::Gui::DGuiApplicationHelper::instance()->themeType()
+            == Dtk::Gui::DGuiApplicationHelper::LightType;
+        break;
+    }
+
+    if (light == m_v23Light && qApp->property(PROP_V23_LIGHT_THEME).isValid())
+        return;
+
+    m_v23Light = light;
+    qApp->setProperty(PROP_V23_LIGHT_THEME, light);
+
+    emit v23ThemeChanged();
+
+    // plugins have no theme notification, repaint everything
+    for (QWidget *w : qApp->allWidgets())
+        w->update();
 }
 
 void DockSettings::writeHideMode(const HideMode mode) {

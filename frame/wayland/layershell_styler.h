@@ -26,7 +26,7 @@ namespace Wayland {
 namespace LayerShellStyler {
 
 void apply(QWindow *window, int radius, bool enableBlur,
-           const QRect &blurRect = QRect());
+           const QRect &blurRect = QRect(), int blurStrength = 300);
 
 }  // namespace LayerShellStyler
 }  // namespace Wayland

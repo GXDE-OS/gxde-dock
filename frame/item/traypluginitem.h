@@ -41,6 +41,7 @@ Q_SIGNALS:
 
 private:
     bool eventFilter(QObject *watched, QEvent *e) Q_DECL_OVERRIDE;
+    void updateGraphicsEffect();
 };
 
 #endif // TRAYPLUGINITEM_H

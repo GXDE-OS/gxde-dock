@@ -43,6 +43,17 @@ const char *RequestDockKeyFallback = "text/plain";
 
 const char *DesktopMimeType = "application/x-desktop";
 
+// V23 efficient-mode panel tint, painted over the compositor blur
+static QColor v23PanelColor()
+{
+    const bool light = DockSettings::Instance().v23LightTheme();
+    QColor color = light ? QColor(255, 255, 255) : QColor(20, 20, 20);
+    // the user opacity is respected, but never so low that the bar turns into
+    // a bare blur strip
+    color.setAlpha(qMax<int>(DockSettings::Instance().Opacity(), light ? 180 : 150));
+    return color;
+}
+
 MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
     : DBlurEffectWidget(parent),
       m_position(Dock::Top),
@@ -97,7 +108,14 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
     connect(m_itemController, &DockItemController::itemManaged, this, &MainPanel::manageItem);
     connect(m_itemController, &DockItemController::itemUpdated, m_itemAdjustTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
     connect(m_checkMouseLeaveTimer, &QTimer::timeout, this, &MainPanel::checkMouseReallyLeave, Qt::QueuedConnection);
-    connect(&DockSettings::Instance(), &DockSettings::opacityChanged, this, &MainPanel::setMaskAlpha);
+    connect(&DockSettings::Instance(), &DockSettings::opacityChanged, this, [this] {
+        setEffectEnabled(m_hasComposite);
+        update();
+    });
+    connect(&DockSettings::Instance(), &DockSettings::v23ThemeChanged, this, [this] {
+        setEffectEnabled(m_hasComposite);
+        update();
+    });
 
     m_sizeChangeAni->setEasingCurve(QEasingCurve::InOutCubic);
     connect(m_sizeChangeAni, &QPropertyAnimation::finished, m_itemAdjustTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
@@ -122,7 +140,7 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
         m_itemLayout->addWidget(item);
     }
 
-    m_showDesktopItem->setFixedSize(10, height());
+    updateShowDesktopItemSize();
     m_itemLayout->addSpacing(1);
     m_itemLayout->addWidget(m_showDesktopItem);
 
@@ -146,15 +164,25 @@ void MainPanel::updateDockPosition(const Position dockPosition)
     case Position::Bottom:
         m_itemLayout->setDirection(QBoxLayout::LeftToRight);
         m_itemLayout->setDirection(QBoxLayout::LeftToRight);
-        m_showDesktopItem->setFixedSize(10, height());
         break;
     case Position::Left:
     case Position::Right:
         m_itemLayout->setDirection(QBoxLayout::TopToBottom);
         m_itemLayout->setDirection(QBoxLayout::TopToBottom);
-        m_showDesktopItem->setFixedSize(width(), 10);
         break;
     }
+
+    updateShowDesktopItemSize();
+}
+
+void MainPanel::updateShowDesktopItemSize()
+{
+    const int thickness = 10;
+
+    if (m_position == Top || m_position == Bottom)
+        m_showDesktopItem->setFixedSize(thickness, height());
+    else
+        m_showDesktopItem->setFixedSize(width(), thickness);
 }
 
 ///
@@ -169,6 +197,7 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
 
     m_showDesktopItem->setVisible(displayMode == Dock::Efficient || displayMode == Dock::Classic
         || displayMode == Dock::V23);
+    updateShowDesktopItemSize();
 
     for (auto item : itemList)
     {
@@ -191,6 +220,8 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
         setBlurRectXRadius(blurRadius);
         setBlurRectYRadius(blurRadius);
     }
+
+    setEffectEnabled(m_hasComposite);
 
     update();
 }
@@ -227,6 +258,18 @@ void MainPanel::setEffectEnabled(const bool enabled)
 
     setMaskAlpha(DockSettings::Instance().Opacity());
 
+    if (m_displayMode == Dock::V23) {
+        const QColor color = v23PanelColor();
+        if (enabled) {
+            setMaskColor(color);
+            setMaskAlpha(color.alpha());
+        } else {
+            // no compositor: an opaque bar in the theme color
+            setMaskColor(DockSettings::Instance().v23LightTheme() ? QColor(240, 240, 240) : QColor(40, 40, 40));
+            setMaskAlpha(255);
+        }
+    }
+
     m_itemAdjustTimer->start();
 }
 
@@ -235,6 +278,11 @@ void MainPanel::paintEvent(QPaintEvent *e)
     if (Wayland::LayerShellHelper::isWayland()) {
         QPainter p(this);
         p.setRenderHint(QPainter::Antialiasing);
+
+        if (m_displayMode == Dock::V23) {
+            p.fillRect(rect(), v23PanelColor());
+            return;
+        }
 
         const int r = m_displayMode == Dock::Fashion ? 5 : 0;
         if (r > 0) {
@@ -307,6 +355,7 @@ void MainPanel::setFixedSize(const QSize &size)
 
 void MainPanel::setComposite(const bool hasComposite)
 {
+    m_hasComposite = hasComposite;
     setEffectEnabled(hasComposite);
 
     m_sizeChangeAni->setDuration(hasComposite ? 300 : 0);
@@ -322,6 +371,8 @@ void MainPanel::moveEvent(QMoveEvent* e)
 void MainPanel::resizeEvent(QResizeEvent *e)
 {
     DBlurEffectWidget::resizeEvent(e);
+
+    updateShowDesktopItemSize();
 
     QTimer::singleShot(500, this, &MainPanel::geometryChanged);
 }

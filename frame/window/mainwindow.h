@@ -63,6 +63,15 @@ private:
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
+    bool eventFilter(QObject *watched, QEvent *e) override;
+
+    int shadowSize() const;
+    QSize surfaceSize(const QSize &panelSize, const Position position) const;
+    QPoint panelOffset(const Position position) const;
+    QRect panelRestRect() const;
+    void updateShadowRegions(const bool forceStyle = false);
 
     void setFixedSize(const QSize &size);
     void internalAnimationMove(int x, int y);
@@ -119,6 +128,7 @@ private:
     XcbMisc *m_xcbMisc;
     DockSettings *m_settings;
     QMetaObject::Connection m_screenChangeConn;
+    QRect m_dockBlurRect;
 
     QDBusConnectionInterface *m_dbusDaemonInterface;
     org::kde::StatusNotifierWatcher *m_sniWatcher;

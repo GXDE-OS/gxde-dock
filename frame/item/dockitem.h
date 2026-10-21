@@ -29,6 +29,7 @@
 #include <QFrame>
 #include <QPointer>
 #include <QGestureEvent>
+#include <QPainterPath>
 
 #include <memory>
 
@@ -100,6 +101,17 @@ protected slots:
 protected:
     // com.deepin.menu缺失时使用QMenu代替
     void popupMenuWayland(const QString& menuJson);
+
+    // V23 mode plate
+    enum V23Plate {
+        V23PlateHover,
+        V23PlateRunning,
+        V23PlateRunningHover,
+        V23PlateActive,
+    };
+
+    static QColor v23PlateColor(const V23Plate plate);
+    static QPainterPath v23PlatePath(const QRectF &itemRect);
 
 private:
     void updatePopupPosition();
