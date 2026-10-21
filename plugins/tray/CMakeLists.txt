@@ -7,6 +7,7 @@ project(${PLUGIN_NAME})
 file(GLOB_RECURSE SRCS "*.h" "*.cpp" "../../widgets/*.h" "../../widgets/*.cpp"
     "../../frame/util/themeappicon.h" "../../frame/util/themeappicon.cpp"
     "../../frame/util/styledmenu.h" "../../frame/util/styledmenu.cpp"
+    "../../frame/util/v23menustyle.h" "../../frame/util/v23menustyle.cpp"
     "../../frame/util/dockpopupwindow.h" "../../frame/util/dockpopupwindow.cpp"
     "../../frame/util/abstractpluginscontroller.h" "../../frame/util/abstractpluginscontroller.cpp"
     "../../frame/util/pluginloader.h" "../../frame/util/pluginloader.cpp"
