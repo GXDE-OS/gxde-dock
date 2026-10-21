@@ -31,6 +31,7 @@
 #include <dplatformwindowhandle.h>
 
 #include "../util/dockpopupwindow.h"
+#include "../util/docksettings.h"
 #include "../util/waylandhelper.h"
 #include "layershellhelper.h"
 #include "layershell_styler.h"
@@ -40,6 +41,10 @@ DWIDGET_USE_NAMESPACE
 namespace Wayland {
 
 namespace {
+
+int dockWindowRadius() {
+    return DockSettings::Instance().displayMode() == Dock::Fashion ? 5 : 0;
+}
 
 QRect dockPopupPanelRect(DockPopupWindow *popup)
 {
@@ -366,7 +371,20 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
     }
 
     // Apply rounded corners and blur via dde_shell / org_kde_kwin_blur
-    LayerShellStyler::apply(window, 5, true);
+    LayerShellStyler::apply(window, dockWindowRadius(), true);
+}
+
+void LayerShellHelper::updateDockStyle(QWidget* widget) {
+    if (widget == nullptr || !isWayland()) {
+        return;
+    }
+
+    QWindow* window = widget->windowHandle();
+    if (window == nullptr) {
+        return;
+    }
+
+    LayerShellStyler::apply(window, dockWindowRadius(), true);
 }
 
 void LayerShellHelper::updateDockAnchor(QWidget* widget,

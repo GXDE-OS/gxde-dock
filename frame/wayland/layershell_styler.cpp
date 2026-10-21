@@ -174,8 +174,7 @@ void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect) 
 
     ensureWindowCleanup(window);
 
-    // Apply window radius via dde_shell
-    if (radius > 0 && ctx.ddeShell) {
+    if (ctx.ddeShell) {
         dde_shell_surface *shellSurface = shellSurfaces().value(window);
         if (!shellSurface) {
             shellSurface = dde_shell_get_shell_surface(ctx.ddeShell, surface);

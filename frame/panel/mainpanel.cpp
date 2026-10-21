@@ -69,8 +69,10 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
         // InWindowBlend keeps DBlurEffectWidget out of the native blur path;
         // paintEvent() below still draws the translucent panel mask.
         setBlendMode(InWindowBlend);
-        setBlurRectXRadius(5);
-        setBlurRectYRadius(5);
+        const int blurRadius =
+            DockSettings::Instance().displayMode() == Dock::Fashion ? 5 : 0;
+        setBlurRectXRadius(blurRadius);
+        setBlurRectYRadius(blurRadius);
     } else {
         setBlendMode(BehindWindowBlend);
     }
@@ -181,6 +183,14 @@ void MainPanel::updateDockDisplayMode(const DisplayMode displayMode)
 
     // reload qss
     setStyleSheet(styleSheet());
+
+    if (Wayland::LayerShellHelper::isWayland()) {
+        const int blurRadius = displayMode == Dock::Fashion ? 5 : 0;
+        setBlurRectXRadius(blurRadius);
+        setBlurRectYRadius(blurRadius);
+    }
+
+    update();
 }
 
 ///
@@ -224,16 +234,18 @@ void MainPanel::paintEvent(QPaintEvent *e)
         QPainter p(this);
         p.setRenderHint(QPainter::Antialiasing);
 
-        const int r = 5;
-        QPainterPath path;
-        path.moveTo(rect().bottomLeft());
-        path.lineTo(rect().topLeft().x(), rect().topLeft().y() + r);
-        path.quadTo(rect().topLeft(), rect().topLeft() + QPoint(r, 0));
-        path.lineTo(rect().topRight() - QPoint(r, 0));
-        path.quadTo(rect().topRight(), rect().topRight() + QPoint(0, r));
-        path.lineTo(rect().bottomRight());
-        path.closeSubpath();
-        p.setClipPath(path);
+        const int r = m_displayMode == Dock::Fashion ? 5 : 0;
+        if (r > 0) {
+            QPainterPath path;
+            path.moveTo(rect().bottomLeft());
+            path.lineTo(rect().topLeft().x(), rect().topLeft().y() + r);
+            path.quadTo(rect().topLeft(), rect().topLeft() + QPoint(r, 0));
+            path.lineTo(rect().topRight() - QPoint(r, 0));
+            path.quadTo(rect().topRight(), rect().topRight() + QPoint(0, r));
+            path.lineTo(rect().bottomRight());
+            path.closeSubpath();
+            p.setClipPath(path);
+        }
 
         p.fillRect(rect(), QColor(0, 0, 0, DockSettings::Instance().Opacity()));
         return;
