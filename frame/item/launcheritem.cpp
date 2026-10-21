@@ -48,27 +48,30 @@ LauncherItem::LauncherItem(QWidget *parent)
     m_tips->setObjectName("launcher");
 }
 
-void LauncherItem::refershIcon()
-{
+void LauncherItem::refershIcon() {
     const int iconSize = qMin(width(), height());
-    if (DockDisplayMode == Efficient)
-    {
-        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.7, devicePixelRatioF());
-        m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.9, devicePixelRatioF());
+    m_iconDpr = devicePixelRatioF();
+    if (DockDisplayMode == Efficient) {
+        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.7, m_iconDpr);
+        m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.9, m_iconDpr);
     } else {
-        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.6, devicePixelRatioF());
-        m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.8, devicePixelRatioF());
+        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.6, m_iconDpr);
+        m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.8, m_iconDpr);
     }
 
     update();
 }
 
-void LauncherItem::paintEvent(QPaintEvent *e)
-{
+void LauncherItem::paintEvent(QPaintEvent *e) {
     DockItem::paintEvent(e);
 
-    if (!isVisible())
+    if (!isVisible()) {
         return;
+    }
+
+    if (m_iconDpr != devicePixelRatioF()) {
+        refershIcon();
+    }
 
     QPainter painter(this);
 

@@ -51,6 +51,7 @@ private:
 private:
     QPixmap m_smallIcon;
     QPixmap m_largeIcon;
+    qreal m_iconDpr = 0;
     LauncherInter *m_launcherInter;
     TipsWidget *m_tips;
 };

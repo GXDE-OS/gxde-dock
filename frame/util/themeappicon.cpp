@@ -82,7 +82,29 @@ const QPixmap ThemeAppIcon::getIcon(const QString iconName, const int size, cons
         // load pixmap from Icon-Theme
         const QIcon icon = QIcon::fromTheme(iconName, QIcon::fromTheme("application-x-desktop"));
         const int fakeSize = std::max(48, s); // cannot use 16x16, cause 16x16 is label icon
-        pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
+        
+        int srcSize = fakeSize;
+        int best = -1;
+        const QList<QSize> available = icon.availableSizes();
+        for (const QSize &sz : available) {
+            if (sz.width() < fakeSize) {
+                continue;
+            }
+
+            if (best == -1 || sz.width() < best) {
+                best = sz.width();
+            }
+        }
+        if (best == -1) {
+            for (const QSize &sz : available) {
+                best = qMax(best, sz.width());
+            }
+        }
+        if (best > 0) {
+            srcSize = best;
+        }
+
+        pixmap = icon.pixmap(QSize(srcSize, srcSize));
         if (!pixmap.isNull())
             break;
 
