@@ -31,6 +31,8 @@
 #include <QResizeEvent>
 #include <QScreen>
 #include <QGuiApplication>
+#include <QPainter>
+#include <QLinearGradient>
 
 #include <qpa/qplatformwindow.h>
 #include <dapplication.h>
@@ -116,7 +118,7 @@ MainWindow::MainWindow(QScreen *screen, QWidget *parent)
         // layer-shell-qt在创建表面时固定窗体尺寸，即使后期resize也不会重新发送set_size
         // 所以初始化之前就得确定真实高度了
         // 不然的话dock的尺寸会卡在100*30 在桌面上看就是半个dock
-        resize(m_settings->windowSize(m_screen));
+        resize(surfaceSize(m_settings->windowSize(m_screen), m_settings->position()));
         Wayland::LayerShellHelper::setDockRole(this, m_screen,
             QStringLiteral("dde-shell/dock"), m_settings->position());
     } else {
@@ -132,6 +134,7 @@ MainWindow::MainWindow(QScreen *screen, QWidget *parent)
     }
 
     m_mainPanel->setFixedSize(m_settings->panelSize());
+    m_mainPanel->installEventFilter(this);
 
     show();
 }
@@ -453,10 +456,10 @@ void MainWindow::initConnections()
     connect(m_settings, &DockSettings::windowVisibleChanged, this, &MainWindow::updatePanelVisible, Qt::QueuedConnection);
     connect(m_settings, &DockSettings::displayModeChanegd, m_positionUpdateTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
     connect(m_settings, &DockSettings::displayModeChanegd, this, [this] {
-        if (Wayland::LayerShellHelper::isWayland()) {
-            Wayland::LayerShellHelper::updateDockStyle(this);
-        }
+        updateShadowRegions(true);
     });
+
+    connect(m_settings, &DockSettings::v23ThemeChanged, this, static_cast<void (MainWindow::*)()>(&MainWindow::update));
 
     connect(m_mainPanel, &MainPanel::requestRefershWindowVisible, this, &MainWindow::updatePanelVisible, Qt::QueuedConnection);
     connect(m_mainPanel, &MainPanel::requestWindowAutoHide, m_settings, &DockSettings::setAutoHide);
@@ -588,7 +591,7 @@ void MainWindow::updateGeometry()
         QWidget::setFixedSize(size);
     } else {
         // this->setFixedSize has been overridden for size animation
-        setFixedSize(size);
+        setFixedSize(surfaceSize(size, position));
     }
 
     const QRect windowRect = m_settings->windowRect(position, isHide, m_screen);
@@ -722,20 +725,20 @@ void MainWindow::expand()
     const auto showAniState = m_panelShowAni->state();
     m_panelHideAni->stop();
 
-    QPoint finishPos(0, 0);
+    const QPoint finishPos = panelOffset(m_settings->position());
 
     resetPanelEnvironment(true, false);
 
     if (showAniState != QPropertyAnimation::Running && m_mainPanel->pos() != m_panelShowAni->currentValue())
     {
-        QPoint startPos(0, 0);
+        QPoint startPos = finishPos;
         const QSize &size = m_settings->windowSize(m_screen);
         switch (m_settings->position())
         {
-        case Top:       startPos.setY(-size.height());     break;
-        case Bottom:    startPos.setY(size.height());      break;
-        case Left:      startPos.setX(-size.width());      break;
-        case Right:     startPos.setX(size.width());       break;
+        case Top:       startPos.ry() -= size.height();     break;
+        case Bottom:    startPos.ry() += size.height();     break;
+        case Left:      startPos.rx() -= size.width();      break;
+        case Right:     startPos.rx() += size.width();      break;
         }
 
         m_panelShowAni->setStartValue(startPos);
@@ -750,13 +753,13 @@ void MainWindow::narrow(const Position prevPos)
 {
     const QSize size = m_settings->windowSize(m_screen);
 
-    QPoint finishPos(0, 0);
+    QPoint finishPos = panelOffset(prevPos);
     switch (prevPos)
     {
-    case Top:       finishPos.setY(-size.height());     break;
-    case Bottom:    finishPos.setY(size.height());      break;
-    case Left:      finishPos.setX(-size.width());      break;
-    case Right:     finishPos.setX(size.width());       break;
+    case Top:       finishPos.ry() -= size.height();     break;
+    case Bottom:    finishPos.ry() += size.height();     break;
+    case Left:      finishPos.rx() -= size.width();      break;
+    case Right:     finishPos.rx() += size.width();      break;
     }
 
     m_panelShowAni->stop();
@@ -780,9 +783,9 @@ void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosit
     const Position position = m_settings->position();
     const QRect r(m_settings->windowRect(position, false, m_screen));
 
-    m_sizeChangeAni->setEndValue(r.size());
+    m_sizeChangeAni->setEndValue(surfaceSize(r.size(), position));
     m_mainPanel->setFixedSize(m_settings->windowSize(m_screen));
-    QWidget::setFixedSize(r.size());
+    QWidget::setFixedSize(surfaceSize(r.size(), position));
     m_posChangeAni->setEndValue(r.topLeft());
     if (!Wayland::LayerShellHelper::isWayland()) {
         QWidget::move(r.topLeft());
@@ -790,13 +793,13 @@ void MainWindow::resetPanelEnvironment(const bool visible, const bool resetPosit
 
     if (!resetPosition)
         return;
-    QPoint finishPos(0, 0);
+    QPoint finishPos = panelOffset(position);
     switch (position)
     {
-    case Top:       finishPos.setY((visible ? 0 : -r.height()));     break;
-    case Bottom:    finishPos.setY(visible ? 0 : r.height());      break;
-    case Left:      finishPos.setX((visible ? 0 : -r.width()));       break;
-    case Right:     finishPos.setX(visible ? 0 : r.width());       break;
+    case Top:       finishPos.ry() -= visible ? 0 : r.height();     break;
+    case Bottom:    finishPos.ry() += visible ? 0 : r.height();     break;
+    case Left:      finishPos.rx() -= visible ? 0 : r.width();      break;
+    case Right:     finishPos.rx() += visible ? 0 : r.width();      break;
     }
 
     m_mainPanel->move(finishPos);
@@ -875,4 +878,125 @@ void MainWindow::onDbusNameOwnerChanged(const QString &name, const QString &oldO
         qDebug() << SNI_WATCHER_SERVICE << "SNI watcher daemon started, register dock to watcher as SNI Host";
         m_sniWatcher->RegisterStatusNotifierHost(m_sniHostService);
     }
+}
+
+// flakewm draws no shadows for layer-shell surfaces, so in V23 mode the dock
+// surface extends past the bar on the desktop side and the shadow is painted
+// there.  The extra strip takes no input, no blur and no exclusive zone.
+int MainWindow::shadowSize() const
+{
+    if (!Wayland::LayerShellHelper::isWayland() || m_settings->displayMode() != Dock::V23)
+        return 0;
+
+    return 10;
+}
+
+QSize MainWindow::surfaceSize(const QSize &panelSize, const Position position) const
+{
+    const int shadow = shadowSize();
+
+    if (position == Top || position == Bottom)
+        return panelSize + QSize(0, shadow);
+
+    return panelSize + QSize(shadow, 0);
+}
+
+QPoint MainWindow::panelOffset(const Position position) const
+{
+    switch (position) {
+    case Bottom:    return QPoint(0, shadowSize());
+    case Right:     return QPoint(shadowSize(), 0);
+    default:        return QPoint();
+    }
+}
+
+QRect MainWindow::panelRestRect() const
+{
+    const int shadow = shadowSize();
+    QRect r = rect();
+
+    switch (m_settings->position()) {
+    case Top:       r.setBottom(r.bottom() - shadow);   break;
+    case Bottom:    r.setTop(r.top() + shadow);         break;
+    case Left:      r.setRight(r.right() - shadow);     break;
+    case Right:     r.setLeft(r.left() + shadow);       break;
+    }
+
+    return r;
+}
+
+void MainWindow::updateShadowRegions(const bool forceStyle)
+{
+    QWindow *window = windowHandle();
+    if (!window || !Wayland::LayerShellHelper::isWayland())
+        return;
+
+    // input region: only the bar itself, so the shadow strip never blocks
+    // clicks on the windows below it
+    const QRect bar = panelRestRect();
+    const bool hasShadow = shadowSize() > 0 && !bar.isEmpty();
+    window->setMask(hasShadow ? QRegion(bar) : QRegion());
+
+    const QRect blurRect = hasShadow ? bar : QRect();
+    if (forceStyle || blurRect != m_dockBlurRect) {
+        m_dockBlurRect = blurRect;
+        Wayland::LayerShellHelper::updateDockStyle(this, blurRect);
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+
+    updateShadowRegions();
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *e)
+{
+    // the shadow follows the panel while it slides in and out
+    if (watched == m_mainPanel && (e->type() == QEvent::Move || e->type() == QEvent::Resize))
+        update();
+
+    return QWidget::eventFilter(watched, e);
+}
+
+void MainWindow::paintEvent(QPaintEvent *e)
+{
+    QWidget::paintEvent(e);
+
+    const int shadow = shadowSize();
+    if (!shadow || !m_mainPanel->isVisible())
+        return;
+
+    const QRect panel = m_mainPanel->geometry();
+    QRect shadowRect;
+    QLinearGradient gradient;
+    switch (m_settings->position()) {
+    case Top:
+        shadowRect = QRect(panel.left(), panel.bottom() + 1, panel.width(), shadow);
+        gradient = QLinearGradient(shadowRect.topLeft(), shadowRect.bottomLeft());
+        break;
+    case Bottom:
+        shadowRect = QRect(panel.left(), panel.top() - shadow, panel.width(), shadow);
+        gradient = QLinearGradient(shadowRect.bottomLeft(), shadowRect.topLeft());
+        break;
+    case Left:
+        shadowRect = QRect(panel.right() + 1, panel.top(), shadow, panel.height());
+        gradient = QLinearGradient(shadowRect.topLeft(), shadowRect.topRight());
+        break;
+    case Right:
+        shadowRect = QRect(panel.left() - shadow, panel.top(), shadow, panel.height());
+        gradient = QLinearGradient(shadowRect.topRight(), shadowRect.topLeft());
+        break;
+    }
+
+    // a soft, gaussian-like falloff away from the bar
+    const int alpha = m_settings->v23LightTheme() ? 18 : 40;
+    gradient.setColorAt(0.0, QColor(0, 0, 0, alpha));
+    gradient.setColorAt(0.25, QColor(0, 0, 0, alpha * 0.55));
+    gradient.setColorAt(0.6, QColor(0, 0, 0, alpha * 0.15));
+    gradient.setColorAt(1.0, QColor(0, 0, 0, 0));
+
+    QPainter painter(this);
+    painter.fillRect(shadowRect, gradient);
 }

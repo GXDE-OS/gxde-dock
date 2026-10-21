@@ -233,7 +233,10 @@ qreal AppItem::iconBaseRatio()
 
 int AppItem::itemBaseWidth()
 {
-    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
+    // V23 taskbar items are square
+    if (DockDisplayMode == Dock::V23)
+        return itemBaseHeight();
+    else if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
         return itemBaseHeight() * 1.1;
     else
         return itemBaseHeight() * 1.4;
@@ -297,7 +300,10 @@ void AppItem::paintEvent(QPaintEvent *e)
     // draw background
     QRectF backgroundRect = itemRect;
 
-    if (DockDisplayMode == Efficient || DockDisplayMode == V23) {
+    if (DockDisplayMode == V23) {
+        paintV23Plate(painter);
+    }
+    else if (DockDisplayMode == Efficient) {
         backgroundRect = itemRect.marginsRemoved(QMargins(1, 1, 1, 1));
 
         if (m_active) {
@@ -371,6 +377,23 @@ void AppItem::paintEvent(QPaintEvent *e)
         return;
 
     painter.drawPixmap(appIconPosition(), m_appIcon);
+}
+
+void AppItem::paintV23Plate(QPainter &painter)
+{
+    QColor color;
+    if (m_active)
+        color = v23PlateColor(V23PlateActive);
+    else if (!m_windowInfos.isEmpty() && hasAttention())
+        color = QColor(241, 138, 46, 255 * .8);
+    else if (!m_windowInfos.isEmpty())
+        color = v23PlateColor(m_hover ? V23PlateRunningHover : V23PlateRunning);
+    else if (m_hover)
+        color = v23PlateColor(V23PlateHover);
+    else
+        return;
+
+    painter.fillPath(v23PlatePath(rect()), color);
 }
 
 void AppItem::mouseReleaseEvent(QMouseEvent *e)

@@ -34,7 +34,7 @@ public:
     static void setDockRole(QWidget* widget, QScreen* screen,
         const QString& scope, Dock::Position position);
     static void updateDockAnchor(QWidget* widget, Dock::Position position);
-    static void updateDockStyle(QWidget* widget);
+    static void updateDockStyle(QWidget* widget, const QRect &blurRect = QRect());
     static void updateExclusiveZone(QWidget* widget, int zone);
     static void updateOutput(QWidget* widget, QScreen* screen);
     // Root Qt Widgets popups cannot be attached to this LayerShellQt version

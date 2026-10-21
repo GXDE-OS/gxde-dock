@@ -20,6 +20,7 @@
  */
 
 #include "traypluginitem.h"
+#include "util/docksettings.h"
 
 #include <QEvent>
 
@@ -27,6 +28,18 @@ TrayPluginItem::TrayPluginItem(PluginsItemInterface * const pluginInter, const Q
     : PluginsItem(pluginInter, itemKey, parent)
 {
     centralWidget()->installEventFilter(this);
+
+    updateGraphicsEffect();
+    connect(&DockSettings::Instance(), &DockSettings::displayModeChanegd, this, &TrayPluginItem::updateGraphicsEffect);
+}
+
+void TrayPluginItem::updateGraphicsEffect()
+{
+    if (!graphicsEffect())
+        return;
+
+    const bool xembed = itemKey().startsWith("window:");
+    graphicsEffect()->setEnabled(DockDisplayMode == Dock::V23 && !xembed);
 }
 
 void TrayPluginItem::setSuggestIconSize(QSize size)

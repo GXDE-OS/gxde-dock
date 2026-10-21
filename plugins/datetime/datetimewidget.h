@@ -23,6 +23,7 @@
 #define DATETIMEWIDGET_H
 
 #include <QWidget>
+#include <QPainter>
 
 class DatetimeWidget : public QWidget
 {
@@ -58,11 +59,22 @@ private:
     // 判断给定字体下的文字行是否能完整显示在条目中
     bool linesFit(const QStringList &lines, const QFont &font) const;
 
+    // V23 模式(上下方向)：时间在上、日期在下的双行布局
+    bool isV23Horizontal() const;
+    bool v23TwoRows() const;
+    QFont v23TimeFont() const;
+    QFont v23DateFont() const;
+    QString v23TimeText() const;
+    QString v23DateText() const;
+    int v23Width() const;
+    void paintV23(QPainter &painter);
+
 private:
     QPixmap m_cachedIcon;
     QString m_cachedTime;
     bool m_24HourFormat;
     int m_lineCount;
+    int m_v23Width;
     QFont m_font;
 };
 

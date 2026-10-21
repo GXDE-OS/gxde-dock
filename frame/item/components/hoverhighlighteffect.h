@@ -32,12 +32,15 @@ public:
     explicit HoverHighlightEffect(QObject *parent = nullptr);
 
     void setHighlighting(const bool highlighting) { m_highlighting = highlighting; }
+    // recolor monochrome content (symbolic icons, text) to the V23 theme
+    void setTintMonochrome(const bool tint) { m_tintMonochrome = tint; }
 
 protected:
     void draw(QPainter *painter);
 
 private:
     bool m_highlighting;
+    bool m_tintMonochrome;
 };
 
 #endif // HOVERHIGHLIGHTEFFECT_H

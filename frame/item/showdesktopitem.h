@@ -23,6 +23,7 @@
 #define SHOWDESKTOPITEM_H
 
 #include <QLabel>
+#include <QPainter>
 
 class ShowDesktopItem : public QLabel
 {
@@ -40,6 +41,8 @@ protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
+    void paintV23(QPainter &painter);
+
     bool m_isHovered;
     bool m_isPressed;
 };

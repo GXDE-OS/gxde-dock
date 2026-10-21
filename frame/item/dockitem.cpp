@@ -460,8 +460,10 @@ const QPoint DockItem::topleftPoint() const
     if (Wayland::LayerShellHelper::isWayland()) {
         // Manually calculate global position on Wayland.
         QScreen *screen = window() ? window()->screen() : nullptr;
-        return DockSettings::Instance().windowRect(DockPosition, false, screen).topLeft()
-            + mapTo(window(), QPoint());
+        QWidget *panel = window() ? window()->findChild<QWidget *>("MainPanel", Qt::FindDirectChildrenOnly) : nullptr;
+        const QPoint offset = panel && panel->isAncestorOf(this)
+            ? mapTo(panel, QPoint()) : mapTo(window(), QPoint());
+        return DockSettings::Instance().windowRect(DockPosition, false, screen).topLeft() + offset;
     }
 
     QPoint p;
@@ -490,4 +492,25 @@ void DockItem::hideNonModel()
     // auto hide if popup is not model window
     if (m_popupShown && !PopupWindow->model())
         hidePopup();
+}
+
+QColor DockItem::v23PlateColor(const V23Plate plate)
+{
+    // translucent overlays: darken the light bar, lighten the dark bar
+    static const int alphas[] = { 13, 15, 28, 46 };
+    const int alpha = alphas[plate];
+
+    return Dock::isV23Light() ? QColor(0, 0, 0, alpha) : QColor(255, 255, 255, alpha);
+}
+
+QPainterPath DockItem::v23PlatePath(const QRectF &itemRect)
+{
+    const qreal size = qMin(itemRect.width(), itemRect.height());
+    QRectF plateRect(0, 0, size, size);
+    plateRect = plateRect.marginsRemoved(QMarginsF(2, 2, 2, 2));
+    plateRect.moveCenter(itemRect.center());
+
+    QPainterPath path;
+    path.addRoundedRect(plateRect, 8, 8);
+    return path;
 }

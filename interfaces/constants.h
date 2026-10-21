@@ -60,6 +60,19 @@ enum DisplayMode {
     V23         = 3,
 };
 
+///
+/// \brief The V23Theme enum
+/// color theme override, only effective in V23 display mode
+///
+enum V23Theme {
+    V23ThemeFollowSystem = 0,
+    V23ThemeDark         = 1,
+    V23ThemeLight        = 2,
+};
+
+// resolved V23 color theme (bool, true = light), maintained by DockSettings
+#define PROP_V23_LIGHT_THEME "V23LightTheme"
+
 #define PROP_HIDE_MODE      "HideMode"
 ///
 /// \brief The HideMode enum
@@ -101,5 +114,20 @@ enum HideState {
 
 Q_DECLARE_METATYPE(Dock::DisplayMode)
 Q_DECLARE_METATYPE(Dock::Position)
+
+namespace Dock {
+
+inline bool isV23Mode()
+{
+    return QCoreApplication::instance()->property(PROP_DISPLAY_MODE).value<DisplayMode>() == V23;
+}
+
+// true when the dock is in V23 mode with the light color theme
+inline bool isV23Light()
+{
+    return isV23Mode() && QCoreApplication::instance()->property(PROP_V23_LIGHT_THEME).toBool();
+}
+
+}
 
 #endif // CONSTANTS_H

@@ -46,6 +46,12 @@ int dockWindowRadius() {
     return DockSettings::Instance().displayMode() == Dock::Fashion ? 5 : 0;
 }
 
+// The V23 taskbar asks the compositor for a stronger backdrop blur so the
+// bar reads as frosted glass; other dock surfaces keep the default.
+int dockBlurStrength() {
+    return DockSettings::Instance().displayMode() == Dock::V23 ? 1200 : 300;
+}
+
 QRect dockPopupPanelRect(DockPopupWindow *popup)
 {
     if (!popup) {
@@ -371,10 +377,10 @@ void LayerShellHelper::setDockRole(QWidget* widget, QScreen* screen,
     }
 
     // Apply rounded corners and blur via dde_shell / org_kde_kwin_blur
-    LayerShellStyler::apply(window, dockWindowRadius(), true);
+    LayerShellStyler::apply(window, dockWindowRadius(), true, QRect(), dockBlurStrength());
 }
 
-void LayerShellHelper::updateDockStyle(QWidget* widget) {
+void LayerShellHelper::updateDockStyle(QWidget* widget, const QRect &blurRect) {
     if (widget == nullptr || !isWayland()) {
         return;
     }
@@ -384,7 +390,7 @@ void LayerShellHelper::updateDockStyle(QWidget* widget) {
         return;
     }
 
-    LayerShellStyler::apply(window, dockWindowRadius(), true);
+    LayerShellStyler::apply(window, dockWindowRadius(), true, blurRect, dockBlurStrength());
 }
 
 void LayerShellHelper::updateDockAnchor(QWidget* widget,

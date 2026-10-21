@@ -44,6 +44,7 @@ public:
     PluginsItemInterface::PluginSizePolicy pluginSizePolicy() const;
 
     QString pluginName() const;
+    inline const QString &itemKey() const { return m_itemKey; }
 
     using DockItem::showContextMenu;
     using DockItem::hidePopup;
@@ -51,6 +52,7 @@ public:
     inline ItemType itemType() const override {return Plugins;}
     QSize sizeHint() const override;
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void paintV23Hover();
 
     QWidget *centralWidget() const;
 

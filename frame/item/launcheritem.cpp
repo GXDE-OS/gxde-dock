@@ -75,6 +75,11 @@ void LauncherItem::paintEvent(QPaintEvent *e) {
 
     QPainter painter(this);
 
+    if (DockDisplayMode == V23 && m_hover) {
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(v23PlatePath(rect()), v23PlateColor(V23PlateHover));
+    }
+
     const QPixmap pixmap = DockDisplayMode == Fashion ? m_largeIcon : m_smallIcon;
 
     // 居中偏移必须用 pixmap 自身的 DPR（修复 HDPI 下图标偏左上）

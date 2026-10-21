@@ -32,6 +32,7 @@
 #include <QPointer>
 #include <QTimer>
 #include <QBoxLayout>
+#include <QPainter>
 
 #include <DBlurEffectWidget>
 #include <DWindowManagerHelper>
@@ -76,6 +77,7 @@ private:
     void moveEvent(QMoveEvent *e);
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *e) override;
+    void updateShowDesktopItemSize();
     void showEvent(QShowEvent *e) override;
     void dragEnterEvent(QDragEnterEvent *e);
     void dragMoveEvent(QDragMoveEvent *e);
@@ -100,6 +102,7 @@ private:
 
     Position m_position;
     DisplayMode m_displayMode;
+    bool m_hasComposite = false;
 
     QBoxLayout *m_itemLayout;
     QTimer *m_itemAdjustTimer;

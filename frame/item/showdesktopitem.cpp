@@ -89,6 +89,11 @@ void ShowDesktopItem::paintEvent(QPaintEvent *event)
         destRect = destRect.marginsRemoved(QMargins(1, 0, 1, 0));
     }
 
+    if (Dock::isV23Mode()) {
+        paintV23(painter);
+        return;
+    }
+
     if (m_isPressed) {
         painter.fillRect(destRect, "#2ca7f8");
     } else if(m_isHovered){
@@ -96,4 +101,25 @@ void ShowDesktopItem::paintEvent(QPaintEvent *event)
     } else {
         painter.fillRect(destRect, QColor(255, 255, 255, 26));
     }
+}
+
+void ShowDesktopItem::paintV23(QPainter &painter)
+{
+    const bool light = Dock::isV23Light();
+
+    QColor fill;
+    if (m_isPressed)
+        fill = light ? QColor(0, 0, 0, 38) : QColor(255, 255, 255, 64);
+    else if (m_isHovered)
+        fill = light ? QColor(0, 0, 0, 20) : QColor(255, 255, 255, 38);
+    else
+        fill = light ? QColor(255, 255, 255, 64) : QColor(255, 255, 255, 13);
+    painter.fillRect(rect(), fill);
+
+    QRect edge = rect();
+    if (width() < height())
+        edge.setRight(edge.left());
+    else
+        edge.setBottom(edge.top());
+    painter.fillRect(edge, light ? QColor(0, 0, 0, 26) : QColor(255, 255, 255, 26));
 }

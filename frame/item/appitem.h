@@ -87,6 +87,7 @@ signals:
 private:
     void moveEvent(QMoveEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
+    void paintV23Plate(QPainter &painter);
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;

@@ -72,6 +72,8 @@ public:
     inline HideMode hideMode() const { return m_hideMode; }
     inline HideState hideState() const { return m_hideState; }
     inline Position position() const { return m_position; }
+    inline V23Theme v23Theme() const { return m_v23Theme; }
+    inline bool v23LightTheme() const { return m_v23Light; }
     inline int screenRawHeight() const { return m_screenRawHeight; }
     inline int screenRawWidth() const { return m_screenRawWidth; }
     inline int expandTimeout() const { return m_dockInter->showTimeout(); }
@@ -110,6 +112,7 @@ signals:
     void windowHideModeChanged() const;
     void windowGeometryChanged() const;
     void opacityChanged(const quint8 value) const;
+    void v23ThemeChanged() const;
 
 public slots:
     void updateGeometry();
@@ -148,6 +151,9 @@ private:
     void writePosition(const Position position);
     void writeDisplayMode(const DisplayMode mode);
     void applyDisplayMode(const DisplayMode mode);
+    V23Theme currentV23Theme() const;
+    void writeV23Theme(const V23Theme theme);
+    void applyV23Theme();
     void writeHideMode(const HideMode mode);
     void writeIconSize(const int size);
     void onGsettingsChanged();
@@ -166,6 +172,8 @@ private:
     HideMode m_hideMode;
     HideState m_hideState;
     DisplayMode m_displayMode;
+    V23Theme m_v23Theme;
+    bool m_v23Light = false;
     QRect m_primaryRawRect;
     QRect m_frontendRect;
     QSize m_mainWindowSize;
@@ -177,6 +185,10 @@ private:
     QAction m_fashionModeAct;
     QAction m_efficientModeAct;
     QAction m_v23ModeAct;
+    QAction m_themeFollowAct;
+    QAction m_themeDarkAct;
+    QAction m_themeLightAct;
+    QAction *m_themeSubMenuAct = nullptr;
     QAction m_topPosAct;
     QAction m_bottomPosAct;
     QAction m_leftPosAct;
