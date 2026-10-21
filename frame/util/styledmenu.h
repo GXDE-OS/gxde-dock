@@ -18,20 +18,34 @@
 #ifndef STYLEDMENU_H
 #define STYLEDMENU_H
 
+#include <QImage>
 #include <QMenu>
 
 class QStyle;
+class QVariantAnimation;
 
 class StyledMenu : public QMenu
 {
 public:
     explicit StyledMenu(const QString &styleName, QWidget *parent = nullptr);
+    void updateStyle();
+    static void updateStyles(QMenu *menu);
 
 protected:
+    bool event(QEvent *e) override; // V23DBG
+    void showEvent(QShowEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    void applyV23Blur();
+    QPointF showAnimationOrigin(const QRectF &menuRect) const;
+
+    QString m_styleName;
     QStyle *m_style = nullptr;
+    QVariantAnimation *m_showAnimation = nullptr;
+    QImage m_shadowCache;
+    QSize m_shadowCacheSize;
+    int m_shadowCacheRadius = -1;
 };
 
 #endif // STYLEDMENU_H

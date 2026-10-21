@@ -505,11 +505,14 @@ void LayerShellHelper::preparePopupLayerShell(QWidget* popup, QScreen* screen,
                 ? LayerShellQt::Window::KeyboardInteractivityOnDemand
                 : LayerShellQt::Window::KeyboardInteractivityNone);
         DPlatformWindowHandle::setEnableNoTitlebarForWindow(window, true);
-        LayerShellStyler::apply(window, 8, true,
-                                menuWidget ? menuPanelRect(menuWidget)
-                                           : QRect());
 
         popup->setProperty("_d_layer_popup_prepared", true);
+    }
+
+    if (QWindow* window = popup->windowHandle()) {
+        const QVariant radius = popup->property("_d_menu_radius");
+        LayerShellStyler::apply(window, radius.isValid() ? radius.toInt() : 8, true,
+            menuWidget ? menuPanelRect(menuWidget) : QRect());
     }
 
     registerPreparedPopup(popup);

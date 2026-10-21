@@ -573,6 +573,9 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
     }
     m_menuItemController = DockItemController::instanceForScreen(targetScreen);
 
+    // V23 menu got its custom styles.
+    StyledMenu::updateStyles(&m_settingsMenu);
+
     // create actions
     QList<QAction *> actions;
     for (auto *p : m_menuItemController->pluginList())
