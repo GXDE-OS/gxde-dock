@@ -136,6 +136,16 @@ PluginsItemInterface *AbstractPluginsController::pluginInterAt(QObject *destItem
     return nullptr;
 }
 
+QString AbstractPluginsController::pluginFile(PluginsItemInterface * const itemInter) const
+{
+    return m_pluginFiles.value(itemInter);
+}
+
+const QHash<PluginsItemInterface *, QString> &AbstractPluginsController::pluginFiles() const
+{
+    return m_pluginFiles;
+}
+
 void AbstractPluginsController::startLoader(PluginLoader *loader)
 {
     connect(loader, &PluginLoader::finished, loader, &PluginLoader::deleteLater, Qt::QueuedConnection);
@@ -154,6 +164,8 @@ void AbstractPluginsController::displayModeChanged()
 
     for (auto inter : inters)
         inter->displayModeChanged(displayMode);
+
+    afterDisplayModeChanged();
 }
 
 void AbstractPluginsController::positionChanged()
@@ -267,6 +279,9 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
         pluginLoader->deleteLater();
         return;
     }
+
+    // Record the file before init()
+    m_pluginFiles.insert(interface, QFileInfo(pluginFile).absoluteFilePath());
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();
     const bool skipMissingService =

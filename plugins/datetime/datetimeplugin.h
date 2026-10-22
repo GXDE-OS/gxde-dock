@@ -65,6 +65,9 @@ private slots:
     void refreshPluginItemsVisible();
 
 private:
+    void loadPlugin();
+
+private:
     QPointer<DatetimeWidget> m_centralWidget;
     QPointer<TipsWidget> m_dateTipsLabel;
 

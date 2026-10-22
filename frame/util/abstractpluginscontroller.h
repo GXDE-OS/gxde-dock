@@ -30,6 +30,7 @@
 #include <QPluginLoader>
 #include <QList>
 #include <QMap>
+#include <QHash>
 #include <QDBusConnectionInterface>
 
 using DockDaemonInter = DockDaemonInterface;
@@ -52,6 +53,9 @@ protected:
     QObject *pluginItemAt(PluginsItemInterface * const itemInter, const QString &itemKey) const;
     PluginsItemInterface *pluginInterAt(const QString &itemKey);
     PluginsItemInterface *pluginInterAt(QObject *destItem);
+    QString pluginFile(PluginsItemInterface * const itemInter) const;
+    const QHash<PluginsItemInterface *, QString> &pluginFiles() const;
+    virtual void afterDisplayModeChanged() {}
 
 protected Q_SLOTS:
     void startLoader(PluginLoader *loader);
@@ -71,6 +75,7 @@ private:
     DockDaemonInter *m_dockDaemonInter;
 
     QMap<PluginsItemInterface *, QMap<QString, QObject *>> m_pluginsMap;
+    QHash<PluginsItemInterface *, QString> m_pluginFiles;
 
     QJsonObject m_pluginSettingsObject;
 };
