@@ -60,6 +60,17 @@ void DatetimePlugin::init(PluginProxyInterface *proxyInter)
         return;
     }
 
+    loadPlugin();
+}
+
+void DatetimePlugin::loadPlugin()
+{
+    // Widgets are created on first enable: a plugin disabled at startup may
+    // still get pluginSettingsChanged(), e.g. when the dock leaves V23 mode.
+    if (m_centralWidget) {
+        return;
+    }
+
     m_dateTipsLabel = new TipsWidget;
     m_refershTimer = new QTimer(this);
     m_dateTipsLabel->setObjectName("datetime");
@@ -68,18 +79,8 @@ void DatetimePlugin::init(PluginProxyInterface *proxyInter)
     m_refershTimer->start();
 
     m_centralWidget = new DatetimeWidget;
-    m_dateTipsLabel = new TipsWidget;
-    m_refershTimer = new QTimer(this);
-    m_dateTipsLabel->setObjectName("datetime");
+    m_centralWidget->set24HourFormat(m_proxyInter->getValue(this, TIME_FORMAT_KEY, true).toBool());
 
-    m_refershTimer->setInterval(1000);
-    m_refershTimer->start();
-
-    m_centralWidget = new DatetimeWidget;
-
-    connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
-
-    connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
 
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
@@ -193,7 +194,9 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
 
 void DatetimePlugin::pluginSettingsChanged()
 {
-    m_centralWidget->set24HourFormat(m_proxyInter->getValue(this, TIME_FORMAT_KEY, true).toBool());
+    if (m_centralWidget) {
+        m_centralWidget->set24HourFormat(m_proxyInter->getValue(this, TIME_FORMAT_KEY, true).toBool());
+    }
 
     refreshPluginItemsVisible();
 }
@@ -218,8 +221,12 @@ void DatetimePlugin::updateCurrentTimeString()
 
 void DatetimePlugin::refreshPluginItemsVisible()
 {
-    if (!pluginIsDisable())
+    if (!pluginIsDisable()) {
+        if (!m_centralWidget) {
+            loadPlugin();
+            return;
+        }
         m_proxyInter->itemAdded(this, pluginName());
-    else
+    } else
         m_proxyInter->itemRemoved(this, pluginName());
 }

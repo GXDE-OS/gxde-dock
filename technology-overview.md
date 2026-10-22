@@ -128,6 +128,8 @@ PluginsItem 的 mousePressEvent 中只直接调用了 QWidget::mousePressEvent �
 dock 要加载的插件所在的目录是 `/usr/lib/gxde-dock/plugins`，而托盘插件要加载的插件所在的目录是 `/usr/lib/gxde-dock/plugins/system-trays`。
 为 dock 编写的插件几乎不用做任何改动就可以放到 `system-trays` 目录下让托盘插件去加载，在代码上唯一要改动的地方是不必再为时尚模式改变控件的样式，因为时尚模式和高效模式下托盘插件内的控件样式是一样的，不需要发生改变。
 
+`/usr/lib/gxde-dock/plugins/v23` 中是内置插件的 Deepin V23 风格替代版本，文件名与被替代的内置插件相同（如 `v23/libdatetime.so` 替代 `libdatetime.so`）。两者都会加载：V23 模式下只显示替代版本，其他模式下只显示原插件。替代只针对同名的内置插件，`~/.local/lib/gxde-dock/plugins` 中的用户插件和第三方插件不受影响。
+
 除了这些“插件内插件”，托盘插件还会提供以下两种类型应用托盘和一种托盘插件自定义的托盘类型，即指示器：
 
 - XEmbed 协议

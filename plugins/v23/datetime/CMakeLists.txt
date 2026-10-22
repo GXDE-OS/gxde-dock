@@ -1,0 +1,25 @@
+set(PLUGIN_NAME "datetime-v23")
+
+project(${PLUGIN_NAME})
+
+file(GLOB SRCS "*.h" "*.cpp" "../../../widgets/*.h" "../../../widgets/*.cpp")
+
+find_package(PkgConfig REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Svg DBus)
+pkg_check_modules(dtk2widget REQUIRED dtk2widget)
+
+add_definitions("${QT_DEFINITIONS} -DQT_PLUGIN")
+add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+set_target_properties(${PLUGIN_NAME} PROPERTIES
+  OUTPUT_NAME datetime
+  LIBRARY_OUTPUT_DIRECTORY ../)
+target_include_directories(${PLUGIN_NAME} PUBLIC ${dtk2widget_INCLUDE_DIRS} ../../../interfaces)
+target_link_libraries(${PLUGIN_NAME} PRIVATE
+  Qt6::DBus
+  ${dtk2widget_LIBRARIES}
+  Qt6::Widgets
+  Qt6::Svg
+)
+
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION lib/gxde-dock/plugins/v23)

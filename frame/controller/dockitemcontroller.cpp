@@ -93,7 +93,13 @@ const QList<QPointer<DockItem>> DockItemController::itemList() const
 
 const QList<PluginsItemInterface *> DockItemController::pluginList() const
 {
-    return m_pluginsInter->pluginsMap().keys();
+    QList<PluginsItemInterface *> plugins;
+    for (PluginsItemInterface *inter : m_pluginsInter->pluginsMap().keys()) {
+        if (m_pluginsInter->isPluginActive(inter)) {
+            plugins << inter;
+        }
+    }
+    return plugins;
 }
 
 bool DockItemController::appIsOnDock(const QString &appDesktop) const

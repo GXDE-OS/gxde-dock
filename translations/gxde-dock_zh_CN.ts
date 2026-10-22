@@ -580,4 +580,45 @@
         <translation>显示CPU、内存、网速、电池和CPU温度</translation>
     </message>
 </context>
+<context>
+    <name>V23CalendarWidget</name>
+    <message>
+        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="326"/>
+        <source>Open the calendar</source>
+        <translation>打开日历</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="328"/>
+        <source>Today</source>
+        <translation>今天</translation>
+    </message>
+</context>
+<context>
+    <name>V23DatetimePlugin</name>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="32"/>
+        <source>Datetime</source>
+        <translation>时间</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="137"/>
+        <source>12 Hour Time</source>
+        <translation>12小时制</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="139"/>
+        <source>24 Hour Time</source>
+        <translation>24小时制</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="145"/>
+        <source>Time Settings</source>
+        <translation>时间设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="151"/>
+        <source>Open the calendar</source>
+        <translation>打开日历</translation>
+    </message>
+</context>
 </TS>

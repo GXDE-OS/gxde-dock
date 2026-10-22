@@ -165,6 +165,16 @@ void DockPopupWindow::show(int x, int y)
         topLeft = QPoint(x - popupSize.width(), y - popupSize.height() / 2);
         break;
     }
+
+    // dde-shell keeps popups 10px inside the screen
+    // But we also have 10px margin. Recalculate the margin for good positioning.
+    if (m_v23) {
+        if (QScreen *screen = this->screen()) {
+            const QRect bounds = screen->geometry();
+            topLeft.setX(qBound(bounds.left(), topLeft.x(), bounds.right() + 1 - popupSize.width()));
+            topLeft.setY(qBound(bounds.top(), topLeft.y(), bounds.bottom() + 1 - popupSize.height()));
+        }
+    }
     setProperty("_d_dock_popup_position", topLeft);
 
     DArrowRectangle::show(x, y);
