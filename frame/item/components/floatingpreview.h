@@ -30,6 +30,7 @@
 DWIDGET_USE_NAMESPACE
 
 class AppSnapshot;
+class PreviewCloseButton;
 class FloatingPreview : public QWidget
 {
     Q_OBJECT
@@ -56,6 +57,7 @@ private:
     QPointer<AppSnapshot> m_tracked;
 
     DImageButton *m_closeBtn3D;
+    PreviewCloseButton *m_closeBtnV23;
 };
 
 #endif // FLOATINGPREVIEW_H

@@ -38,6 +38,11 @@ DTK_USE_NAMESPACE
 #define SNAP_WIDTH       200
 #define SNAP_HEIGHT      130
 
+#define V23_SNAP_MAX_WIDTH      240
+#define V23_SNAP_MIN_WIDTH      80
+#define V23_SNAP_HEIGHT         118
+#define V23_SNAP_BORDER         4
+
 struct SHMInfo;
 struct _XImage;
 typedef _XImage XImage;
@@ -62,6 +67,7 @@ signals:
     void entered(const WId wid) const;
     void clicked(const WId wid) const;
     void requestCheckWindow() const;
+    void sizeChanged() const;
 
 public slots:
     void fetchSnapshot();
@@ -72,6 +78,9 @@ public slots:
 private:
     void fetchWaylandSnapshot();
     void applyWaylandSnapshot(const QImage &image);
+    QSizeF snapshotTargetSize() const;
+    void updateV23Size();
+    void paintV23(QPainter &painter);
     void dragEnterEvent(QDragEnterEvent *e);
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);

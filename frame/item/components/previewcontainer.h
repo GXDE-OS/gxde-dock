@@ -37,6 +37,7 @@
 
 DWIDGET_USE_NAMESPACE
 
+class PreviewCloseButton;
 class PreviewContainer : public QWidget
 {
     Q_OBJECT
@@ -55,6 +56,7 @@ public:
     void setWindowInfos(const WindowInfoMap &infos, const WindowList &allowClose,
         const QString &appId = QString());
     void updateSnapshots();
+    void setAppIcon(const QPixmap &icon);
 
 public slots:
     void updateLayoutDirection(const Dock::Position dockPos);
@@ -64,12 +66,16 @@ public slots:
 private:
     void adjustSize();
     void appendSnapWidget(const WId wid);
+    void updateV23Layout();
+    void closeAllWindows();
 
     void enterEvent(QEnterEvent *e);
     void leaveEvent(QEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
     void dragLeaveEvent(QDragLeaveEvent *e);
     void showEvent(QShowEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
 
 private slots:
     void onSnapshotClicked(const WId wid);
@@ -87,6 +93,10 @@ private:
     DWindowManagerHelper *m_wmHelper;
     QTimer *m_waitForShowPreviewTimer;
     WId m_currentWId;
+
+    QPixmap m_appIcon;
+    QString m_title;
+    PreviewCloseButton *m_closeAllButton;
 };
 
 #endif // PREVIEWCONTAINER_H

@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QScreen>
 #include <QTimer>
+#include <QImage>
 
 class DockPopupMask;
 
@@ -64,6 +65,8 @@ protected:
     void showEvent(QShowEvent *e);
     void enterEvent(QEnterEvent *e);
     bool eventFilter(QObject *o, QEvent *e);
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
 
 private slots:
     void onGlobMouseRelease(const QPoint &mousePos, const int flag);
@@ -71,7 +74,17 @@ private slots:
     void ensureRaised();
 
 private:
+    void updateV23Style(QWidget *content);
+    QRect v23PanelRect() const;
+    void applyV23Blur();
+
+private:
     bool m_model;
+    // V23 mode: Deepin 25 panel without arrow, painted by ourselves
+    bool m_v23;
+    int m_v23ShadowOffset;
+    QImage m_shadowCache;
+    QSize m_shadowCacheSize;
     QPoint m_lastPoint;
 
     QTimer *m_acceptDelayTimer;

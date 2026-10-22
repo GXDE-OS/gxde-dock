@@ -105,21 +105,16 @@ void ShowDesktopItem::paintEvent(QPaintEvent *event)
 
 void ShowDesktopItem::paintV23(QPainter &painter)
 {
-    const bool light = Dock::isV23Light();
-
-    QColor fill;
-    if (m_isPressed)
-        fill = light ? QColor(0, 0, 0, 38) : QColor(255, 255, 255, 64);
-    else if (m_isHovered)
-        fill = light ? QColor(0, 0, 0, 20) : QColor(255, 255, 255, 38);
-    else
-        fill = light ? QColor(255, 255, 255, 64) : QColor(255, 255, 255, 13);
-    painter.fillRect(rect(), fill);
+    if (m_isPressed || m_isHovered) {
+        painter.fillRect(rect(), QColor(255, 255, 255, 255 * (m_isPressed ? .25 : .15)));
+        painter.setPen(QColor(255, 255, 255, 255 * .1));
+        painter.drawRect(rect().adjusted(0, 0, -1, -1));
+    }
 
     QRect edge = rect();
     if (width() < height())
         edge.setRight(edge.left());
     else
         edge.setBottom(edge.top());
-    painter.fillRect(edge, light ? QColor(0, 0, 0, 26) : QColor(255, 255, 255, 26));
+    painter.fillRect(edge, Dock::isV23Light() ? QColor(0, 0, 0, 255 * .2) : QColor(255, 255, 255, 255 * .2));
 }

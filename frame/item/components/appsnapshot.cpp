@@ -24,6 +24,7 @@
 #include "../../wayland/gxdescreenshotclient.h"
 #include "previewcontainer.h"
 #include "../../dbus/dockdbusnames.h"
+#include "constants.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -32,6 +33,7 @@
 #include <sys/shm.h>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QVBoxLayout>
 #include <QSizeF>
 #include <QTimer>
@@ -95,7 +97,10 @@ AppSnapshot::AppSnapshot(const WId wid, QWidget *parent)
 
     setLayout(centralLayout);
     setAcceptDrops(true);
-    resize(SNAP_WIDTH, SNAP_HEIGHT);
+    if (Dock::isV23Mode())
+        setFixedSize(V23_SNAP_MAX_WIDTH + V23_SNAP_BORDER * 2, V23_SNAP_HEIGHT + V23_SNAP_BORDER * 2);
+    else
+        resize(SNAP_WIDTH, SNAP_HEIGHT);
 
     connect(m_closeBtn2D, &DImageButton::clicked, this, &AppSnapshot::closeWindow, Qt::QueuedConnection);
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &AppSnapshot::compositeChanged, Qt::QueuedConnection);
@@ -168,9 +173,10 @@ void AppSnapshot::fetchWaylandSnapshot() {
         const QString appId = m_appId.section('@', -1);
         const qreal ratio = devicePixelRatioF();
         QImage image;
+        const QSizeF target = snapshotTargetSize();
         if (client->captureWindowThumbnail(appId, m_windowInfo.title,
-                quint32(SNAP_WIDTH * ratio),
-                quint32(SNAP_HEIGHT * ratio), &image)) {
+                quint32(target.width() * ratio),
+                quint32(target.height() * ratio), &image)) {
             applyWaylandSnapshot(image);
             return;
         }
@@ -231,7 +237,7 @@ void AppSnapshot::applyWaylandSnapshot(const QImage& image) {
     m_snapshotSrcRect = m_snapshot.rect();
     m_title->setVisible(false);
 
-    QSizeF size(rect().marginsRemoved(QMargins(8, 8, 8, 8)).size());
+    QSizeF size(snapshotTargetSize());
     const auto ratio = devicePixelRatioF();
     size = m_snapshotSrcRect.size().scaled(size * ratio, Qt::KeepAspectRatio);
     const qreal scale = qreal(size.width()) / m_snapshotSrcRect.width();
@@ -241,7 +247,32 @@ void AppSnapshot::applyWaylandSnapshot(const QImage& image) {
         Qt::SmoothTransformation);
     m_snapshotSrcRect = QRectF(QPointF(0, 0), size);
     m_snapshot.setDevicePixelRatio(ratio);
+    updateV23Size();
     update();
+}
+
+QSizeF AppSnapshot::snapshotTargetSize() const
+{
+    if (Dock::isV23Mode())
+        return QSizeF(V23_SNAP_MAX_WIDTH, V23_SNAP_HEIGHT);
+
+    return rect().marginsRemoved(QMargins(8, 8, 8, 8)).size();
+}
+
+void AppSnapshot::updateV23Size()
+{
+    if (!Dock::isV23Mode() || m_snapshot.isNull())
+        return;
+
+    // the card follows the window's aspect ratio
+    const int contentWidth = qBound(V23_SNAP_MIN_WIDTH,
+        qRound(m_snapshotSrcRect.width() / devicePixelRatioF()), V23_SNAP_MAX_WIDTH);
+    const QSize cardSize(contentWidth + V23_SNAP_BORDER * 2, V23_SNAP_HEIGHT + V23_SNAP_BORDER * 2);
+    if (cardSize == size())
+        return;
+
+    setFixedSize(cardSize);
+    emit sizeChanged();
 }
 
 void AppSnapshot::fetchSnapshot()
@@ -298,7 +329,7 @@ void AppSnapshot::fetchSnapshot()
         m_snapshot = qimage;
     } while (false);
 
-    QSizeF size(rect().marginsRemoved(QMargins(8, 8, 8, 8)).size());
+    QSizeF size(snapshotTargetSize());
     const auto ratio = devicePixelRatioF();
     size = m_snapshotSrcRect.size().scaled(size * ratio, Qt::KeepAspectRatio);
     qreal scale = qreal(size.width()) / m_snapshotSrcRect.width();
@@ -315,6 +346,7 @@ void AppSnapshot::fetchSnapshot()
     if (info) XFree(info);
     if (prop_to_return_gtk) XFree(prop_to_return_gtk);
 
+    updateV23Size();
     update();
 }
 
@@ -355,6 +387,11 @@ void AppSnapshot::paintEvent(QPaintEvent *e)
     if (m_snapshot.isNull())
         return;
 
+    if (Dock::isV23Mode()) {
+        paintV23(painter);
+        return;
+    }
+
     const auto ratio = devicePixelRatioF();
 
     // draw attention background
@@ -373,9 +410,46 @@ void AppSnapshot::paintEvent(QPaintEvent *e)
     painter.drawImage(QPointF(offset_x, offset_y), im, m_snapshotSrcRect);
 }
 
+void AppSnapshot::paintV23(QPainter &painter)
+{
+    // dde-shell AppItemWindowDeletegate
+    const bool light = Dock::isV23Light();
+    const int radius = 8;
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const QRectF card = QRectF(rect()).marginsRemoved(
+        QMarginsF(V23_SNAP_BORDER, V23_SNAP_BORDER, V23_SNAP_BORDER, V23_SNAP_BORDER));
+    QColor background = light ? QColor(0, 0, 0, 255 * 0.05) : QColor(255, 255, 255, 255 * 0.05);
+    if (m_windowInfo.attention)
+        background = QColor(241, 138, 46, 255 * .8);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(background);
+    painter.drawRoundedRect(card, radius, radius);
+
+    const qreal ratio = devicePixelRatioF();
+    const QSizeF imageSize = m_snapshotSrcRect.size() / ratio;
+    const QRectF imageRect(QPointF(qRound((width() - imageSize.width()) / 2),
+                                   qRound((height() - imageSize.height()) / 2)), imageSize);
+
+    QPainterPath clip;
+    clip.addRoundedRect(imageRect, radius, radius);
+    painter.save();
+    painter.setClipPath(clip);
+    painter.drawImage(imageRect.topLeft(), m_snapshot, m_snapshotSrcRect);
+    painter.restore();
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(QPen(light ? QColor(0, 0, 0, 255 * 0.1) : QColor(255, 255, 255, 255 * 0.1), 1));
+    painter.drawRoundedRect(imageRect.adjusted(.5, .5, -.5, -.5), radius, radius);
+}
+
 void AppSnapshot::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
+
+    // the V23 thumbnail size does not depend on the card size
+    if (Dock::isV23Mode())
+        return;
 
     QTimer::singleShot(1, this, &AppSnapshot::fetchSnapshot);
 }

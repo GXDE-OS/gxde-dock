@@ -618,7 +618,8 @@ void LayerShellHelper::styleDockPopupLayerShell(QWidget* popup) {
     }
 
     QWindow* window = popup->windowHandle();
-    if (!window || window->property("_d_dock_popup_styled").toBool()) {
+    if (!window || (window->property("_d_dock_popup_styled").toBool()
+            && !Dock::isV23Mode())) {
         return;
     }
 

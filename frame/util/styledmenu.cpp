@@ -22,9 +22,6 @@
 #include "wayland/layershell_styler.h"
 
 #include <QAction>
-#include <QDebug>
-#include <QMouseEvent>
-#include <QCursor>
 #include <QApplication>
 #include <QColor>
 #include <QFontMetrics>
@@ -60,9 +57,6 @@ StyledMenu::StyledMenu(const QString &styleName, QWidget *parent)
     , m_styleName(styleName)
 {
     updateStyle();
-    // V23DBG
-    connect(this, &QMenu::hovered, this, [this](QAction *a) { qWarning() << "V23DBG hovered" << this << a->text(); });
-    connect(this, &QMenu::aboutToHide, this, [this] { qWarning() << "V23DBG aboutToHide" << this; });
 
     if (Wayland::LayerShellHelper::isWayland()) {
         setAttribute(Qt::WA_TranslucentBackground);
@@ -111,21 +105,6 @@ void StyledMenu::updateStyles(QMenu *menu)
     for (QMenu *sub : menu->findChildren<QMenu *>())
         if (StyledMenu *styled = dynamic_cast<StyledMenu *>(sub))
             styled->updateStyle();
-}
-
-bool StyledMenu::event(QEvent *e)  // V23DBG
-{
-    switch (e->type()) {
-    case QEvent::MouseMove: {
-        auto *me = static_cast<QMouseEvent *>(e);
-        qWarning() << "V23DBG move" << this << me->position() << me->globalPosition() << "active" << (activeAction() ? activeAction()->text() : QString());
-        break; }
-    case QEvent::Enter: case QEvent::Leave: case QEvent::Hide: case QEvent::Close:
-        qWarning() << "V23DBG event" << this << e->type() << QCursor::pos();
-        break;
-    default: break;
-    }
-    return QMenu::event(e);
 }
 
 void StyledMenu::showEvent(QShowEvent *event)
@@ -305,8 +284,10 @@ void StyledMenu::paintEvent(QPaintEvent *event)
         const bool light = v23Style->isLight();
         painter.setPen(light ? QColor(0, 0, 0, 255 * 0.12) : QColor(0, 0, 0, 255 * 0.5));
         painter.drawPath(menuPath);
-        painter.setPen(light ? QColor(255, 255, 255, 255 * 0.6) : QColor(255, 255, 255, 255 * 0.1));
-        painter.drawRoundedRect(menuRect.adjusted(1, 1, -1, -1), kV23CornerRadius - 1, kV23CornerRadius - 1);
+        if (!light) {
+            painter.setPen(QColor(255, 255, 255, 255 * 0.1));
+            painter.drawRoundedRect(menuRect.adjusted(1, 1, -1, -1), kV23CornerRadius - 1, kV23CornerRadius - 1);
+        }
         return;
     }
 

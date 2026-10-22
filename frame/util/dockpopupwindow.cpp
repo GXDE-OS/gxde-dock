@@ -20,19 +20,38 @@
  */
 
 #include "dockpopupwindow.h"
+#include "constants.h"
 #include "wayland/layershellhelper.h"
+#include "wayland/layershell_styler.h"
 
 #include <DApplication> 
 #include <QTimer>
 #include <QScreen>
 #include <QApplication>
 #include <QGuiApplication>
+#include <QPainter>
+#include <QPainterPath>
+#include <QWindow>
 
 DWIDGET_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+void qt_blurImage(QPainter *painter, QImage &image, qreal radius, bool quality,
+                  bool alphaOnly, int transposed = 0);
+QT_END_NAMESPACE
+
+namespace {
+constexpr int kV23ShadowMargin = 10;
+constexpr int kV23ShadowBlur = 6;
+constexpr int kV23DockGap = 10;
+constexpr int kMarkPointGap = 2;
+}
 
 DockPopupWindow::DockPopupWindow(QWidget *parent)
     : DArrowRectangle(ArrowBottom, parent),
       m_model(false),
+      m_v23(false),
+      m_v23ShadowOffset(2),
 
       m_acceptDelayTimer(new QTimer(this)),
 
@@ -81,6 +100,7 @@ void DockPopupWindow::setContent(QWidget *content)
 
     setAccessibleName(content->objectName() + "-popup");
 
+    updateV23Style(content);
     DArrowRectangle::setContent(content);
 }
 
@@ -114,9 +134,19 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
     }
 }
 
-void DockPopupWindow::show(const int x, const int y)
+void DockPopupWindow::show(int x, int y)
 {
     m_lastPoint = QPoint(x, y);
+
+    if (m_v23) {
+        const int shift = kV23ShadowMargin + kMarkPointGap - kV23DockGap;
+        switch (arrowDirection()) {
+        case ArrowTop:      y -= shift; break;
+        case ArrowBottom:   y += shift; break;
+        case ArrowLeft:     x -= shift; break;
+        case ArrowRight:    x += shift; break;
+        }
+    }
 
     // Replace Qt::move() on Wayland by manually calculating position.
     const QSize popupSize = getFixedSize();
@@ -158,6 +188,10 @@ void DockPopupWindow::showEvent(QShowEvent *e)
 {
     DArrowRectangle::showEvent(e);
 
+    if (m_v23) {
+        applyV23Blur();
+    }
+
     QTimer::singleShot(1, this, &DockPopupWindow::ensureRaised);
 }
 
@@ -184,6 +218,119 @@ bool DockPopupWindow::eventFilter(QObject *o, QEvent *e)
     }
 
     return false;
+}
+
+void DockPopupWindow::paintEvent(QPaintEvent *e)
+{
+    if (!m_v23) {
+        DArrowRectangle::paintEvent(e);
+        return;
+    }
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.fillRect(rect(), Qt::transparent);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+    const QRectF panel = v23PanelRect();
+    QPainterPath path;
+    path.addRoundedRect(panel, radius(), radius());
+
+    const bool light = Dock::isV23Light();
+    if (m_shadowCache.isNull() || m_shadowCacheSize != size()) {
+        QImage shadow(size(), QImage::Format_ARGB32_Premultiplied);
+        shadow.fill(Qt::transparent);
+        {
+            QPainter shadowPainter(&shadow);
+            shadowPainter.setRenderHint(QPainter::Antialiasing, true);
+            shadowPainter.fillPath(path.translated(0, m_v23ShadowOffset), Qt::black);
+        }
+
+        m_shadowCache = QImage(size(), QImage::Format_ARGB32_Premultiplied);
+        m_shadowCache.fill(Qt::transparent);
+        QPainter cachePainter(&m_shadowCache);
+        qt_blurImage(&cachePainter, shadow, kV23ShadowBlur * 2.0, true, true);
+        m_shadowCacheSize = size();
+    }
+
+    QPainterPath outside;
+    outside.addRect(rect());
+    outside = outside.subtracted(path);
+    painter.save();
+    painter.setClipPath(outside);
+    painter.setOpacity(light ? 0.2 : 0.5);
+    painter.drawImage(0, 0, m_shadowCache);
+    painter.restore();
+
+    // dde-shell PanelPopupWindow blend color over the compositor blur
+    painter.fillPath(path, light ? QColor(235, 235, 235, 255 * 0.6) : QColor(0, 0, 0, 85));
+
+    painter.setPen(QPen(light ? QColor(0, 0, 0, 255 * 0.1) : QColor(0, 0, 0, 255 * 0.5), 1));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRoundedRect(panel.adjusted(.5, .5, -.5, -.5), radius() - .5, radius() - .5);
+}
+
+void DockPopupWindow::resizeEvent(QResizeEvent *e)
+{
+    DArrowRectangle::resizeEvent(e);
+
+    if (m_v23 && isVisible()) {
+        applyV23Blur();
+    }
+}
+
+void DockPopupWindow::updateV23Style(QWidget *content)
+{
+    const bool v23 = Dock::isV23Mode() && Wayland::LayerShellHelper::isWayland();
+    if (!v23 && !m_v23) {
+        return;
+    }
+
+    m_v23 = v23;
+    m_shadowCache = QImage();
+
+    if (!v23) {
+        if (QWindow *window = windowHandle())
+            window->setMask(QRegion());
+
+        setShadowBlurRadius(0);
+        setShadowYOffset(0);
+        setArrowWidth(18);
+        setArrowHeight(10);
+        setMargin(8);
+        setRadius(6);
+        return;
+    }
+
+    const bool preview = content->inherits("PreviewContainer");
+    const bool padded = preview || content->inherits("TipsWidget");
+
+    setArrowWidth(0);
+    setArrowHeight(0);
+    setShadowBlurRadius(kV23ShadowMargin);
+    setShadowYOffset(0);
+    setMargin(padded ? 0 : 8);
+    setRadius(preview ? 6 : 8);
+    m_v23ShadowOffset = preview ? 4 : 2;
+}
+
+QRect DockPopupWindow::v23PanelRect() const
+{
+    return rect().marginsRemoved(QMargins(kV23ShadowMargin, kV23ShadowMargin,
+        kV23ShadowMargin, kV23ShadowMargin));
+}
+
+void DockPopupWindow::applyV23Blur()
+{
+    QWindow *window = windowHandle();
+    if (!window) {
+        return;
+    }
+
+    window->setMask(QRegion(v23PanelRect()));
+    Wayland::LayerShellStyler::apply(window, radius(), true, v23PanelRect());
 }
 
 void DockPopupWindow::onGlobMouseRelease(const QPoint &mousePos, const int flag)

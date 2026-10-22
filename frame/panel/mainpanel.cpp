@@ -30,6 +30,7 @@
 #include <QScreen>
 #include <QGraphicsView>
 #include <QPainter>
+#include <QPropertyAnimation>
 
 #include <window/mainwindow.h>
 
@@ -801,10 +802,62 @@ void MainPanel::itemRemoved(DockItem *item)
 ///
 void MainPanel::itemMoved(DockItem *item, const int index)
 {
-    // remove old item
-    m_itemLayout->removeWidget(item);
-    // insert new position
-    m_itemLayout->insertWidget(index, item);
+    animateItemMoves([=] {
+        // remove old item
+        m_itemLayout->removeWidget(item);
+        // insert new position
+        m_itemLayout->insertWidget(index, item);
+    });
+}
+
+void MainPanel::animateItemMoves(const std::function<void()> &change)
+{
+    if (m_displayMode != Dock::V23 || !isVisible()) {
+        change();
+        return;
+    }
+
+    static const char *animationName = "_v23_move_animation";
+
+    QHash<QWidget *, QPoint> before;
+    for (int i = 0; i < m_itemLayout->count(); ++i) {
+        QWidget *w = m_itemLayout->itemAt(i)->widget();
+        if (!w || !w->isVisible()) {
+            continue;
+        }
+
+        if (auto *animation = w->findChild<QPropertyAnimation *>(animationName, Qt::FindDirectChildrenOnly)) {
+            animation->stop();
+        }
+        before.insert(w, w->pos());
+    }
+
+    change();
+    m_itemLayout->activate();
+
+    for (int i = 0; i < m_itemLayout->count(); ++i) {
+        QWidget *w = m_itemLayout->itemAt(i)->widget();
+        if (!w || !before.contains(w) || before.value(w) == w->pos()) {
+            continue;
+        }
+        
+        if (w == DraggingItem || w == RequestDockItem) {
+            continue;
+        }
+
+        auto *animation = w->findChild<QPropertyAnimation *>(animationName, Qt::FindDirectChildrenOnly);
+        if (!animation) {
+            animation = new QPropertyAnimation(w, "pos", w);
+            animation->setObjectName(animationName);
+            animation->setDuration(200);
+            animation->setEasingCurve(QEasingCurve::OutCubic);
+        }
+
+        animation->setStartValue(before.value(w));
+        animation->setEndValue(w->pos());
+        w->move(before.value(w));
+        animation->start();
+    }
 }
 
 ///

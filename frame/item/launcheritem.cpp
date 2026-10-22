@@ -52,7 +52,8 @@ void LauncherItem::refershIcon() {
     const int iconSize = qMin(width(), height());
     m_iconDpr = devicePixelRatioF();
     if (DockDisplayMode == Efficient || DockDisplayMode == V23) {
-        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.7, m_iconDpr);
+        const qreal scale = DockDisplayMode == V23 ? V23IconScale : 0.7;
+        m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * scale, m_iconDpr);
         m_largeIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.9, m_iconDpr);
     } else {
         m_smallIcon = ThemeAppIcon::getIcon("deepin-launcher", iconSize * 0.6, m_iconDpr);
@@ -74,11 +75,6 @@ void LauncherItem::paintEvent(QPaintEvent *e) {
     }
 
     QPainter painter(this);
-
-    if (DockDisplayMode == V23 && m_hover) {
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.fillPath(v23PlatePath(rect()), v23PlateColor(V23PlateHover));
-    }
 
     const QPixmap pixmap = DockDisplayMode == Fashion ? m_largeIcon : m_smallIcon;
 

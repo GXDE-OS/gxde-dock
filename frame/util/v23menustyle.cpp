@@ -18,7 +18,6 @@
 #include "v23menustyle.h"
 
 #include <QCommonStyle>
-#include <QDebug>
 #include <QFontInfo>
 #include <QIcon>
 #include <QPainter>
@@ -300,7 +299,6 @@ V23MenuMovementAnimation *V23MenuStyle::drawMenuItemBackground(const QStyleOptio
         if (selected)
             animation->setTargetRect(rect);
     }
-    if (selected) qWarning() << "V23DBG paint selected" << menuItem->text << rect << (animation ? animation->isRunning() : -1) << (animation ? animation->currentRect() : QRect()) << painter->opacity() << painter->clipBoundingRect(); // V23DBG
 
     if (animation && animation->isRunning()) {
         painter->save();

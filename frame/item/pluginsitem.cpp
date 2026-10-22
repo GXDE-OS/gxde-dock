@@ -139,12 +139,13 @@ void PluginsItem::paintEvent(QPaintEvent *event)
     if (displayMode == Dock::DisplayMode::Fashion || displayMode == Dock::Classic) {
         return;
     }
-    if (!m_hover || m_dragging) {
+    if (DockDisplayMode == Dock::V23) {
+        if ((m_hover || m_pressed) && !m_dragging)
+            paintV23Hover();
         return;
     }
 
-    if (DockDisplayMode == Dock::V23) {
-        paintV23Hover();
+    if (!m_hover || m_dragging) {
         return;
     }
 
@@ -249,6 +250,7 @@ bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_centralWidget) {
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            m_pressed = mouseEvent->button() == Qt::LeftButton;
             // 右键落在可见图标之外时不要吞掉事件，让 Qt 继续向父级传播，
             // 最终由 MainWindow 弹出 dock 设置菜单。
             if (mouseEvent->button() == Qt::RightButton
@@ -266,6 +268,7 @@ bool PluginsItem::eventFilter(QObject *watched, QEvent *event)
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_hover = false;
+            m_pressed = false;
             update();
             // 同上，托盘插件：让释放事件直接到达托盘 widget，
             // SystemTray 由此弹出左键 applet，SNI/XEmbed 由此触发 sendClick。
@@ -368,10 +371,6 @@ void PluginsItem::paintV23Hover()
         plateRect.setWidth(plateWidth);
     }
 
-    QPainterPath path;
-    path.addRoundedRect(plateRect, 8, 8);
-
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.fillPath(path, v23PlateColor(V23PlateRunningHover));
+    paintV23Plate(painter, plateRect, 4, m_pressed);
 }

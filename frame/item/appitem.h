@@ -32,6 +32,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsItemAnimation>
+#include <QVariantAnimation>
 #include <QSet>
 
 #include "dbus/dockentryinterface.h"
@@ -87,7 +88,9 @@ signals:
 private:
     void moveEvent(QMoveEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
-    void paintV23Plate(QPainter &painter);
+    void paintV23Indicator(QPainter &painter);
+    void animateV23IconScale(const qreal to);
+    QPixmap v23DragPixmap() const;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
@@ -136,6 +139,8 @@ private:
     QPointer<AppDrag> m_drag;
 
     bool m_dragging;
+    QVariantAnimation *m_v23IconScaleAnimation;
+    qreal m_v23IconScale;
     bool m_active;
     int m_retryTimes;
 

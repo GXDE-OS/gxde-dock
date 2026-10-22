@@ -32,7 +32,6 @@ public:
     static void updateStyles(QMenu *menu);
 
 protected:
-    bool event(QEvent *e) override; // V23DBG
     void showEvent(QShowEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 

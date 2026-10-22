@@ -34,6 +34,8 @@
 #include <QBoxLayout>
 #include <QPainter>
 
+#include <functional>
+
 #include <DBlurEffectWidget>
 #include <DWindowManagerHelper>
 
@@ -86,6 +88,7 @@ private:
 
     void manageItem(DockItem *item);
     DockItem *itemAt(const QPoint &point);
+    void animateItemMoves(const std::function<void()> &change);
 
 private slots:
     void adjustItemSize();
