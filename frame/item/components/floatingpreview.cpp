@@ -22,23 +22,31 @@
 #include "floatingpreview.h"
 #include "appsnapshot.h"
 #include "previewcontainer.h"
+#include "previewclosebutton.h"
+#include "constants.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QVBoxLayout>
 
 FloatingPreview::FloatingPreview(QWidget *parent)
     : QWidget(parent),
 
-      m_closeBtn3D(new DImageButton)
+      m_closeBtn3D(new DImageButton),
+      m_closeBtnV23(new PreviewCloseButton)
 {
     m_closeBtn3D->setFixedSize(24, 24);
     m_closeBtn3D->setNormalPic(":/icons/resources/close_round_normal.svg");
     m_closeBtn3D->setHoverPic(":/icons/resources/close_round_hover.svg");
     m_closeBtn3D->setPressPic(":/icons/resources/close_round_press.svg");
 
+    m_closeBtnV23->setVisible(false);
+
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addWidget(m_closeBtn3D);
     centralLayout->setAlignment(m_closeBtn3D, Qt::AlignRight | Qt::AlignTop);
+    centralLayout->addWidget(m_closeBtnV23);
+    centralLayout->setAlignment(m_closeBtnV23, Qt::AlignRight | Qt::AlignTop);
     centralLayout->setContentsMargins(0, 0, 0, 0);
     centralLayout->setSpacing(0);
 
@@ -46,6 +54,7 @@ FloatingPreview::FloatingPreview(QWidget *parent)
     setFixedSize(SNAP_WIDTH, SNAP_HEIGHT);
 
     connect(m_closeBtn3D, &DImageButton::clicked, this, &FloatingPreview::onCloseBtnClicked);
+    connect(m_closeBtnV23, &PreviewCloseButton::clicked, this, &FloatingPreview::onCloseBtnClicked);
 }
 
 WId FloatingPreview::trackedWid() const
@@ -66,9 +75,14 @@ void FloatingPreview::trackWindow(AppSnapshot * const snap)
         m_tracked->removeEventFilter(this);
     snap->installEventFilter(this);
     m_tracked = snap;
-    m_closeBtn3D->setVisible(m_tracked->closeAble());
+
+    const bool v23 = Dock::isV23Mode();
+    m_closeBtn3D->setVisible(!v23 && m_tracked->closeAble());
+    m_closeBtnV23->setVisible(v23 && m_tracked->closeAble());
+    layout()->setContentsMargins(0, v23 ? 5 : 0, v23 ? 4 : 0, 0);
 
     QTimer::singleShot(0, this, [=] {
+        setFixedSize(v23 ? snap->size() : QSize(SNAP_WIDTH, SNAP_HEIGHT));
         setGeometry(snap->geometry());
     });
 }
@@ -88,6 +102,15 @@ void FloatingPreview::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+
+    if (Dock::isV23Mode()) {
+        const bool light = Dock::isV23Light();
+        painter.setPen(QPen(light ? QColor(0, 0, 0, 255 * 0.2) : QColor(255, 255, 255, 255 * 0.3),
+            V23_SNAP_BORDER));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRoundedRect(QRectF(rect()).adjusted(2, 2, -2, -2), 8 + 2, 8 + 2);
+        return;
+    }
 
     const QRectF r = rect().marginsRemoved(QMargins(8, 8, 8, 8));
     const auto ratio = devicePixelRatioF();

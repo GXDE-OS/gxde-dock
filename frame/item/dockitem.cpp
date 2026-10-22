@@ -44,6 +44,7 @@ QPointer<DockPopupWindow> DockItem::PopupWindow(nullptr);
 DockItem::DockItem(QWidget *parent)
     : QWidget(parent),
       m_hover(false),
+      m_pressed(false),
       m_popupShown(false),
       m_tapAndHold(false),
 
@@ -134,6 +135,22 @@ bool DockItem::event(QEvent *event)
     if (event->type() == QEvent::Gesture)
         gestureEvent(static_cast<QGestureEvent*>(event));
 
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+        if (static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
+            m_pressed = true;
+            update();
+        }
+        break;
+    case QEvent::MouseButtonRelease:
+        if (m_pressed) {
+            m_pressed = false;
+            update();
+        }
+        break;
+    default:;
+    }
+
     return QWidget::event(event);
 }
 
@@ -198,6 +215,7 @@ void DockItem::leaveEvent(QEvent *e)
     QWidget::leaveEvent(e);
 
     m_hover = false;
+    m_pressed = false;
     m_hoverEffect->setHighlighting(false);
     m_popupTipsDelayTimer->stop();
 
@@ -494,23 +512,28 @@ void DockItem::hideNonModel()
         hidePopup();
 }
 
-QColor DockItem::v23PlateColor(const V23Plate plate)
+QRectF DockItem::v23IconPlateRect(const QRectF &iconRect)
 {
-    // translucent overlays: darken the light bar, lighten the dark bar
-    static const int alphas[] = { 13, 15, 28, 46 };
-    const int alpha = alphas[plate];
-
-    return Dock::isV23Light() ? QColor(0, 0, 0, alpha) : QColor(255, 255, 255, alpha);
+    // icon + iconSize / 8 on each side, one more pixel vertically
+    const int padding = qRound(iconRect.width() / 8);
+    return iconRect.adjusted(-padding, -padding - 1, padding, padding + 1);
 }
 
-QPainterPath DockItem::v23PlatePath(const QRectF &itemRect)
+void DockItem::paintV23Plate(QPainter &painter, const QRectF &plateRect,
+                             const qreal radius, const bool pressed)
 {
-    const qreal size = qMin(itemRect.width(), itemRect.height());
-    QRectF plateRect(0, 0, size, size);
-    plateRect = plateRect.marginsRemoved(QMarginsF(2, 2, 2, 2));
-    plateRect.moveCenter(itemRect.center());
+    painter.save();
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
     QPainterPath path;
-    path.addRoundedRect(plateRect, 8, 8);
-    return path;
+    path.addRoundedRect(plateRect, radius, radius);
+    painter.fillPath(path, QColor(255, 255, 255, 255 * (pressed ? .25 : .15)));
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(QPen(QColor(255, 255, 255, 255 * .1), 1));
+    painter.drawRoundedRect(plateRect.adjusted(.5, .5, -.5, -.5), radius - .5, radius - .5);
+    painter.setPen(QPen(QColor(0, 0, 0, 255 * .1), 1));
+    painter.drawRoundedRect(plateRect.adjusted(-.5, -.5, .5, .5), radius + .5, radius + .5);
+
+    painter.restore();
 }

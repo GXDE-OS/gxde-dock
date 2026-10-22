@@ -16,6 +16,7 @@ protected:
 
 private:
     QString m_text;
+    bool m_v23Font = false;
 };
 
 #endif // TIPSWIDGET_H

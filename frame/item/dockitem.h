@@ -102,22 +102,17 @@ protected:
     // com.deepin.menu缺失时使用QMenu代替
     void popupMenuWayland(const QString& menuJson);
 
-    // V23 mode plate
-    enum V23Plate {
-        V23PlateHover,
-        V23PlateRunning,
-        V23PlateRunningHover,
-        V23PlateActive,
-    };
-
-    static QColor v23PlateColor(const V23Plate plate);
-    static QPainterPath v23PlatePath(const QRectF &itemRect);
+    static constexpr qreal V23IconScale = 0.64;
+    static QRectF v23IconPlateRect(const QRectF &iconRect);
+    static void paintV23Plate(QPainter &painter, const QRectF &plateRect,
+                              const qreal radius, const bool pressed);
 
 private:
     void updatePopupPosition();
 
 protected:
     bool m_hover;
+    bool m_pressed;
     bool m_popupShown;
     bool m_tapAndHold;
 

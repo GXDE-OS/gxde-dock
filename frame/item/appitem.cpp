@@ -76,6 +76,8 @@ AppItem::AppItem(const QDBusObjectPath &entry, QWidget *parent,
       m_drag(nullptr),
 
       m_dragging(false),
+      m_v23IconScaleAnimation(nullptr),
+      m_v23IconScale(1.0),
 
       m_retryTimes(0),
 
@@ -286,7 +288,9 @@ void AppItem::paintEvent(QPaintEvent *e)
 {
     DockItem::paintEvent(e);
 
-    if (m_dragging || (m_swingEffectView != nullptr && DockDisplayMode != Fashion))
+    const bool v23Shrinking = m_dragging && m_v23IconScaleAnimation
+        && m_v23IconScaleAnimation->state() == QAbstractAnimation::Running;
+    if ((m_dragging && !v23Shrinking) || (m_swingEffectView != nullptr && DockDisplayMode != Fashion))
         return;
 
     QPainter painter(this);
@@ -295,13 +299,27 @@ void AppItem::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
+    if (DockDisplayMode == V23 && m_v23IconScale < 1.0) {
+        if (m_appIcon.isNull()) {
+            return;
+        }
+
+        const QRectF iconRect(appIconPosition(), m_appIcon.size() / m_appIcon.devicePixelRatioF());
+        painter.setOpacity(m_v23IconScale);
+        painter.translate(iconRect.center());
+        painter.scale(m_v23IconScale, m_v23IconScale);
+        painter.translate(-iconRect.center());
+        painter.drawPixmap(iconRect.topLeft(), m_appIcon);
+        return;
+    }
+
     const QRectF itemRect = rect();
 
     // draw background
     QRectF backgroundRect = itemRect;
 
     if (DockDisplayMode == V23) {
-        paintV23Plate(painter);
+        paintV23Indicator(painter);
     }
     else if (DockDisplayMode == Efficient) {
         backgroundRect = itemRect.marginsRemoved(QMargins(1, 1, 1, 1));
@@ -379,21 +397,61 @@ void AppItem::paintEvent(QPaintEvent *e)
     painter.drawPixmap(appIconPosition(), m_appIcon);
 }
 
-void AppItem::paintV23Plate(QPainter &painter)
+void AppItem::paintV23Indicator(QPainter &painter)
 {
-    QColor color;
-    if (m_active)
-        color = v23PlateColor(V23PlateActive);
-    else if (!m_windowInfos.isEmpty() && hasAttention())
-        color = QColor(241, 138, 46, 255 * .8);
-    else if (!m_windowInfos.isEmpty())
-        color = v23PlateColor(m_hover ? V23PlateRunningHover : V23PlateRunning);
-    else if (m_hover)
-        color = v23PlateColor(V23PlateHover);
-    else
+    const qreal dpr = m_appIcon.devicePixelRatioF();
+    const QRectF plate = v23IconPlateRect(QRectF(appIconPosition(), m_appIcon.size() / dpr));
+    const qreal plateRadius = plate.height() / 5;
+
+    const bool running = !m_windowInfos.isEmpty();
+    if (running && hasAttention()) {
+        QPainterPath path;
+        path.addRoundedRect(plate, plateRadius, plateRadius);
+        painter.fillPath(path, QColor(241, 138, 46, 255 * .8));
+    } else if (m_hover || m_pressed) {
+        paintV23Plate(painter, plate, plateRadius, m_pressed);
+    }
+
+    if (!running)
         return;
 
-    painter.fillPath(v23PlatePath(rect()), color);
+    const bool light = Dock::isV23Light();
+    QColor color;
+    if (m_active)
+        color = QColor(0x1f, 0x6e, 0xe7);
+    else
+        color = light ? QColor(0, 0, 0) : QColor(255, 255, 255);
+
+    const int length = 12;
+    const int thickness = 3;
+    const int edgeGap = 2;
+    const QPointF center = plate.center();
+    QRectF pill;
+    switch (DockPosition) {
+    case Top:
+        pill = QRectF(qRound(center.x() - length / 2.0), edgeGap, length, thickness);
+        break;
+    case Bottom:
+        pill = QRectF(qRound(center.x() - length / 2.0), height() - edgeGap - thickness, length, thickness);
+        break;
+    case Left:
+        pill = QRectF(edgeGap, qRound(center.y() - length / 2.0), thickness, length);
+        break;
+    case Right:
+        pill = QRectF(width() - edgeGap - thickness, qRound(center.y() - length / 2.0), thickness, length);
+        break;
+    }
+
+    const QRectF halo = pill.adjusted(-1, -1, 1, 1);
+    const qreal haloRadius = qMin(halo.width(), halo.height()) / 2.0;
+    QPainterPath haloPath;
+    haloPath.addRoundedRect(halo, haloRadius, haloRadius);
+    painter.fillPath(haloPath, light ? QColor(255, 255, 255, 46) : QColor(0, 0, 0, 46));
+
+    const qreal radius = qMin(pill.width(), pill.height()) / 2.0;
+    QPainterPath pillPath;
+    pillPath.addRoundedRect(pill, radius, radius);
+    painter.fillPath(pillPath, color);
 }
 
 void AppItem::mouseReleaseEvent(QMouseEvent *e)
@@ -587,12 +645,56 @@ QWidget *AppItem::popupTips()
     return m_appNameTips;
 }
 
+void AppItem::animateV23IconScale(const qreal to)
+{
+    if (DockDisplayMode != V23) {
+        m_v23IconScale = 1.0;
+        return;
+    }
+
+    if (!m_v23IconScaleAnimation) {
+        m_v23IconScaleAnimation = new QVariantAnimation(this);
+        m_v23IconScaleAnimation->setDuration(200);
+        m_v23IconScaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        connect(m_v23IconScaleAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+            m_v23IconScale = value.toReal();
+            update();
+        });
+    }
+
+    m_v23IconScaleAnimation->stop();
+    m_v23IconScaleAnimation->setStartValue(m_v23IconScale);
+    m_v23IconScaleAnimation->setEndValue(to);
+    m_v23IconScaleAnimation->start();
+}
+
+QPixmap AppItem::v23DragPixmap() const
+{
+    const qreal dpr = m_appIcon.devicePixelRatioF();
+    const QRectF iconRect(QPointF(0, 0), m_appIcon.size() / dpr);
+    const QRectF plate = v23IconPlateRect(iconRect);
+    const QRectF bounds = plate.adjusted(-1, -1, 1, 1);
+
+    QPixmap pix((bounds.size() * dpr).toSize());
+    pix.setDevicePixelRatio(dpr);
+    pix.fill(Qt::transparent);
+
+    QPainter painter(&pix);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.translate(-bounds.topLeft());
+    paintV23Plate(painter, plate, plate.height() / 5, true);
+    painter.drawPixmap(iconRect.topLeft(), m_appIcon);
+
+    return pix;
+}
+
 void AppItem::startDrag()
 {
     m_dragging = true;
+    animateV23IconScale(0.0);
     update();
 
-    const QPixmap &dragPix = m_appIcon;
+    const QPixmap dragPix = DockDisplayMode == V23 ? v23DragPixmap() : m_appIcon;
 
     m_drag = new AppDrag(this);
     m_drag->setMimeData(new QMimeData);
@@ -602,6 +704,7 @@ void AppItem::startDrag()
         m_dragging = false;
         m_drag.clear();
         setVisible(true);
+        animateV23IconScale(1.0);
         update();
     });
 
@@ -718,7 +821,9 @@ void AppItem::refershIcon()
     const QString icon = m_itemEntryInter->icon();
     const int iconSize = qMin(width(), height());
 
-    if (DockDisplayMode == Efficient || DockDisplayMode == V23)
+    if (DockDisplayMode == V23)
+        m_appIcon = ThemeAppIcon::getIcon(icon, iconSize * V23IconScale, devicePixelRatioF());
+    else if (DockDisplayMode == Efficient)
         m_appIcon = ThemeAppIcon::getIcon(icon, iconSize * 0.7, devicePixelRatioF());
     else
         m_appIcon = ThemeAppIcon::getIcon(icon, iconSize * 0.8, devicePixelRatioF());
@@ -755,6 +860,9 @@ void AppItem::showPreview()
 
     m_appPreviewTips = PreviewWindow(m_windowInfos, m_itemEntryInter->GetAllowedCloseWindows().value(),
                                      DockPosition, appId());
+    if (DockDisplayMode == V23) {
+        m_appPreviewTips->setAppIcon(ThemeAppIcon::getIcon(m_itemEntryInter->icon(), 24, devicePixelRatioF()));
+    }
 
     connect(m_appPreviewTips, &PreviewContainer::requestActivateWindow, this, &AppItem::requestActivateWindow, Qt::QueuedConnection);
     connect(m_appPreviewTips, &PreviewContainer::requestPreviewWindow, this, &AppItem::requestPreviewWindow, Qt::QueuedConnection);
