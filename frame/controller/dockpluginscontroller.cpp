@@ -25,7 +25,6 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QFileInfo>
 
 DockPluginsController::DockPluginsController(QObject *parent)
     : AbstractPluginsController(parent)
@@ -35,14 +34,8 @@ DockPluginsController::DockPluginsController(QObject *parent)
 
 void DockPluginsController::itemAdded(PluginsItemInterface * const itemInter, const QString &itemKey)
 {
-    if (!isPluginActive(itemInter)) {
-        QStringList &keys = m_inactiveItems[itemInter];
-        if (!keys.contains(itemKey)) {
-            keys << itemKey;
-        }
-
+    if (holdInactiveItem(itemInter, itemKey))
         return;
-    }
 
     QMap<PluginsItemInterface *, QMap<QString, QObject *>> &mPluginsMap = pluginsMap();
 
@@ -80,9 +73,8 @@ void DockPluginsController::itemUpdate(PluginsItemInterface * const itemInter, c
 
 void DockPluginsController::itemRemoved(PluginsItemInterface * const itemInter, const QString &itemKey)
 {
-    if (m_inactiveItems.contains(itemInter) && m_inactiveItems[itemInter].removeOne(itemKey)) {
+    if (releaseInactiveItem(itemInter, itemKey))
         return;
-    }
 
     PluginsItem *item = static_cast<PluginsItem *>(pluginItemAt(itemInter, itemKey));
     if (!item)
@@ -135,82 +127,8 @@ void DockPluginsController::requestSetAppletVisible(PluginsItemInterface * const
 
 void DockPluginsController::startLoader()
 {
-    m_v23Mode = Dock::isV23Mode();
-
     loadLocalPlugins();
     loadSystemPlugins();
-}
-
-bool DockPluginsController::isPluginActive(PluginsItemInterface * const itemInter) const
-{
-    if (isV23Replacement(itemInter)) {
-        return m_v23Mode;
-    }
-
-    return !(m_v23Mode && isReplacedByV23(itemInter));
-}
-
-bool DockPluginsController::isV23Replacement(PluginsItemInterface * const itemInter) const
-{
-    return !m_v23PluginsDir.isEmpty()
-        && QFileInfo(pluginFile(itemInter)).canonicalPath() == m_v23PluginsDir;
-}
-
-bool DockPluginsController::isReplacedByV23(PluginsItemInterface * const itemInter) const
-{
-    // Only built in library that is named after V23 is replaced.
-    // Installed ones will not be, for safety.
-    const QFileInfo file(pluginFile(itemInter));
-    if (m_systemPluginsDir.isEmpty() || file.canonicalPath() != m_systemPluginsDir) {
-        return false;
-    }
-
-    for (const QString &loaded : pluginFiles()) {
-        const QFileInfo replacement(loaded);
-        if (replacement.fileName() == file.fileName()
-                && replacement.canonicalPath() == m_v23PluginsDir) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void DockPluginsController::afterDisplayModeChanged()
-{
-    const bool v23Mode = Dock::isV23Mode();
-    if (v23Mode == m_v23Mode) {
-        return;
-    }
-
-    QList<PluginsItemInterface *> wasActive;
-    for (PluginsItemInterface *inter : pluginsMap().keys()) {
-        if (isPluginActive(inter)) {
-            wasActive << inter;
-        }
-    }
-
-    m_v23Mode = v23Mode;
-
-    QList<PluginsItemInterface *> activated;
-    for (PluginsItemInterface *inter : pluginsMap().keys()) {
-        const bool active = isPluginActive(inter);
-        if (!active && wasActive.contains(inter)) {
-            for (const QString &key : pluginsMap()[inter].keys()) {
-                itemRemoved(inter, key);
-                m_inactiveItems[inter] << key;
-            }
-        } else if (active && !wasActive.contains(inter)) {
-            for (const QString &key : m_inactiveItems.take(inter))
-                itemAdded(inter, key);
-            activated << inter;
-        }
-    }
-
-    // ALl of V15 & V23 shared settings!
-    for (PluginsItemInterface *inter : activated) {
-        inter->pluginSettingsChanged();
-    }
 }
 
 void DockPluginsController::loadLocalPlugins() {
@@ -232,20 +150,18 @@ void DockPluginsController::loadSystemPlugins() {
     }
     qDebug() << "using dock plugins dir:" << pluginsDir;
 
-    m_systemPluginsDir = QDir(pluginsDir).canonicalPath();
-
     PluginLoader *systemLoader = new PluginLoader(pluginsDir, this);
-    const QDir v23Dir(pluginsDir + "/v23");
-    if (!v23Dir.exists()) {
+    const QString v23Dir(pluginsDir + "/v23");
+    if (!QDir(v23Dir).exists()) {
         AbstractPluginsController::startLoader(systemLoader);
         return;
     }
 
-    // Load the V23 replacements first, that inits them.
-    m_v23PluginsDir = v23Dir.canonicalPath();
-    qDebug() << "using dock V23 plugins dir:" << m_v23PluginsDir;
+    // Load the V23 replacements first, so what they replace is known before
+    // the built-ins come up and nothing flashes in V23 mode
+    qDebug() << "using dock V23 plugins dir:" << v23Dir;
 
-    PluginLoader *v23Loader = new PluginLoader(m_v23PluginsDir, this);
+    PluginLoader *v23Loader = new PluginLoader(v23Dir, this);
     connect(v23Loader, &PluginLoader::finished, this, [this, systemLoader] {
         AbstractPluginsController::startLoader(systemLoader);
     }, Qt::QueuedConnection);

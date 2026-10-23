@@ -34,6 +34,9 @@ SystemTraysController::SystemTraysController(QObject *parent)
 
 void SystemTraysController::itemAdded(PluginsItemInterface * const itemInter, const QString &itemKey)
 {
+    if (holdInactiveItem(itemInter, itemKey))
+        return;
+
     QMap<PluginsItemInterface *, QMap<QString, QObject *>> &mPluginsMap = pluginsMap();
 
     // check if same item added
@@ -63,6 +66,9 @@ void SystemTraysController::itemUpdate(PluginsItemInterface * const itemInter, c
 
 void SystemTraysController::itemRemoved(PluginsItemInterface * const itemInter, const QString &itemKey)
 {
+    if (releaseInactiveItem(itemInter, itemKey))
+        return;
+
     SystemTrayItem *item = static_cast<SystemTrayItem *>(pluginItemAt(itemInter, itemKey));
     if (!item)
         return;

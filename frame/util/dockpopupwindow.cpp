@@ -31,6 +31,7 @@
 #include <QGuiApplication>
 #include <QPainter>
 #include <QPainterPath>
+#include <QVariantAnimation>
 #include <QWindow>
 
 DWIDGET_USE_NAMESPACE
@@ -45,13 +46,47 @@ constexpr int kV23ShadowMargin = 10;
 constexpr int kV23ShadowBlur = 6;
 constexpr int kV23DockGap = 10;
 constexpr int kMarkPointGap = 2;
+
+// fadingpopups of deepin-kwin 5.27.2 on Deepin V23: a dock popup grows from
+// 30% of its size at the dock side under the pointer while fading in, and
+// fades out at its full size, both on an OutQuart curve
+constexpr int kOpenDuration = 150;
+constexpr int kCloseDuration = 180;
+constexpr qreal kOpenStartSize = 0.3;
 }
+
+// Covers the popup during its animation, and paints the popup as it looked
+// when the animation started, moved, scaled and faded
+class DockPopupAnimationOverlay : public QWidget
+{
+public:
+    explicit DockPopupAnimationOverlay(DockPopupWindow *popup)
+        : QWidget(popup)
+        , m_popup(popup)
+    {
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        hide();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter painter(this);
+        m_popup->paintAnimation(painter);
+    }
+
+private:
+    DockPopupWindow *m_popup;
+};
 
 DockPopupWindow::DockPopupWindow(QWidget *parent)
     : DArrowRectangle(ArrowBottom, parent),
       m_model(false),
       m_v23(false),
       m_v23ShadowOffset(2),
+      m_animation(Animation::None),
+      m_animator(new QVariantAnimation(this)),
+      m_animationOverlay(new DockPopupAnimationOverlay(this)),
 
       m_acceptDelayTimer(new QTimer(this)),
 
@@ -77,6 +112,23 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
     setAttribute(Qt::WA_InputMethodEnabled, false);
     setProperty("_d_dock_popup", true);
 
+    m_animator->setStartValue(0.0);
+    m_animator->setEndValue(1.0);
+    m_animator->setEasingCurve(QEasingCurve::OutQuart);
+    connect(m_animator, &QVariantAnimation::valueChanged, this, [this] {
+        m_animationOverlay->update();
+        if (QWindow *window = windowHandle()) {
+            const QRectF panel = animatedPanelRect(m_animator->currentValue().toReal());
+            Wayland::LayerShellStyler::apply(window, radius(), true, panel.toAlignedRect());
+        }
+    });
+    connect(m_animator, &QVariantAnimation::finished, this, [this] {
+        const Animation finished = m_animation;
+        stopAnimation();
+        if (finished == Animation::Closing)
+            hideNow();
+    });
+
     connect(m_acceptDelayTimer, &QTimer::timeout, this, &DockPopupWindow::accept);
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &DockPopupWindow::compositeChanged);
     connect(m_regionInter, &DRegionMonitor::buttonPress, this, &DockPopupWindow::onGlobMouseRelease);
@@ -88,7 +140,7 @@ DockPopupWindow::~DockPopupWindow()
 
 bool DockPopupWindow::model() const
 {
-    return isVisible() && m_model;
+    return isVisible() && m_model && m_animation != Animation::Closing;
 }
 
 void DockPopupWindow::setContent(QWidget *content)
@@ -106,6 +158,13 @@ void DockPopupWindow::setContent(QWidget *content)
 
 void DockPopupWindow::show(const QPoint &pos, const bool model)
 {
+    // a popup opens when it was hidden or closing, or shows other content;
+    // moving a shown one around is no opening
+    const bool opening = model && m_v23
+        && (!isVisible() || m_animation == Animation::Closing || !m_model || getContent() != m_openedContent);
+    if (m_animation == Animation::Closing)
+        stopAnimation();
+
     m_model = model;
     m_lastPoint = pos;
 
@@ -131,6 +190,11 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
         // Wayland 下显示遮罩窗口
         m_maskWindow->showMask(screen);
         this->raise(); 
+    }
+
+    if (opening) {
+        m_openedContent = getContent();
+        startAnimation(Animation::Opening);
     }
 }
 
@@ -176,12 +240,17 @@ void DockPopupWindow::show(int x, int y)
         }
     }
     setProperty("_d_dock_popup_position", topLeft);
+    m_anchor = QPoint(x, y) - topLeft;
 
     DArrowRectangle::show(x, y);
 }
 
 void DockPopupWindow::hide()
 {
+    if (m_animation == Animation::Closing)
+        return;
+
+    // the mask goes at once, the clicks pass while the popup fades
     const bool nativeWayland = QGuiApplication::platformName().contains(
         "wayland", Qt::CaseInsensitive);
     if (!nativeWayland && m_regionInter->registered())
@@ -191,14 +260,96 @@ void DockPopupWindow::hide()
         m_maskWindow->hideMask();
     }
 
+    if (m_v23 && m_model && isVisible()) {
+        startAnimation(Animation::Closing);
+        return;
+    }
+
+    hideNow();
+}
+
+void DockPopupWindow::hideNow()
+{
+    stopAnimation();
+    m_openedContent = nullptr;
     DArrowRectangle::hide();
+}
+
+void DockPopupWindow::startAnimation(Animation animation)
+{
+    stopAnimation();
+
+    // the popup as it is, without the overlay
+    m_snapshot = grab();
+    m_animation = animation;
+    m_animator->setDuration(animation == Animation::Opening ? kOpenDuration : kCloseDuration);
+    m_animationOverlay->setGeometry(rect());
+    m_animationOverlay->raise();
+    m_animationOverlay->show();
+    m_animator->start();
+}
+
+void DockPopupWindow::stopAnimation()
+{
+    if (m_animation == Animation::None)
+        return;
+
+    m_animation = Animation::None;
+    m_animator->stop();
+    m_animationOverlay->hide();
+    m_snapshot = QPixmap();
+    if (isVisible())
+        applyV23Blur();
+}
+
+QRectF DockPopupWindow::animatedPanelRect(qreal progress) const
+{
+    const QRectF panel = v23PanelRect();
+    if (m_animation != Animation::Opening)
+        return panel;
+
+    // from 30% of the size, centered on the pointer along the dock and 15%
+    // of the size off the dock side: its edge then lies on the dock side
+    const QSizeF startSize = panel.size() * kOpenStartSize;
+    QPointF start(qBound(panel.left(), qreal(m_anchor.x()), panel.right()),
+                  qBound(panel.top(), qreal(m_anchor.y()), panel.bottom()));
+    switch (arrowDirection()) {
+    case ArrowBottom: start.setY(panel.bottom() - startSize.height() / 2); break;
+    case ArrowTop:    start.setY(panel.top() + startSize.height() / 2);    break;
+    case ArrowRight:  start.setX(panel.right() - startSize.width() / 2);   break;
+    case ArrowLeft:   start.setX(panel.left() + startSize.width() / 2);    break;
+    }
+
+    const QSizeF size = startSize + (panel.size() - startSize) * progress;
+    const QPointF center = start + (panel.center() - start) * progress;
+    return QRectF(center - QPointF(size.width() / 2, size.height() / 2), size);
+}
+
+void DockPopupWindow::paintAnimation(QPainter &painter)
+{
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.fillRect(rect(), Qt::transparent);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    if (m_snapshot.isNull())
+        return;
+
+    const qreal progress = m_animator->currentValue().toReal();
+    const QRectF panel = v23PanelRect();
+    const QRectF current = animatedPanelRect(progress);
+
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.setOpacity(m_animation == Animation::Opening ? progress : 1.0 - progress);
+    painter.translate(current.topLeft());
+    painter.scale(current.width() / panel.width(), current.height() / panel.height());
+    painter.translate(-panel.topLeft());
+    painter.drawPixmap(0, 0, m_snapshot);
 }
 
 void DockPopupWindow::showEvent(QShowEvent *e)
 {
     DArrowRectangle::showEvent(e);
 
-    if (m_v23) {
+    if (m_v23 && m_animation == Animation::None) {
         applyV23Blur();
     }
 
@@ -285,6 +436,15 @@ void DockPopupWindow::paintEvent(QPaintEvent *e)
 void DockPopupWindow::resizeEvent(QResizeEvent *e)
 {
     DArrowRectangle::resizeEvent(e);
+
+    // the window may get its size only after the animation started
+    if (m_animation != Animation::None) {
+        m_animationOverlay->hide();
+        m_snapshot = grab();
+        m_animationOverlay->setGeometry(rect());
+        m_animationOverlay->show();
+        return;
+    }
 
     if (m_v23 && isVisible()) {
         applyV23Blur();
