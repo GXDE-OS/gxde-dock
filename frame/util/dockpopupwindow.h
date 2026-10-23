@@ -30,8 +30,13 @@
 #include <QScreen>
 #include <QTimer>
 #include <QImage>
+#include <QPixmap>
+#include <QPointer>
 
 class DockPopupMask;
+class DockPopupAnimationOverlay;
+class QPainter;
+class QVariantAnimation;
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE
@@ -74,9 +79,24 @@ private slots:
     void ensureRaised();
 
 private:
+    friend class DockPopupAnimationOverlay;
+
     void updateV23Style(QWidget *content);
     QRect v23PanelRect() const;
     void applyV23Blur();
+    void hideNow();
+
+    // V23 mode on Wayland: the fade of the popups that deepin-kwin draws on
+    // Deepin V23, drawn by ourselves as the GXDE compositor has none
+    enum class Animation {
+        None,
+        Opening,
+        Closing,
+    };
+    void startAnimation(Animation animation);
+    void stopAnimation();
+    QRectF animatedPanelRect(qreal progress) const;
+    void paintAnimation(QPainter &painter);
 
 private:
     bool m_model;
@@ -86,6 +106,14 @@ private:
     QImage m_shadowCache;
     QSize m_shadowCacheSize;
     QPoint m_lastPoint;
+    // where the popup points at, in its own coordinates
+    QPoint m_anchor;
+
+    Animation m_animation;
+    QVariantAnimation *m_animator;
+    DockPopupAnimationOverlay *m_animationOverlay;
+    QPixmap m_snapshot;
+    QPointer<QWidget> m_openedContent;
 
     QTimer *m_acceptDelayTimer;
 

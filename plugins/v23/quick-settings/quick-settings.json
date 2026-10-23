@@ -1,0 +1,10 @@
+{
+    "api": "1.1.1",
+    "replaces": [
+        "system-trays/libnetwork.so",
+        "system-trays/libsound.so",
+        "system-trays/libpower.so",
+        "libnotify.so",
+        "libonboard.so"
+    ]
+}

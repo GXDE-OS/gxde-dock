@@ -20,6 +20,7 @@
  */
 
 #include "fashiontraywidgetwrapper.h"
+#include "util/waylandhelper.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -144,7 +145,10 @@ void FashionTrayWidgetWrapper::leaveEvent(QEvent *event)
     // here we should check the mouse position to ensure the mouse is really leaved
     // because this leaveEvent will also be called if setX11PassMouseEvent(false) is invoked
     // in XWindowTrayWidget::sendHoverEvent()
-    if (!rect().contains(mapFromGlobal(QCursor::pos()))) {
+    // That is X11 only. On Wayland QCursor::pos() keeps the last position the
+    // dock saw, still on this item when the pointer leaves the dock, so the
+    // leave is to be trusted there.
+    if (Wayland::isWaylandSession() || !rect().contains(mapFromGlobal(QCursor::pos()))) {
         m_hover = false;
         m_pressed = false;
         update();

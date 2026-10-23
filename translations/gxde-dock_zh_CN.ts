@@ -621,4 +621,310 @@
         <translation>打开日历</translation>
     </message>
 </context>
+<context>
+    <name>V23QuickSettingsPlugin</name>
+    <message>
+        <source>Quick Settings</source>
+        <translation>快捷设置</translation>
+    </message>
+    <message>
+        <source>Quick actions</source>
+        <translation>快捷设置</translation>
+    </message>
+    <message>
+        <source>Remove %1 from Dock</source>
+        <translation>从任务栏移除%1</translation>
+    </message>
+    <message>
+        <source>Show %1 on Dock</source>
+        <translation>在任务栏显示%1</translation>
+    </message>
+    <message>
+        <source>Remove from Dock</source>
+        <translation>从任务栏移除</translation>
+    </message>
+</context>
+<context>
+    <name>V23NetworkModule</name>
+    <message>
+        <source>Wireless Network</source>
+        <translation>无线网络</translation>
+    </message>
+    <message>
+        <source>Wired Network</source>
+        <translation>有线网络</translation>
+    </message>
+    <message>
+        <source>Wireless Network %1</source>
+        <translation>无线网络%1</translation>
+    </message>
+    <message>
+        <source>Wired Network %1</source>
+        <translation>有线网络%1</translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>网络</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>已关闭</translation>
+    </message>
+    <message>
+        <source>Connecting</source>
+        <translation>正在连接</translation>
+    </message>
+    <message>
+        <source>Connected but no Internet access</source>
+        <translation>已连接网络但无法访问互联网</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>已连接</translation>
+    </message>
+    <message>
+        <source>Network cable unplugged</source>
+        <translation>未插入网线</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>未连接</translation>
+    </message>
+    <message>
+        <source>No Network</source>
+        <translation>无网络访问</translation>
+    </message>
+    <message>
+        <source>Wired connection: %1</source>
+        <translation>有线连接：%1</translation>
+    </message>
+    <message>
+        <source>Wireless connection: %1</source>
+        <translation>无线连接：%1</translation>
+    </message>
+    <message>
+        <source>Disable network</source>
+        <translation>关闭网络</translation>
+    </message>
+    <message>
+        <source>Enable network</source>
+        <translation>启用网络</translation>
+    </message>
+    <message>
+        <source>Network settings</source>
+        <translation>网络设置</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>断开连接</translation>
+    </message>
+</context>
+<context>
+    <name>V23BluetoothModule</name>
+    <message>
+        <source>Bluetooth</source>
+        <translation>蓝牙</translation>
+    </message>
+    <message>
+        <source>Turned off</source>
+        <translation>蓝牙关闭</translation>
+    </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 已连接</translation>
+    </message>
+    <message>
+        <source>Connecting...</source>
+        <translation>正在连接...</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <source>Bluetooth settings</source>
+        <translation>蓝牙设置</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>已关闭</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>已开启</translation>
+    </message>
+    <message>
+        <source>My Devices</source>
+        <translation>我的设备</translation>
+    </message>
+    <message>
+        <source>Other Devices</source>
+        <translation>其他设备</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>断开连接</translation>
+    </message>
+</context>
+<context>
+    <name>V23SoundModule</name>
+    <message>
+        <source>Sound</source>
+        <translation>声音</translation>
+    </message>
+    <message>
+        <source>Mute</source>
+        <translation>静音</translation>
+    </message>
+    <message>
+        <source>Volume %1</source>
+        <translation>当前音量 %1</translation>
+    </message>
+    <message>
+        <source>Unmute</source>
+        <translation>取消静音</translation>
+    </message>
+    <message>
+        <source>Sound settings</source>
+        <translation>声音设置</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation>音量</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>输出</translation>
+    </message>
+</context>
+<context>
+    <name>V23BrightnessModule</name>
+    <message>
+        <source>Brightness</source>
+        <translation>亮度</translation>
+    </message>
+    <message>
+        <source>Display settings</source>
+        <translation>显示设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23MediaModule</name>
+    <message>
+        <source>Media</source>
+        <translation>媒体</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+</context>
+<context>
+    <name>V23OnboardModule</name>
+    <message>
+        <source>Onboard</source>
+        <translation>屏幕键盘</translation>
+    </message>
+</context>
+<context>
+    <name>V23PowerModule</name>
+    <message>
+        <source>Battery</source>
+        <translation>电池</translation>
+    </message>
+    <message>
+        <source>Capacity %1 ...</source>
+        <translation>电量%1 ...</translation>
+    </message>
+    <message>
+        <source>Capacity %1</source>
+        <translation>电量%1</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 min remaining</source>
+        <translation>电量%1，剩余%2分钟</translation>
+    </message>
+    <message>
+        <source>Capacity %1, %2 hr %3 min remaining</source>
+        <translation>电量%1，剩余%2小时%3分钟</translation>
+    </message>
+    <message>
+        <source>Capacity %1, fully charged</source>
+        <translation>电量%1，已充满</translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 min until full</source>
+        <translation>正在充电%1，还需%2分钟</translation>
+    </message>
+    <message>
+        <source>Charging %1, %2 hr %3 min until full</source>
+        <translation>正在充电%1，还需%2小时%3分钟</translation>
+    </message>
+    <message>
+        <source>Power settings</source>
+        <translation>电源设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23NotificationModule</name>
+    <message>
+        <source>Notification Center</source>
+        <translation>通知中心</translation>
+    </message>
+    <message>
+        <source>No messages</source>
+        <translation>暂无新消息</translation>
+    </message>
+    <message>
+        <source>Notifications</source>
+        <translation>条通知</translation>
+    </message>
+    <message>
+        <source>Notification settings</source>
+        <translation>通知设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23ThemeModule</name>
+    <message>
+        <source>Theme</source>
+        <translation>主题</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>浅色</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
+        <source>Personalization settings</source>
+        <translation>个性化设置</translation>
+    </message>
+    <message>
+        <source>Grand Search</source>
+        <translation>全局搜索</translation>
+    </message>
+    <message>
+        <source>Screenshot</source>
+        <translation>截图</translation>
+    </message>
+    <message>
+        <source>Record</source>
+        <translation>录屏</translation>
+    </message>
+    <message>
+        <source>Clipboard</source>
+        <translation>剪贴板</translation>
+    </message>
+    <message>
+        <source>System Monitor</source>
+        <translation>系统监视器</translation>
+    </message>
+</context>
 </TS>

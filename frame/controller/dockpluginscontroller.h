@@ -53,30 +53,15 @@ public:
 
     void startLoader();
 
-    // false for a plugin whose items are held back in the current display
-    // mode: V23 replacements outside V23 mode, the built-ins they replace in it
-    bool isPluginActive(PluginsItemInterface * const itemInter) const;
-
 signals:
     void pluginItemInserted(PluginsItem *pluginItem) const;
     void pluginItemRemoved(PluginsItem *pluginItem) const;
     void pluginItemUpdated(PluginsItem *pluginItem) const;
     void fashionTraySizeChanged(const QSize &traySize) const;
 
-protected:
-    void afterDisplayModeChanged() override;
-
 private:
     void loadLocalPlugins();
     void loadSystemPlugins();
-    bool isV23Replacement(PluginsItemInterface * const itemInter) const;
-    bool isReplacedByV23(PluginsItemInterface * const itemInter) const;
-
-private:
-    QString m_systemPluginsDir;
-    QString m_v23PluginsDir;
-    bool m_v23Mode = false;
-    QMap<PluginsItemInterface *, QStringList> m_inactiveItems;
 };
 
 #endif // DOCKPLUGINSCONTROLLER_H

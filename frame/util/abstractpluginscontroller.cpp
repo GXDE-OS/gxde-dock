@@ -31,6 +31,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QGSettings>
+#include <QJsonArray>
 #include <QSet>
 #include <QTemporaryFile>
 
@@ -136,14 +137,137 @@ PluginsItemInterface *AbstractPluginsController::pluginInterAt(QObject *destItem
     return nullptr;
 }
 
-QString AbstractPluginsController::pluginFile(PluginsItemInterface * const itemInter) const
+// Where the built-in plugins live: next to a dock run from its build tree,
+// and the installed ones
+static const QStringList &builtinPluginsDirs()
 {
-    return m_pluginFiles.value(itemInter);
+    static const QStringList dirs = [] {
+        QStringList list;
+        for (const QString &path : {QCoreApplication::applicationDirPath() + "/../plugins",
+                                    QStringLiteral("/usr/lib/gxde-dock/plugins")}) {
+            const QString canonical = QDir(path).canonicalPath();
+            if (!canonical.isEmpty() && !list.contains(canonical))
+                list << canonical;
+        }
+        return list;
+    }();
+
+    return dirs;
 }
 
-const QHash<PluginsItemInterface *, QString> &AbstractPluginsController::pluginFiles() const
+bool AbstractPluginsController::isPluginActive(PluginsItemInterface * const itemInter) const
 {
-    return m_pluginFiles;
+    if (isV23Replacement(itemInter))
+        return Dock::isV23Mode();
+
+    if (!Dock::isV23Mode())
+        return true;
+
+    // Only the very built-in file is replaced, never a plugin the user installed
+    const QString builtin = builtinPluginPath(itemInter);
+    return builtin.isEmpty()
+        || !qApp->property(PROP_V23_REPLACED_PLUGINS).toStringList().contains(builtin);
+}
+
+bool AbstractPluginsController::holdInactiveItem(PluginsItemInterface * const itemInter, const QString &itemKey)
+{
+    if (!m_inactivePlugins.contains(itemInter) && isPluginActive(itemInter))
+        return false;
+
+    QStringList &keys = m_inactiveItems[itemInter];
+    if (!keys.contains(itemKey))
+        keys << itemKey;
+
+    // Items it already shows are taken down by refreshActivePlugins()
+    if (m_pluginsMap.value(itemInter).isEmpty())
+        m_inactivePlugins.insert(itemInter);
+
+    return true;
+}
+
+bool AbstractPluginsController::releaseInactiveItem(PluginsItemInterface * const itemInter, const QString &itemKey)
+{
+    auto it = m_inactiveItems.find(itemInter);
+    return it != m_inactiveItems.end() && it->removeOne(itemKey);
+}
+
+bool AbstractPluginsController::isV23Replacement(PluginsItemInterface * const itemInter) const
+{
+    const QString dir = QFileInfo(m_pluginFiles.value(itemInter)).path();
+    for (const QString &builtinDir : builtinPluginsDirs()) {
+        if (dir == builtinDir + "/v23")
+            return true;
+    }
+
+    return false;
+}
+
+QString AbstractPluginsController::builtinPluginPath(PluginsItemInterface * const itemInter) const
+{
+    const QString file = m_pluginFiles.value(itemInter);
+    for (const QString &builtinDir : builtinPluginsDirs()) {
+        if (file.startsWith(builtinDir + "/"))
+            return file.mid(builtinDir.size() + 1);
+    }
+
+    return QString();
+}
+
+// A V23 replacement takes over the built-in of the same file name, and those
+// its metadata lists in "replaces"
+void AbstractPluginsController::publishV23Replacements(PluginsItemInterface * const itemInter, const QJsonObject &meta)
+{
+    if (!isV23Replacement(itemInter))
+        return;
+
+    QStringList replaced = qApp->property(PROP_V23_REPLACED_PLUGINS).toStringList();
+    QStringList entries { QFileInfo(m_pluginFiles.value(itemInter)).fileName() };
+    for (const QJsonValue &value : meta.value("replaces").toArray())
+        entries << QDir::cleanPath(value.toString());
+
+    bool changed = false;
+    for (const QString &entry : entries) {
+        if (!entry.isEmpty() && !replaced.contains(entry)) {
+            replaced << entry;
+            changed = true;
+        }
+    }
+
+    // Every controller of the dock, including the system tray ones, listens
+    if (changed)
+        qApp->setProperty(PROP_V23_REPLACED_PLUGINS, replaced);
+}
+
+// Shows or holds back the items of the plugins whose activeness changed
+void AbstractPluginsController::refreshActivePlugins()
+{
+    QList<PluginsItemInterface *> activated;
+    const auto inters = m_pluginsMap.keys();
+
+    for (PluginsItemInterface *inter : inters) {
+        const bool active = isPluginActive(inter);
+        if (!active && !m_inactivePlugins.contains(inter)) {
+            const QStringList keys = m_pluginsMap.value(inter).keys();
+            for (const QString &key : keys)
+                itemRemoved(inter, key);
+
+            QStringList &held = m_inactiveItems[inter];
+            for (const QString &key : keys) {
+                if (!held.contains(key))
+                    held << key;
+            }
+            m_inactivePlugins.insert(inter);
+        } else if (active && (m_inactivePlugins.remove(inter) || m_inactiveItems.contains(inter))) {
+            for (const QString &key : m_inactiveItems.take(inter))
+                itemAdded(inter, key);
+            activated << inter;
+        }
+    }
+
+    // A V15 plugin and its V23 replacement share their settings, which may
+    // have changed in the meantime
+    for (PluginsItemInterface *inter : activated)
+        inter->pluginSettingsChanged();
 }
 
 void AbstractPluginsController::startLoader(PluginLoader *loader)
@@ -165,7 +289,7 @@ void AbstractPluginsController::displayModeChanged()
     for (auto inter : inters)
         inter->displayModeChanged(displayMode);
 
-    afterDisplayModeChanged();
+    refreshActivePlugins();
 }
 
 void AbstractPluginsController::positionChanged()
@@ -280,8 +404,9 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
         return;
     }
 
-    // Record the file before init()
-    m_pluginFiles.insert(interface, QFileInfo(pluginFile).absoluteFilePath());
+    // Record the file before init(), it decides if the plugin is active
+    m_pluginFiles.insert(interface, QFileInfo(pluginFile).canonicalFilePath());
+    publishV23Replacements(interface, meta);
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();
     const bool skipMissingService =
@@ -381,6 +506,8 @@ bool AbstractPluginsController::eventFilter(QObject *o, QEvent *e)
         positionChanged();
     else if (propertyName == PROP_DISPLAY_MODE)
         displayModeChanged();
+    else if (propertyName == PROP_V23_REPLACED_PLUGINS)
+        refreshActivePlugins();
 
     return false;
 }
