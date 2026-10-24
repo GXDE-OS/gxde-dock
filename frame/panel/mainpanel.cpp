@@ -31,10 +31,83 @@
 #include <QGraphicsView>
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <QVariantAnimation>
 
 #include <window/mainwindow.h>
 
 #include <item/traypluginitem.h>
+
+namespace {
+class V23TrayItemFade : public QWidget {
+public:
+    V23TrayItemFade(QWidget *parent, const QPixmap &pixmap, const QRect &geometry, const QPoint &hiddenPos,
+                const bool in, QWidget *stackUnder, const std::function<void()> &finished = nullptr)
+            : QWidget(parent)
+            , m_pixmap(pixmap)
+            , m_in(in)
+            , m_shownPos(geometry.topLeft())
+            , m_hiddenPos(hiddenPos)
+            , m_animation(new QVariantAnimation(this)) {
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        setGeometry(geometry);
+        move(in ? hiddenPos : geometry.topLeft());
+
+        m_animation->setDuration(200);
+        m_animation->setStartValue(0.0);
+        m_animation->setEndValue(1.0);
+        m_animation->setEasingCurve(in ? QEasingCurve::InQuad : QEasingCurve::OutQuad);
+        connect(m_animation, &QVariantAnimation::valueChanged, this, [this] {
+            const qreal shown = this->shown();
+            move(m_hiddenPos + (m_shownPos - m_hiddenPos) * shown);
+            update();
+        });
+
+        connect(m_animation, &QVariantAnimation::finished, this, [this, finished] {
+            if (finished) {
+                finished();
+            }
+            deleteLater();
+        });
+
+        if (stackUnder) {
+            this->stackUnder(stackUnder);
+        } else {
+            raise();
+        }
+
+        show();
+        m_animation->start();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override {
+        const qreal shown = this->shown();
+        const qreal scale = 0.2 + 0.8 * shown;
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::SmoothPixmapTransform);
+        painter.setOpacity(shown);
+        painter.translate(rect().center());
+        painter.scale(scale, scale);
+        painter.translate(-rect().center());
+        painter.drawPixmap(0, 0, m_pixmap);
+    }
+
+private:
+    qreal shown() const {
+        const qreal progress = m_animation->currentValue().toReal();
+        return m_in ? progress : 1.0 - progress;
+    }
+
+private:
+    QPixmap m_pixmap;
+    bool m_in;
+    QPoint m_shownPos;
+    QPoint m_hiddenPos;
+    QVariantAnimation *m_animation;
+};
+
+}
 
 static QPointer<DockItem> DraggingItem = nullptr;
 static PlaceholderItem *RequestDockItem = nullptr;
@@ -108,6 +181,7 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
     connect(m_itemController, &DockItemController::itemMoved, this, &MainPanel::itemMoved);
     connect(m_itemController, &DockItemController::itemManaged, this, &MainPanel::manageItem);
     connect(m_itemController, &DockItemController::itemUpdated, m_itemAdjustTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(m_itemController, &DockItemController::v23TrayChanged, this, &MainPanel::updateV23TrayVisibility);
     connect(m_checkMouseLeaveTimer, &QTimer::timeout, this, &MainPanel::checkMouseReallyLeave, Qt::QueuedConnection);
     connect(&DockSettings::Instance(), &DockSettings::opacityChanged, this, [this] {
         setEffectEnabled(m_hasComposite);
@@ -573,8 +647,13 @@ void MainPanel::adjustItemSize()
         if (m_displayMode == Fashion &&
             itemType == DockItem::Container)
             continue;
+        if (m_displayMode == Dock::V23 && m_itemController->v23ItemHidden(item)) {
+            QMetaObject::invokeMethod(item, "setVisible", Qt::QueuedConnection, Q_ARG(bool, false));
+            continue;
+        }
 
-        QMetaObject::invokeMethod(item, "setVisible", Qt::QueuedConnection, Q_ARG(bool, true));
+        if (!m_v23ShowingItems.contains(item))
+            QMetaObject::invokeMethod(item, "setVisible", Qt::QueuedConnection, Q_ARG(bool, true));
 
         switch (item->itemType())
         {
@@ -641,6 +720,7 @@ void MainPanel::adjustItemSize()
             }
             break;
         case DockItem::Container:
+        case DockItem::TrayAction:
             {
                 const QSize size = item->sizeHint();
                 item->setFixedSize(size);
@@ -709,11 +789,13 @@ void MainPanel::adjustItemSize()
 
     int extraDecrease = overflow - base - decrease * totalAppItemCount;
 
-    for (auto item : itemList)
-    {
+    for (auto item : itemList) {
         const DockItem::ItemType itemType = item->itemType();
-        if (itemType == DockItem::Stretch || itemType == DockItem::Container)
+        if (itemType == DockItem::Stretch || itemType == DockItem::Container
+                || itemType == DockItem::TrayAction) {
             continue;
+        }
+
         if (itemType == DockItem::Plugins)
         {
             if (m_displayMode != Dock::Fashion && m_displayMode != Dock::Classic)
@@ -860,6 +942,102 @@ void MainPanel::animateItemMoves(const std::function<void()> &change)
     }
 }
 
+void MainPanel::updateV23TrayVisibility(const bool animate) {
+    if (m_displayMode != Dock::V23) {
+        return;
+    }
+
+    QList<DockItem *> hiding;
+    QList<DockItem *> showing;
+    for (const QPointer<DockItem> &item : m_itemController->itemList()) {
+        if (!item || item == DraggingItem || m_itemController->itemIsInContainer(item)) {
+            continue;
+        }
+
+        if (m_v23ShowingItems.contains(item)) {
+            continue;
+        }
+
+        const bool hidden = m_itemController->v23ItemHidden(item);
+        if (hidden && !item->isHidden()) {
+            hiding << item;
+        } else if (!hidden && item->isHidden()) {
+            showing << item;
+        }
+    }
+
+    if (hiding.isEmpty() && showing.isEmpty()) {
+        return;
+    }
+
+    if (!animate || !isVisible()) {
+        for (DockItem *item : hiding) {
+            item->setVisible(false);
+        }
+
+        for (DockItem *item : showing) {
+            item->setVisible(true);
+        }
+
+        m_itemAdjustTimer->start();
+        return;
+    }
+
+    DockItem *collapseItem = nullptr;
+    for (const QPointer<DockItem> &item : m_itemController->itemList()) {
+        if (item && item->itemType() == DockItem::TrayAction) {
+            collapseItem = item;
+        }
+    }
+
+    auto hiddenPos = [this, collapseItem](DockItem *item) {
+        if (!collapseItem || collapseItem->isHidden()) {
+            return item->pos();
+        }
+
+        if (m_position == Dock::Top || m_position == Dock::Bottom) {
+            return QPoint(collapseItem->x(), item->y());
+        }
+
+        return QPoint(item->x(), collapseItem->y());
+    };
+
+    for (DockItem *item : hiding) {
+        new V23TrayItemFade(this, item->grab(), item->geometry(), hiddenPos(item), false, collapseItem);
+    }
+
+    animateItemMoves([&] {
+        for (DockItem *item : hiding) {
+            item->setVisible(false);
+        }
+
+        for (DockItem *item : showing) {
+            QSizePolicy policy = item->sizePolicy();
+            policy.setRetainSizeWhenHidden(true);
+            item->setSizePolicy(policy);
+            m_v23ShowingItems.insert(item);
+        }
+    });
+
+    for (DockItem *item : showing) {
+        QPointer<DockItem> guard(item);
+        new V23TrayItemFade(this, item->grab(), item->geometry(), hiddenPos(item), true, collapseItem,
+                [this, item, guard] {
+            m_v23ShowingItems.remove(item);
+            if (!guard) {
+                return;
+            }
+
+            QSizePolicy policy = guard->sizePolicy();
+            policy.setRetainSizeWhenHidden(false);
+            guard->setSizePolicy(policy);
+            if (!m_itemController->v23ItemHidden(guard)) {
+                guard->setVisible(true);
+            }
+        });
+    }
+}
+
 ///
 /// \brief MainPanel::itemDragStarted handle managed item dragging
 ///
@@ -905,11 +1083,16 @@ void MainPanel::itemDragStarted()
 /// \brief MainPanel::itemDropped handle managed item dropped.
 /// \param destnation
 ///
-void MainPanel::itemDropped(QObject *destnation, const QPoint &dropPoint)
-{
+void MainPanel::itemDropped(QObject *destnation, const QPoint &dropPoint) {
+    DockItem *src = qobject_cast<DockItem *>(sender());
+
     m_itemController->setDropping(false);
 
-    DockItem *src = qobject_cast<DockItem *>(sender());
+    if (m_displayMode == Dock::V23) {
+        updateV23TrayVisibility(true);
+        m_itemAdjustTimer->start();
+        return;
+    }
 
     if (m_displayMode == Dock::Fashion || m_displayMode == Dock::Classic)
         return;

@@ -85,18 +85,26 @@ void PluginsItem::detachPluginWidget()
         widget->setParent(nullptr);
 }
 
-bool PluginsItem::allowContainer() const
-{
-    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
+bool PluginsItem::allowContainer() const {
+    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic) {
         return false;
+    }
+
+    if (DockDisplayMode == Dock::V23) {
+        return false;
+    }
 
     return m_pluginInter->itemAllowContainer(m_itemKey);
 }
 
-bool PluginsItem::isInContainer() const
-{
-    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic)
+bool PluginsItem::isInContainer() const {
+    if (DockDisplayMode == Dock::Fashion || DockDisplayMode == Dock::Classic) {
         return false;
+    }
+
+    if (DockDisplayMode == Dock::V23) {
+        return false;
+    }
 
     return m_pluginInter->itemIsInContainer(m_itemKey);
 }
@@ -104,6 +112,11 @@ bool PluginsItem::isInContainer() const
 void PluginsItem::setInContainer(const bool container)
 {
     m_pluginInter->setItemIsInContainer(m_itemKey, container);
+}
+
+bool PluginsItem::isV23Fixed() const {
+    const QString name = pluginName();
+    return name == "datetime" || (name == "quick-settings" && m_itemKey == "quick-settings");
 }
 
 PluginsItemInterface::PluginSizePolicy PluginsItem::pluginSizePolicy() const
@@ -193,16 +206,21 @@ void PluginsItem::mousePressEvent(QMouseEvent *e)
     DockItem::mousePressEvent(e);
 }
 
-void PluginsItem::mouseMoveEvent(QMouseEvent *e)
-{
-    if (e->buttons() != Qt::LeftButton)
+void PluginsItem::mouseMoveEvent(QMouseEvent *e) {
+    if (e->buttons() != Qt::LeftButton) {
         return DockItem::mouseMoveEvent(e);
+    }
+
+    if (DockDisplayMode == Dock::V23 && isV23Fixed()) {
+        return;
+    }
 
     e->accept();
 
     const QPoint distance = e->pos() - MousePressPoint;
-    if (distance.manhattanLength() > PLUGIN_ITEM_DRAG_THRESHOLD)
+    if (distance.manhattanLength() > PLUGIN_ITEM_DRAG_THRESHOLD) {
         startDrag();
+    }
 }
 
 void PluginsItem::mouseReleaseEvent(QMouseEvent *e)
@@ -364,17 +382,6 @@ void PluginsItem::mouseClicked()
 
 void PluginsItem::paintV23Hover()
 {
-    QRectF plateRect = rect();
-    if (DockPosition == Dock::Top || DockPosition == Dock::Bottom) {
-        const int plateHeight = qBound(20, height() - 4, 30);
-        plateRect.setTop((height() - plateHeight) / 2.0);
-        plateRect.setHeight(plateHeight);
-    } else {
-        const int plateWidth = qBound(20, width() - 4, 30);
-        plateRect.setLeft((width() - plateWidth) / 2.0);
-        plateRect.setWidth(plateWidth);
-    }
-
     QPainter painter(this);
-    paintV23Plate(painter, plateRect, 4, m_pressed);
+    paintV23Plate(painter, v23TrayPlateRect(), 4, m_pressed);
 }

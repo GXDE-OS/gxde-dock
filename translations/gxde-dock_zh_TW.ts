@@ -27,6 +27,14 @@
     </message>
 </context>
 <context>
+    <name>V23CollapseItem</name>
+    <message>
+        <location filename="../frame/item/v23collapseitem.cpp" line="31"/>
+        <source>Collapse tray</source>
+        <translation>折疊托盤</translation>
+    </message>
+</context>
+<context>
     <name>DBusAdaptors</name>
     <message>
         <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>

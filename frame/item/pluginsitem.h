@@ -45,6 +45,7 @@ public:
 
     QString pluginName() const;
     inline const QString &itemKey() const { return m_itemKey; }
+    bool isV23Fixed() const;
 
     using DockItem::showContextMenu;
     using DockItem::hidePopup;

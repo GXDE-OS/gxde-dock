@@ -179,7 +179,7 @@ void DockItem::mousePressEvent(QMouseEvent *e)
     hideNonModel();
 
     if (e->button() == Qt::RightButton) {
-        if (itemType() == ItemType::Container) {
+        if (itemType() == ItemType::Container || itemType() == ItemType::TrayAction) {
             // ignore this event to MainPanel/MainWindow to show context menu of MainWindow
             return e->ignore();
         }
@@ -517,6 +517,21 @@ QRectF DockItem::v23IconPlateRect(const QRectF &iconRect)
     // icon + iconSize / 8 on each side, one more pixel vertically
     const int padding = qRound(iconRect.width() / 8);
     return iconRect.adjusted(-padding, -padding - 1, padding, padding + 1);
+}
+
+QRectF DockItem::v23TrayPlateRect() const {
+    QRectF plateRect = rect();
+    if (DockPosition == Dock::Top || DockPosition == Dock::Bottom) {
+        const int plateHeight = qBound(20, height() - 4, 30);
+        plateRect.setTop((height() - plateHeight) / 2.0);
+        plateRect.setHeight(plateHeight);
+    } else {
+        const int plateWidth = qBound(20, width() - 4, 30);
+        plateRect.setLeft((width() - plateWidth) / 2.0);
+        plateRect.setWidth(plateWidth);
+    }
+
+    return plateRect;
 }
 
 void DockItem::paintV23Plate(QPainter &painter, const QRectF &plateRect,

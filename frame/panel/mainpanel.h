@@ -30,6 +30,7 @@
 
 #include <QFrame>
 #include <QPointer>
+#include <QSet>
 #include <QTimer>
 #include <QBoxLayout>
 #include <QPainter>
@@ -89,6 +90,7 @@ private:
     void manageItem(DockItem *item);
     DockItem *itemAt(const QPoint &point);
     void animateItemMoves(const std::function<void()> &change);
+    void updateV23TrayVisibility(const bool animate);
 
 private slots:
     void adjustItemSize();
@@ -115,6 +117,8 @@ private:
 
     ShowDesktopItem *m_showDesktopItem;
     DockItemController *m_itemController;
+
+    QSet<QWidget *> m_v23ShowingItems;
 
     QString m_draggingMimeKey;
     QSize m_destSize;
