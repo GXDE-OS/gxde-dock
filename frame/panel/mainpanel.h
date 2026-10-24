@@ -71,10 +71,15 @@ public:
     void setFixedSize(const QSize &size);
     void setComposite(const bool hasComposite);
 
+    inline const QList<QRect> &v20Capsules() const {
+        return m_v20Capsules;
+    }
+
 signals:
     void requestWindowAutoHide(const bool autoHide) const;
     void requestRefershWindowVisible() const;
     void geometryChanged();
+    void v20CapsulesChanged() const;
 
 private:
     void moveEvent(QMoveEvent *e);
@@ -91,6 +96,9 @@ private:
     DockItem *itemAt(const QPoint &point);
     void animateItemMoves(const std::function<void()> &change);
     void updateV23TrayVisibility(const bool animate);
+    QMargins v20Margins() const;
+    int v20CapsulePadding() const;
+    void updateV20Capsules();
 
 private slots:
     void adjustItemSize();
@@ -123,6 +131,8 @@ private:
     DockItemController *m_itemController;
 
     QSet<QWidget *> m_v23ShowingItems;
+    QList<QRect> m_v20Capsules;
+    QTimer *m_v20CapsuleTimer;
 
     QString m_draggingMimeKey;
     QSize m_destSize;

@@ -393,6 +393,19 @@ void LayerShellHelper::updateDockStyle(QWidget* widget, const QRect &blurRect) {
     LayerShellStyler::apply(window, dockWindowRadius(), true, blurRect, dockBlurStrength());
 }
 
+void LayerShellHelper::updateDockStyle(QWidget* widget, const QRegion &blurRegion) {
+    if (widget == nullptr || !isWayland()) {
+        return;
+    }
+
+    QWindow* window = widget->windowHandle();
+    if (window == nullptr) {
+        return;
+    }
+
+    LayerShellStyler::apply(window, dockWindowRadius(), true, blurRegion, dockBlurStrength());
+}
+
 void LayerShellHelper::updateDockAnchor(QWidget* widget,
         Dock::Position position) {
     if (widget == nullptr || !isWayland()) {

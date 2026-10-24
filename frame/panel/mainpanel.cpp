@@ -138,8 +138,19 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
       m_appDragWidget(nullptr),
       m_sizeChangeAni(new QVariantAnimation(this)),
       m_showDesktopItem(new ShowDesktopItem(this)),
-      m_itemController(controller)
+      m_itemController(controller),
+      m_v20CapsuleTimer(new QTimer(this))
 {
+    m_v20CapsuleTimer->setSingleShot(true);
+    m_v20CapsuleTimer->setInterval(0);
+    connect(m_v20CapsuleTimer, &QTimer::timeout, this, &MainPanel::updateV20Capsules);
+    connect(&DockSettings::Instance(), &DockSettings::v20CapsuleChanged,
+            m_itemAdjustTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(&DockSettings::Instance(), &DockSettings::v20CapsuleChanged, this, [this] {
+        m_v20Capsules.clear();
+        m_v20CapsuleTimer->start();
+    });
+
     m_itemLayout->setSpacing(0);
     m_itemLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -357,6 +368,20 @@ void MainPanel::paintEvent(QPaintEvent *e)
         QPainter p(this);
         p.setRenderHint(QPainter::Antialiasing);
 
+        if (m_displayMode == Dock::V23 && Dock::isV20Mode()) {
+            const bool light = DockSettings::Instance().v23LightTheme();
+            for (const QRect &capsule : m_v20Capsules) {
+                const QRectF r = QRectF(capsule).adjusted(.5, .5, -.5, -.5);
+                const qreal radius = DockSettings::Instance().v20CapsuleRadius(capsule) - .5;
+                QPainterPath path;
+                path.addRoundedRect(r, radius, radius);
+                p.fillPath(path, v23PanelColor());
+                p.setPen(QPen(light ? QColor(0, 0, 0, 255 * .1) : QColor(255, 255, 255, 255 * .1), 1));
+                p.drawPath(path);
+            }
+            return;
+        }
+
         if (m_displayMode == Dock::V23) {
             p.fillRect(rect(), v23PanelColor());
             return;
@@ -388,6 +413,19 @@ void MainPanel::showEvent(QShowEvent *e)
 
 bool MainPanel::eventFilter(QObject *watched, QEvent *event)
 {
+    switch (event->type()) {
+    case QEvent::Move:
+    case QEvent::Resize:
+    case QEvent::Show:
+    case QEvent::Hide:
+        if (watched->parent() == this && Dock::isV20Mode()) {
+            m_v20CapsuleTimer->start();
+        }
+        break;
+    default:
+        break;
+    }
+
     if (event->type() != QEvent::DragMove && event->type() != QEvent::Drop) {
         return DBlurEffectWidget::eventFilter(watched, event);
     }
@@ -451,6 +489,7 @@ void MainPanel::resizeEvent(QResizeEvent *e)
     DBlurEffectWidget::resizeEvent(e);
 
     updateShowDesktopItemSize();
+    m_v20CapsuleTimer->start();
 
     QTimer::singleShot(500, this, &MainPanel::geometryChanged);
 }
@@ -555,6 +594,8 @@ void MainPanel::manageItem(DockItem *item)
     if (qobject_cast<V23SearchItem *>(item)) {
         m_v23SearchItem = item;
     }
+
+    item->installEventFilter(this);
 }
 
 ///
@@ -614,19 +655,24 @@ void MainPanel::adjustItemSize()
     // IconBaseSize / ratio 不一致、主屏程序图标被算长的问题。
     const auto ratio = AppItem::iconBaseRatio();
 
+    const QMargins v20Inset = v20Margins();
+    if (m_itemLayout->contentsMargins() != v20Inset) {
+        m_itemLayout->setContentsMargins(v20Inset);
+    }
+
     QSize itemSize;
     switch (m_position)
     {
     case Top:
     case Bottom:
-        itemSize.setHeight(m_destSize.height() - PANEL_BORDER);
+        itemSize.setHeight(m_destSize.height() - PANEL_BORDER - v20Inset.top() - v20Inset.bottom());
         itemSize.setWidth(std::round(qreal(AppItem::itemBaseWidth()) / ratio));
         break;
 
     case Left:
     case Right:
         itemSize.setHeight(std::round(qreal(AppItem::itemBaseHeight()) / ratio));
-        itemSize.setWidth(m_destSize.width() - PANEL_BORDER);
+        itemSize.setWidth(m_destSize.width() - PANEL_BORDER - v20Inset.left() - v20Inset.right());
         break;
 
     default:
@@ -752,8 +798,10 @@ void MainPanel::adjustItemSize()
         }
     }
 
-    const int w = m_destSize.width() - PANEL_BORDER * 2 - PANEL_PADDING * 2 - PANEL_MARGIN * 2;
-    const int h = m_destSize.height() - PANEL_BORDER * 2 - PANEL_PADDING * 2 - PANEL_MARGIN * 2;
+    const int w = m_destSize.width() - PANEL_BORDER * 2 - PANEL_PADDING * 2 - PANEL_MARGIN * 2
+        - v20Inset.left() - v20Inset.right();
+    const int h = m_destSize.height() - PANEL_BORDER * 2 - PANEL_PADDING * 2 - PANEL_MARGIN * 2
+        - v20Inset.top() - v20Inset.bottom();
 
     // test if panel can display all items completely
     bool containsCompletely = false;
@@ -859,6 +907,8 @@ void MainPanel::adjustItemSize()
 }
 
 void MainPanel::updateV23Alignment() {
+    m_v20CapsuleTimer->start();
+
     const bool horizontal = m_position == Dock::Top || m_position == Dock::Bottom;
     const int searchIndex = m_v23SearchItem ? m_itemLayout->indexOf(m_v23SearchItem) : -1;
 
@@ -879,13 +929,20 @@ void MainPanel::updateV23Alignment() {
         m_itemLayout->insertSpacerItem(m_itemLayout->indexOf(m_v23SearchItem) + 1, m_v23CenterSpacer);
     }
 
+    m_showDesktopItem->setVisible(!Dock::isV20Mode());
+    const QMargins inset = m_itemLayout->contentsMargins();
+    const int insetStart = horizontal ? inset.left() : inset.top();
+    const int insetEnd = horizontal ? inset.right() : inset.bottom();
+    const bool multi = Dock::v20Capsule() == V20CapsuleMulti;
+    const int capsuleGap = V20_CAPSULE_MARGIN + v20CapsulePadding() * 2;
+
     int margin = 0;
     if (DockSettings::Instance().v23Centered()) {
         auto length = [horizontal](QWidget *w) {
             return horizontal ? w->minimumWidth() : w->minimumHeight();
         };
 
-        int lengths[3] = { 0, 0, length(m_showDesktopItem) + 1 };
+        int lengths[3] = { 0, 0, (m_showDesktopItem->isHidden() ? 0 : length(m_showDesktopItem)) + 1 };
         int part = 0;
         for (const QPointer<DockItem> &item : m_itemController->itemList()) {
             if (!item || m_itemController->itemIsInContainer(item)
@@ -903,9 +960,10 @@ void MainPanel::updateV23Alignment() {
         }
 
         const int total = horizontal ? m_destSize.width() : m_destSize.height();
-        const int gap = 20;
-        margin = qMax(0, qMin((total - lengths[1]) / 2 - lengths[0],
-                              total - lengths[0] - lengths[1] - lengths[2] - gap));
+        const int gap = multi ? capsuleGap : 20;
+        margin = qMax(multi ? capsuleGap : 0,
+                      qMin((total - lengths[1]) / 2 - insetStart - lengths[0],
+                           total - insetStart - insetEnd - lengths[0] - lengths[1] - lengths[2] - gap));
     }
 
     const QSize size = horizontal ? QSize(margin, 0) : QSize(0, margin);
@@ -922,6 +980,103 @@ void MainPanel::updateV23Alignment() {
 int MainPanel::layoutIndex(const int index) const {
     const int spacer = m_v23CenterSpacer ? m_itemLayout->indexOf(m_v23CenterSpacer) : -1;
     return spacer >= 0 && index >= spacer ? index + 1 : index;
+}
+
+QMargins MainPanel::v20Margins() const {
+    if (!Dock::isV20Mode()) {
+        return QMargins();
+    }
+
+    const int edge = DockSettings::Instance().v20Margin();
+    const int end = V20_CAPSULE_MARGIN + v20CapsulePadding();
+    switch (m_position) {
+    case Dock::Top:     return QMargins(end, edge, end, 0);
+    case Dock::Left:    return QMargins(edge, end, 0, end);
+    case Dock::Right:   return QMargins(0, end, edge, end);
+    default:            return QMargins(end, 0, end, edge);
+    }
+}
+
+int MainPanel::v20CapsulePadding() const {
+    const bool horizontal = m_position == Dock::Top || m_position == Dock::Bottom;
+    const int thickness = (horizontal ? m_destSize.height() : m_destSize.width())
+        - DockSettings::Instance().v20Margin();
+    return qMax(4, qRound(thickness / 6.0));
+}
+
+void MainPanel::updateV20Capsules() {
+    QList<QRect> capsules;
+
+    if (m_displayMode == Dock::V23 && Dock::isV20Mode()) {
+        const bool horizontal = m_position == Dock::Top || m_position == Dock::Bottom;
+        const int pad = v20CapsulePadding();
+        const QMargins ends = horizontal ? QMargins(pad, 0, pad, 0) : QMargins(0, pad, 0, pad);
+        const QRect inner = rect().marginsRemoved(m_itemLayout->contentsMargins()).marginsAdded(ends);
+
+        if (Dock::v20Capsule() == V20CapsuleSingle) {
+            capsules << inner;
+        } else {
+            QRect group;
+            auto closeGroup = [&] {
+                if (group.isEmpty()) {
+                    return;
+                }
+                QRect capsule = group.marginsAdded(ends);
+                if (horizontal) {
+                    capsule.setTop(inner.top());
+                    capsule.setBottom(inner.bottom());
+                } else {
+                    capsule.setLeft(inner.left());
+                    capsule.setRight(inner.right());
+                }
+                capsules << capsule;
+                group = QRect();
+            };
+
+            for (int i = 0; i < m_itemLayout->count(); ++i) {
+                QLayoutItem *layoutItem = m_itemLayout->itemAt(i);
+                if (layoutItem == m_v23CenterSpacer) {
+                    const QSize gap = m_v23CenterSpacer->sizeHint();
+                    if ((horizontal ? gap.width() : gap.height()) > 0) {
+                        closeGroup();
+                    }
+                    continue;
+                }
+
+                QWidget *w = layoutItem->widget();
+                if (!w || w->isHidden()) {
+                    continue;
+                }
+
+                DockItem *item = qobject_cast<DockItem *>(w);
+                if (item && item->itemType() == DockItem::Stretch) {
+                    closeGroup();
+                    continue;
+                }
+
+                group |= w->geometry();
+            }
+            closeGroup();
+        }
+    }
+
+    if (capsules == m_v20Capsules) {
+        return;
+    }
+
+    m_v20Capsules = capsules;
+
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        QPainterPath path;
+        for (const QRect &capsule : capsules) {
+            const qreal radius = DockSettings::Instance().v20CapsuleRadius(capsule);
+            path.addRoundedRect(capsule, radius, radius);
+        }
+        setMaskPath(path);
+    }
+
+    update();
+    emit v20CapsulesChanged();
 }
 
 ///

@@ -24,6 +24,7 @@
 #include "panel/mainpanel.h"
 #include "util/utils.h"
 #include "wayland/layershellhelper.h"
+#include "wayland/layershell_styler.h"
 #include "wayland/gxdescreenshotclient.h"
 
 #include <QDebug>
@@ -464,6 +465,8 @@ void MainWindow::initConnections()
     connect(m_mainPanel, &MainPanel::requestRefershWindowVisible, this, &MainWindow::updatePanelVisible, Qt::QueuedConnection);
     connect(m_mainPanel, &MainPanel::requestWindowAutoHide, m_settings, &DockSettings::setAutoHide);
     connect(m_mainPanel, &MainPanel::geometryChanged, this, &MainWindow::panelGeometryChanged);
+    connect(m_mainPanel, &MainPanel::v20CapsulesChanged, this, [this] { updateShadowRegions(); });
+    connect(m_settings, &DockSettings::v20CapsuleChanged, this, &MainWindow::setStrutPartial, Qt::QueuedConnection);
 
     connect(m_positionUpdateTimer, &QTimer::timeout, this, &MainWindow::updatePosition, Qt::QueuedConnection);
     connect(m_expandDelayTimer, &QTimer::timeout, this, &MainWindow::expand, Qt::QueuedConnection);
@@ -592,6 +595,12 @@ void MainWindow::updateGeometry()
     } else {
         // this->setFixedSize has been overridden for size animation
         setFixedSize(surfaceSize(size, position));
+
+        if (m_panelShowAni->state() != QPropertyAnimation::Running
+                && m_panelHideAni->state() != QPropertyAnimation::Running) {
+            m_mainPanel->move(panelOffset(position));
+        }
+        updateShadowRegions(true);
     }
 
     const QRect windowRect = m_settings->windowRect(position, isHide, m_screen);
@@ -629,12 +638,14 @@ void MainWindow::setStrutPartial()
 
     // Wayland上保留区域是layer-shell设置的exclusive zone，WM负责处理
     // 所以我们放松就好~
+    const int v20Gap = m_settings->v20Margin();
+
     if (Wayland::LayerShellHelper::isWayland()) {
         const Position side = m_settings->position();
         const QSize s = m_settings->windowSize(m_screen);
         const int zone = (side == Position::Top || side == Position::Bottom)
             ? s.height() : s.width();
-        Wayland::LayerShellHelper::updateExclusiveZone(this, zone);
+        Wayland::LayerShellHelper::updateExclusiveZone(this, zone + v20Gap);
         return;
     }
 
@@ -645,6 +656,7 @@ void MainWindow::setStrutPartial()
     const QPoint &p = rawXPosition(m_posChangeAni->endValue().toPoint());
     const QSize &s = m_settings->windowSize(m_screen);
     const QRect &primaryRawRect = m_settings->primaryRawRect();
+    const int gap = qRound(v20Gap * ratio);
 
     XcbMisc::Orientation orientation = XcbMisc::OrientationTop;
     uint strut = 0;
@@ -656,7 +668,7 @@ void MainWindow::setStrutPartial()
     {
     case Position::Top:
         orientation = XcbMisc::OrientationTop;
-        strut = p.y() + s.height() * ratio;
+        strut = p.y() + s.height() * ratio + gap;
         strutStart = p.x();
         strutEnd = qMin(qRound(p.x() + s.width() * ratio), primaryRawRect.right());
         strutArea.setLeft(strutStart);
@@ -665,16 +677,16 @@ void MainWindow::setStrutPartial()
         break;
     case Position::Bottom:
         orientation = XcbMisc::OrientationBottom;
-        strut = maxScreenHeight - p.y();
+        strut = maxScreenHeight - p.y() + gap;
         strutStart = p.x();
         strutEnd = qMin(qRound(p.x() + s.width() * ratio), primaryRawRect.right());
         strutArea.setLeft(strutStart);
         strutArea.setRight(strutEnd);
-        strutArea.setTop(p.y());
+        strutArea.setTop(p.y() - gap);
         break;
     case Position::Left:
         orientation = XcbMisc::OrientationLeft;
-        strut = p.x() + s.width() * ratio;
+        strut = p.x() + s.width() * ratio + gap;
         strutStart = p.y();
         strutEnd = qMin(qRound(p.y() + s.height() * ratio), primaryRawRect.bottom());
         strutArea.setTop(strutStart);
@@ -683,12 +695,12 @@ void MainWindow::setStrutPartial()
         break;
     case Position::Right:
         orientation = XcbMisc::OrientationRight;
-        strut = maxScreenWidth - p.x();
+        strut = maxScreenWidth - p.x() + gap;
         strutStart = p.y();
         strutEnd = qMin(qRound(p.y() + s.height() * ratio), primaryRawRect.bottom());
         strutArea.setTop(strutStart);
         strutArea.setBottom(strutEnd);
-        strutArea.setLeft(p.x());
+        strutArea.setLeft(p.x() - gap);
         break;
     default:
         Q_ASSERT(false);
@@ -885,7 +897,8 @@ void MainWindow::onDbusNameOwnerChanged(const QString &name, const QString &oldO
 // there.  The extra strip takes no input, no blur and no exclusive zone.
 int MainWindow::shadowSize() const
 {
-    if (!Wayland::LayerShellHelper::isWayland() || m_settings->displayMode() != Dock::V23)
+    if (!Wayland::LayerShellHelper::isWayland() || m_settings->displayMode() != Dock::V23
+            || Dock::isV20Mode())
         return 0;
 
     return 10;
@@ -928,19 +941,45 @@ QRect MainWindow::panelRestRect() const
 void MainWindow::updateShadowRegions(const bool forceStyle)
 {
     QWindow *window = windowHandle();
-    if (!window || !Wayland::LayerShellHelper::isWayland())
+    if (!window) {
         return;
+    }
+
+    if (!Wayland::LayerShellHelper::isWayland()) {
+        QRegion region;
+        if (Dock::isV20Mode() && m_wmHelper->hasComposite()) {
+            for (const QRect &capsule : m_mainPanel->v20Capsules()) {
+                const int radius = m_settings->v20CapsuleRadius(capsule);
+                region += Wayland::LayerShellStyler::roundedRegion(
+                    capsule.translated(m_mainPanel->pos()), radius);
+            }
+        }
+        if (region != m_dockBlurRegion) {
+            m_dockBlurRegion = region;
+            window->setMask(region);
+        }
+        return;
+    }
 
     // input region: only the bar itself, so the shadow strip never blocks
     // clicks on the windows below it
     const QRect bar = panelRestRect();
     const bool hasShadow = shadowSize() > 0 && !bar.isEmpty();
-    window->setMask(hasShadow ? QRegion(bar) : QRegion());
+    QRegion region = hasShadow ? QRegion(bar) : QRegion();
 
-    const QRect blurRect = hasShadow ? bar : QRect();
-    if (forceStyle || blurRect != m_dockBlurRect) {
-        m_dockBlurRect = blurRect;
-        Wayland::LayerShellHelper::updateDockStyle(this, blurRect);
+    if (Dock::isV20Mode()) {
+        for (const QRect &capsule : m_mainPanel->v20Capsules()) {
+            const int radius = m_settings->v20CapsuleRadius(capsule);
+            region += Wayland::LayerShellStyler::roundedRegion(
+                capsule.translated(m_mainPanel->pos()), radius);
+        }
+    }
+
+    window->setMask(region);
+
+    if (forceStyle || region != m_dockBlurRegion) {
+        m_dockBlurRegion = region;
+        Wayland::LayerShellHelper::updateDockStyle(this, region);
     }
 }
 
@@ -953,9 +992,11 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *e)
 {
-    // the shadow follows the panel while it slides in and out
-    if (watched == m_mainPanel && (e->type() == QEvent::Move || e->type() == QEvent::Resize))
+    if (watched == m_mainPanel && (e->type() == QEvent::Move || e->type() == QEvent::Resize)) {
         update();
+        if (Dock::isV20Mode())
+            updateShadowRegions();
+    }
 
     return QWidget::eventFilter(watched, e);
 }

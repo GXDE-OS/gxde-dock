@@ -153,6 +153,36 @@
 <context>
     <name>DockSettings</name>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="214"/>
+        <source>Disable Margin</source>
+        <translation>停用邊距</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="313"/>
+        <source>Corner Radius</source>
+        <translation>圓角</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="187"/>
+        <source>Deepin V20 Mode</source>
+        <translation>深度 V20 模式</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="188"/>
+        <source>Single Capsule</source>
+        <translation>單膠囊</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="189"/>
+        <source>Multiple Capsules</source>
+        <translation>多膠囊</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="283"/>
+        <source>Capsule Style</source>
+        <translation>膠囊樣式</translation>
+    </message>
+    <message>
         <location filename="../frame/util/docksettings.cpp" line="174"/>
         <source>Align Left</source>
         <translation>靠左</translation>

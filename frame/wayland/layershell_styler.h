@@ -19,6 +19,7 @@
 #define LAYERSHELL_STYLER_H
 
 #include <QRect>
+#include <QRegion>
 
 class QWindow;
 
@@ -27,6 +28,12 @@ namespace LayerShellStyler {
 
 void apply(QWindow *window, int radius, bool enableBlur,
            const QRect &blurRect = QRect(), int blurStrength = 300);
+// blurs the given region of the window, all of it when the region is empty
+void apply(QWindow *window, int radius, bool enableBlur,
+           const QRegion &blurRegion, int blurStrength);
+
+// the pixels of rect with its corners rounded
+QRegion roundedRegion(const QRect &rect, int radius);
 
 }  // namespace LayerShellStyler
 }  // namespace Wayland

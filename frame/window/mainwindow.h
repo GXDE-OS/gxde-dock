@@ -128,7 +128,7 @@ private:
     XcbMisc *m_xcbMisc;
     DockSettings *m_settings;
     QMetaObject::Connection m_screenChangeConn;
-    QRect m_dockBlurRect;
+    QRegion m_dockBlurRegion;
 
     QDBusConnectionInterface *m_dbusDaemonInterface;
     org::kde::StatusNotifierWatcher *m_sniWatcher;

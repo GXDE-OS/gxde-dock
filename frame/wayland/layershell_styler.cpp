@@ -144,6 +144,17 @@ BindContext displayBindings(wl_display *display)
 
 void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect,
            int blurStrength) {
+    QRegion blurRegion;
+    if (blurRect.isValid() && !blurRect.isEmpty()) {
+        const int cornerRadius = qBound(0, radius, qMin(blurRect.width(), blurRect.height()) / 2);
+        blurRegion = roundedRegion(blurRect, cornerRadius);
+    }
+
+    apply(window, radius, enableBlur, blurRegion, blurStrength);
+}
+
+void apply(QWindow *window, int radius, bool enableBlur, const QRegion &blurRegion,
+           int blurStrength) {
     if (!window || radius < 0) {
         return;
     }
@@ -217,7 +228,7 @@ void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect,
         }
     }
 
-    // Apply background blur via org_kde_kwin_blur.  A non-empty blurRect
+    // Apply background blur via org_kde_kwin_blur.  A non-empty blurRegion
     // restricts the blur to the rounded panel area; using the whole surface
     // here would also blur the transparent shadow margins around a menu.
     bool blurApplied = false;
@@ -230,17 +241,14 @@ void apply(QWindow *window, int radius, bool enableBlur, const QRect &blurRect,
             org_kde_kwin_blur_manager_create(ctx.blurManager, surface);
         if (blur) {
             bool regionApplied = false;
-            if (blurRect.isValid() && !blurRect.isEmpty()) {
+            if (!blurRegion.isEmpty()) {
                 if (!compositor) {
                     // A shaped menu blur is impossible without a compositor.
                     org_kde_kwin_blur_release(blur);
                 } else {
-                    const int cornerRadius = qBound(
-                        0, radius, qMin(blurRect.width(), blurRect.height()) / 2);
-                    const QRegion region = roundedRegion(blurRect, cornerRadius);
                     wl_region *wlRegion =
                         wl_compositor_create_region(compositor);
-                    for (const QRect &rect : region) {
+                    for (const QRect &rect : blurRegion) {
                         wl_region_add(wlRegion, rect.x(), rect.y(),
                                       rect.width(), rect.height());
                     }

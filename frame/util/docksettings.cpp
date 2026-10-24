@@ -120,6 +120,42 @@ QString v23CenteredFlagPath() {
     return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-centered";
 }
 
+QString v20ModeFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v20-mode";
+}
+
+QString v20CapsuleFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v20-capsule";
+}
+
+QString v20NoMarginFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v20-no-margin";
+}
+
+QString v20RadiusFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v20-radius";
+}
+
+V20Radius readV20Radius() {
+    QFile file(v20RadiusFlagPath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return V20RadiusLarge;
+    }
+    const QByteArray value = file.readAll().trimmed();
+    if (value == "medium") {
+        return V20RadiusMedium;
+    }
+    return value == "small" ? V20RadiusSmall : V20RadiusLarge;
+}
+
+V20Capsule readV20Style() {
+    QFile file(v20CapsuleFlagPath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return V20CapsuleSingle;
+    }
+    return file.readAll().trimmed() == "multi" ? V20CapsuleMulti : V20CapsuleSingle;
+}
+
 HideMode hideModeFromString(const QString& s) {
     if (s == "keep-hidden") {
         return KeepHidden;
@@ -172,6 +208,13 @@ DockSettings::DockSettings(QWidget *parent)
     , m_themeLightAct(tr("Force Light"), this)
     , m_v23AlignLeftAct(tr("Align Left"), this)
     , m_v23AlignCenterAct(tr("Align Center"), this)
+    , m_v20ModeAct(tr("Deepin V20 Mode"), this)
+    , m_v20SingleAct(tr("Single Capsule"), this)
+    , m_v20MultiAct(tr("Multiple Capsules"), this)
+    , m_v20NoMarginAct(tr("Disable Margin"), this)
+    , m_v20RadiusLargeAct(tr("Large"), this)
+    , m_v20RadiusMediumAct(tr("Medium"), this)
+    , m_v20RadiusSmallAct(tr("Small"), this)
     , m_topPosAct(tr("Top"), this)
     , m_bottomPosAct(tr("Bottom"), this)
     , m_leftPosAct(tr("Left"), this)
@@ -212,6 +255,10 @@ DockSettings::DockSettings(QWidget *parent)
 
     m_v23Theme = currentV23Theme();
     m_v23Centered = QFile::exists(v23CenteredFlagPath());
+    m_v20Radius = readV20Radius();
+    m_v20NoMargin = QFile::exists(v20NoMarginFlagPath());
+    m_v20Style = readV20Style();
+    applyV20Capsule(QFile::exists(v20ModeFlagPath()) ? m_v20Style : V20CapsuleNone);
     applyV23Theme();
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DockSettings::applyV23Theme);
@@ -224,6 +271,13 @@ DockSettings::DockSettings(QWidget *parent)
     m_themeLightAct.setCheckable(true);
     m_v23AlignLeftAct.setCheckable(true);
     m_v23AlignCenterAct.setCheckable(true);
+    m_v20ModeAct.setCheckable(true);
+    m_v20SingleAct.setCheckable(true);
+    m_v20MultiAct.setCheckable(true);
+    m_v20NoMarginAct.setCheckable(true);
+    m_v20RadiusLargeAct.setCheckable(true);
+    m_v20RadiusMediumAct.setCheckable(true);
+    m_v20RadiusSmallAct.setCheckable(true);
     m_topPosAct.setCheckable(true);
     m_bottomPosAct.setCheckable(true);
     m_leftPosAct.setCheckable(true);
@@ -240,6 +294,7 @@ DockSettings::DockSettings(QWidget *parent)
     modeSubMenu->addAction(&m_fashionModeAct);
     modeSubMenu->addAction(&m_efficientModeAct);
     modeSubMenu->addAction(&m_v23ModeAct);
+    modeSubMenu->addAction(&m_v20ModeAct);
     QAction *modeSubMenuAct = new QAction(tr("Mode"), this);
     modeSubMenuAct->setMenu(modeSubMenu);
     modeSubMenuAct->setDisabled(QFile::exists(QDir::homePath() + "/.config/GXDE/gxde-dock/mac-mode"));
@@ -256,6 +311,21 @@ DockSettings::DockSettings(QWidget *parent)
     alignSubMenu->addAction(&m_v23AlignCenterAct);
     m_v23AlignSubMenuAct = new QAction(tr("Icon Mode"), this);
     m_v23AlignSubMenuAct->setMenu(alignSubMenu);
+
+    WhiteMenu *capsuleSubMenu = new WhiteMenu(&m_settingsMenu);
+    capsuleSubMenu->addAction(&m_v20SingleAct);
+    capsuleSubMenu->addAction(&m_v20MultiAct);
+    capsuleSubMenu->addSeparator();
+    capsuleSubMenu->addAction(&m_v20NoMarginAct);
+    m_v20CapsuleSubMenuAct = new QAction(tr("Capsule Style"), this);
+    m_v20CapsuleSubMenuAct->setMenu(capsuleSubMenu);
+
+    WhiteMenu *radiusSubMenu = new WhiteMenu(&m_settingsMenu);
+    radiusSubMenu->addAction(&m_v20RadiusLargeAct);
+    radiusSubMenu->addAction(&m_v20RadiusMediumAct);
+    radiusSubMenu->addAction(&m_v20RadiusSmallAct);
+    m_v20RadiusSubMenuAct = new QAction(tr("Corner Radius"), this);
+    m_v20RadiusSubMenuAct->setMenu(radiusSubMenu);
 
     WhiteMenu *locationSubMenu = new WhiteMenu(&m_settingsMenu);
     locationSubMenu->addAction(&m_topPosAct);
@@ -286,6 +356,8 @@ DockSettings::DockSettings(QWidget *parent)
     m_settingsMenu.addAction(modeSubMenuAct);
     m_settingsMenu.addAction(m_themeSubMenuAct);
     m_settingsMenu.addAction(m_v23AlignSubMenuAct);
+    m_settingsMenu.addAction(m_v20CapsuleSubMenuAct);
+    m_settingsMenu.addAction(m_v20RadiusSubMenuAct);
     m_settingsMenu.addAction(locationSubMenuAct);
     m_settingsMenu.addAction(sizeSubMenuAct);
     m_settingsMenu.addAction(statusSubMenuAct);
@@ -650,7 +722,16 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
 
     m_fashionModeAct.setChecked(m_displayMode == Fashion);
     m_efficientModeAct.setChecked(m_displayMode == Efficient);
-    m_v23ModeAct.setChecked(m_displayMode == V23);
+    m_v23ModeAct.setChecked(m_displayMode == V23 && v20Capsule() == V20CapsuleNone);
+    m_v20ModeAct.setChecked(v20Capsule() != V20CapsuleNone);
+    m_v20SingleAct.setChecked(v20Capsule() == V20CapsuleSingle);
+    m_v20MultiAct.setChecked(v20Capsule() == V20CapsuleMulti);
+    m_v20NoMarginAct.setChecked(m_v20NoMargin);
+    m_v20CapsuleSubMenuAct->setVisible(v20Capsule() != V20CapsuleNone);
+    m_v20RadiusLargeAct.setChecked(m_v20Radius == V20RadiusLarge);
+    m_v20RadiusMediumAct.setChecked(m_v20Radius == V20RadiusMedium);
+    m_v20RadiusSmallAct.setChecked(m_v20Radius == V20RadiusSmall);
+    m_v20RadiusSubMenuAct->setVisible(v20Capsule() != V20CapsuleNone);
     m_themeFollowAct.setChecked(m_v23Theme == V23ThemeFollowSystem);
     m_themeDarkAct.setChecked(m_v23Theme == V23ThemeDark);
     m_themeLightAct.setChecked(m_v23Theme == V23ThemeLight);
@@ -852,8 +933,26 @@ void DockSettings::menuActionClicked(QAction *action)
         return writeDisplayMode(Fashion);
     if (action == &m_efficientModeAct)
         return writeDisplayMode(Efficient);
-    if (action == &m_v23ModeAct)
+    if (action == &m_v23ModeAct) {
+        writeV20Capsule(V20CapsuleNone);
         return writeDisplayMode(V23);
+    }
+    if (action == &m_v20ModeAct) {
+        writeV20Capsule(m_v20Style);
+        return writeDisplayMode(V23);
+    }
+    if (action == &m_v20SingleAct)
+        return writeV20Capsule(V20CapsuleSingle);
+    if (action == &m_v20MultiAct)
+        return writeV20Capsule(V20CapsuleMulti);
+    if (action == &m_v20NoMarginAct)
+        return writeV20NoMargin(m_v20NoMarginAct.isChecked());
+    if (action == &m_v20RadiusLargeAct)
+        return writeV20Radius(V20RadiusLarge);
+    if (action == &m_v20RadiusMediumAct)
+        return writeV20Radius(V20RadiusMedium);
+    if (action == &m_v20RadiusSmallAct)
+        return writeV20Radius(V20RadiusSmall);
     if (action == &m_themeFollowAct)
         return writeV23Theme(V23ThemeFollowSystem);
     if (action == &m_themeDarkAct)
@@ -1144,19 +1243,19 @@ void DockSettings::calculateWindowConfig()
 
     if (m_displayMode == Dock::V23)
     {
-        // V23 is a full-width taskbar, sharing the Efficient layout.
+        const int margin = v20Margin();
         switch (m_position)
         {
         case Top:
         case Bottom:
-            m_mainWindowSize.setHeight(defaultHeight + PANEL_BORDER);
+            m_mainWindowSize.setHeight(defaultHeight + PANEL_BORDER + margin);
             m_mainWindowSize.setWidth(primaryRect().width());
             break;
 
         case Left:
         case Right:
             m_mainWindowSize.setHeight(primaryRect().height());
-            m_mainWindowSize.setWidth(defaultWidth + PANEL_BORDER);
+            m_mainWindowSize.setWidth(defaultWidth + PANEL_BORDER + margin);
             break;
 
         default:
@@ -1385,6 +1484,99 @@ void DockSettings::writeV23Centered(const bool centered) {
     }
 
     emit v23AlignmentChanged();
+}
+
+void DockSettings::writeV20Capsule(const V20Capsule capsule) {
+    if (capsule == V20CapsuleNone) {
+        QFile::remove(v20ModeFlagPath());
+    } else {
+        m_v20Style = capsule;
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile flag(v20ModeFlagPath());
+        if (flag.open(QIODevice::WriteOnly)) {
+            flag.close();
+        }
+        QFile file(v20CapsuleFlagPath());
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(capsule == V20CapsuleMulti ? "multi" : "single");
+            file.close();
+        }
+    }
+
+    applyV20Capsule(capsule);
+}
+
+void DockSettings::applyV20Capsule(const V20Capsule capsule) {
+    const bool changed = capsule != m_v20Capsule;
+    m_v20Capsule = capsule;
+    qApp->setProperty(PROP_V20_CAPSULE, int(capsule));
+
+    if (!changed || m_displayMode != V23) {
+        return;
+    }
+
+    calculateWindowConfig();
+    emit v20CapsuleChanged();
+    emit windowGeometryChanged();
+}
+
+void DockSettings::writeV20Radius(const V20Radius radius) {
+    if (radius == m_v20Radius) {
+        return;
+    }
+
+    m_v20Radius = radius;
+    if (radius == V20RadiusLarge) {
+        QFile::remove(v20RadiusFlagPath());
+    } else {
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile file(v20RadiusFlagPath());
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(radius == V20RadiusMedium ? "medium" : "small");
+            file.close();
+        }
+    }
+
+    emit v20CapsuleChanged();
+}
+
+void DockSettings::writeV20NoMargin(const bool noMargin) {
+    if (noMargin == m_v20NoMargin) {
+        return;
+    }
+
+    m_v20NoMargin = noMargin;
+    if (noMargin) {
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile file(v20NoMarginFlagPath());
+        file.open(QIODevice::WriteOnly);
+    } else {
+        QFile::remove(v20NoMarginFlagPath());
+    }
+
+    if (v20Capsule() == V20CapsuleNone) {
+        return;
+    }
+
+    calculateWindowConfig();
+    emit v20CapsuleChanged();
+    emit windowGeometryChanged();
+}
+
+int DockSettings::v20Margin() const {
+    if (v20Capsule() == V20CapsuleNone) {
+        return 0;
+    }
+    return m_v20NoMargin ? V20_CAPSULE_THIN_MARGIN : V20_CAPSULE_MARGIN;
+}
+
+int DockSettings::v20CapsuleRadius(const QRect &capsule) const {
+    const int half = qMin(capsule.width(), capsule.height()) / 2;
+    switch (m_v20Radius) {
+    case V20RadiusMedium:   return half / 2;
+    case V20RadiusSmall:    return qMax(4, half / 4);
+    default:                return half;
+    }
 }
 
 void DockSettings::applyV23Theme()

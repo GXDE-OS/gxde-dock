@@ -40,6 +40,9 @@
 
 #include <dregionmonitor.h>
 
+#define V20_CAPSULE_MARGIN 10
+#define V20_CAPSULE_THIN_MARGIN 2
+
 DWIDGET_USE_NAMESPACE
 
 class QGSettings;
@@ -75,6 +78,9 @@ public:
     inline V23Theme v23Theme() const { return m_v23Theme; }
     inline bool v23LightTheme() const { return m_v23Light; }
     inline bool v23Centered() const { return m_v23Centered; }
+    inline V20Capsule v20Capsule() const { return m_displayMode == V23 ? m_v20Capsule : V20CapsuleNone; }
+    int v20CapsuleRadius(const QRect &capsule) const;
+    int v20Margin() const;
     inline int screenRawHeight() const { return m_screenRawHeight; }
     inline int screenRawWidth() const { return m_screenRawWidth; }
     inline int expandTimeout() const { return m_dockInter->showTimeout(); }
@@ -115,6 +121,7 @@ signals:
     void opacityChanged(const quint8 value) const;
     void v23ThemeChanged() const;
     void v23AlignmentChanged() const;
+    void v20CapsuleChanged() const;
 
 public slots:
     void updateGeometry();
@@ -157,6 +164,10 @@ private:
     void writeV23Theme(const V23Theme theme);
     void applyV23Theme();
     void writeV23Centered(const bool centered);
+    void writeV20Capsule(const V20Capsule capsule);
+    void applyV20Capsule(const V20Capsule capsule);
+    void writeV20Radius(const V20Radius radius);
+    void writeV20NoMargin(const bool noMargin);
     void writeHideMode(const HideMode mode);
     void writeIconSize(const int size);
     void onGsettingsChanged();
@@ -178,6 +189,10 @@ private:
     V23Theme m_v23Theme;
     bool m_v23Light = false;
     bool m_v23Centered = false;
+    V20Capsule m_v20Capsule = V20CapsuleNone;
+    V20Capsule m_v20Style = V20CapsuleSingle;
+    V20Radius m_v20Radius = V20RadiusLarge;
+    bool m_v20NoMargin = false;
     QRect m_primaryRawRect;
     QRect m_frontendRect;
     QSize m_mainWindowSize;
@@ -196,6 +211,15 @@ private:
     QAction m_v23AlignLeftAct;
     QAction m_v23AlignCenterAct;
     QAction *m_v23AlignSubMenuAct = nullptr;
+    QAction m_v20ModeAct;
+    QAction m_v20SingleAct;
+    QAction m_v20MultiAct;
+    QAction m_v20NoMarginAct;
+    QAction *m_v20CapsuleSubMenuAct = nullptr;
+    QAction m_v20RadiusLargeAct;
+    QAction m_v20RadiusMediumAct;
+    QAction m_v20RadiusSmallAct;
+    QAction *m_v20RadiusSubMenuAct = nullptr;
     QAction m_topPosAct;
     QAction m_bottomPosAct;
     QAction m_leftPosAct;

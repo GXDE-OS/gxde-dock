@@ -73,6 +73,28 @@ enum V23Theme {
 // resolved V23 color theme (bool, true = light), maintained by DockSettings
 #define PROP_V23_LIGHT_THEME "V23LightTheme"
 
+///
+/// \brief The V20Capsule enum
+/// the Deepin V20 mode is the V23 mode drawn as floating capsules
+///
+enum V20Capsule {
+    V20CapsuleNone   = 0,
+    V20CapsuleSingle = 1,
+    V20CapsuleMulti  = 2,
+};
+
+#define PROP_V20_CAPSULE "V20Capsule"
+
+///
+/// \brief The V20Radius enum
+/// the corners of the V20 capsules, large ones are round ends
+///
+enum V20Radius {
+    V20RadiusLarge  = 0,
+    V20RadiusMedium = 1,
+    V20RadiusSmall  = 2,
+};
+
 #define PROP_HIDE_MODE      "HideMode"
 ///
 /// \brief The HideMode enum
@@ -126,6 +148,18 @@ inline bool isV23Mode()
 inline bool isV23Light()
 {
     return isV23Mode() && QCoreApplication::instance()->property(PROP_V23_LIGHT_THEME).toBool();
+}
+
+inline V20Capsule v20Capsule()
+{
+    if (!isV23Mode())
+        return V20CapsuleNone;
+    return V20Capsule(QCoreApplication::instance()->property(PROP_V20_CAPSULE).toInt());
+}
+
+inline bool isV20Mode()
+{
+    return v20Capsule() != V20CapsuleNone;
 }
 
 }
