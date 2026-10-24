@@ -1,3 +1,13 @@
+gxde-dock (6.0.31) UNRELEASED; urgency=medium
+
+  [ gfdgd_xi ]
+  * 默认禁用power插件
+
+  [ CharOfString ]
+  * 新增仿Deepin V23模式
+
+ -- CharOfString <root@charofstring.cc>  Fri, 23 Oct 2026 22:22:22 -0500
+
 gxde-dock (6.0.30) UNRELEASED; urgency=medium
 
   * 修复启动器「开始」图标在HDPI下大锯齿的问题
