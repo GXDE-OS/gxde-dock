@@ -171,6 +171,10 @@ bool AbstractPluginsController::isPluginActive(PluginsItemInterface * const item
              || qApp->property(PROP_V23_REPLACED_PLUGINS).toStringList().contains(builtin));
 }
 
+QObject *AbstractPluginsController::pluginObject(PluginsItemInterface * const itemInter) const {
+    return m_pluginObjects.value(itemInter);
+}
+
 bool AbstractPluginsController::holdInactiveItem(PluginsItemInterface * const itemInter, const QString &itemKey)
 {
     if (!m_inactivePlugins.contains(itemInter) && isPluginActive(itemInter))
@@ -325,10 +329,12 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
 
     QObject *rootObject = pluginLoader->instance();
     PluginsItemInterface *interface = nullptr;
+    QObject *pluginObject = nullptr;
     if (auto *factory = qobject_cast<PluginsItemFactoryInterface *>(rootObject)) {
         QObject *instanceObject = factory->createPluginInstance();
         interface = qobject_cast<PluginsItemInterface *>(instanceObject);
         if (interface) {
+            pluginObject = instanceObject;
             instanceObject->setParent(this);
         } else if (instanceObject) {
             delete instanceObject;
@@ -364,6 +370,7 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
                                << pluginFile << isolatedLoader->errorString();
                     isolatedLoader->deleteLater();
                 } else {
+                    pluginObject = isolatedRoot;
                     qInfo() << objectName() << "isolated legacy plugin instance:"
                             << pluginFile << isolatedRoot;
                 }
@@ -390,6 +397,7 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
                 pluginLoader->deleteLater();
                 return;
             } else {
+                pluginObject = rootObject;
                 initializedLegacyPlugins.insert(canonicalFile);
             }
         }
@@ -408,6 +416,7 @@ void AbstractPluginsController::loadPlugin(const QString &pluginFile)
 
     // Record the file before init(), it decides if the plugin is active
     m_pluginFiles.insert(interface, QFileInfo(pluginFile).canonicalFilePath());
+    m_pluginObjects.insert(interface, pluginObject);
     publishV23Replacements(interface, meta);
 
     QString dbusService = meta.value("depends-daemon-dbus-service").toString();

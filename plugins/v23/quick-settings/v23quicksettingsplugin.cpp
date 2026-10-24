@@ -270,6 +270,28 @@ void V23QuickSettingsPlugin::invokedMenuItem(const QString &itemKey, const QStri
     }
 }
 
+QVariantList V23QuickSettingsPlugin::dockableItems() {
+    QVariantList items;
+    const QStringList docked = dockedKeys();
+    for (V23QuickModule *module : m_modules) {
+        if (!module->isDockable() || !module->isAvailable()) {
+            continue;
+        }
+
+        QVariantMap item;
+        item["key"] = module->key();
+        item["name"] = module->displayName();
+        item["docked"] = docked.contains(module->key());
+        items << item;
+    }
+
+    return items;
+}
+
+void V23QuickSettingsPlugin::setItemDocked(const QString &key, bool docked) {
+    setDocked(key, docked);
+}
+
 void V23QuickSettingsPlugin::refreshIcon(const QString &itemKey)
 {
     if (QWidget *widget = itemWidget(itemKey))

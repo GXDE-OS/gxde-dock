@@ -105,6 +105,10 @@ const QList<PluginsItemInterface *> DockItemController::pluginList() const
     return plugins;
 }
 
+QObject *DockItemController::pluginObject(PluginsItemInterface *plugin) const {
+    return m_pluginsInter->pluginObject(plugin);
+}
+
 bool DockItemController::appIsOnDock(const QString &appDesktop) const
 {
     return m_appInter->IsOnDock(appDesktop);

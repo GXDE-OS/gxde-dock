@@ -51,6 +51,9 @@ public:
     void refreshIcon(const QString &itemKey) override;
     void pluginSettingsChanged() override;
 
+    Q_INVOKABLE QVariantList dockableItems();
+    Q_INVOKABLE void setItemDocked(const QString &key, bool docked);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 

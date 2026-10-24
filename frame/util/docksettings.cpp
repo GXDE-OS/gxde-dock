@@ -619,6 +619,25 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
         actions << act;
     }
 
+    for (auto *p : m_menuItemController->pluginList()) {
+        QObject *object = m_menuItemController->pluginObject(p);
+        QVariantList items;
+        if (!object || object->metaObject()->indexOfMethod("dockableItems()") < 0
+                || !QMetaObject::invokeMethod(object, "dockableItems", Q_RETURN_ARG(QVariantList, items))) {
+            continue;
+        }
+
+        for (const QVariant &value : items) {
+            const QVariantMap item = value.toMap();
+            QAction *act = new QAction(item.value("name").toString(), this);
+            act->setCheckable(true);
+            act->setChecked(item.value("docked").toBool());
+            act->setData(p->pluginName() + "/" + item.value("key").toString());
+
+            actions << act;
+        }
+    }
+
     // sort by name
     std::sort(actions.begin(), actions.end(), [] (QAction *a, QAction *b) -> bool {
         return a->data().toString() > b->data().toString();
@@ -881,12 +900,25 @@ void DockSettings::menuActionClicked(QAction *action)
     const QString &data = action->data().toString();
     if (data.isEmpty())
         return;
+    const QString pluginName = data.section('/', 0, 0);
+    const QString itemKey = data.section('/', 1);
     DockItemController *menuController = m_menuItemController
         ? m_menuItemController.data() : m_itemController;
     for (auto *p : menuController->pluginList())
     {
-        if (p->pluginName() == data)
+        if (p->pluginName() != pluginName) {
+            continue;
+        }
+
+        if (itemKey.isEmpty()) {
             return p->pluginStateSwitched();
+        }
+
+        if (QObject *object = menuController->pluginObject(p)) {
+            QMetaObject::invokeMethod(object, "setItemDocked", Q_ARG(QString, itemKey), Q_ARG(bool, action->isChecked()));
+        }
+
+        return;
     }
 }
 

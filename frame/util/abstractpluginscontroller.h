@@ -57,6 +57,7 @@ public:
     // false for a plugin whose items are held back in the current display
     // mode: V23 replacements outside V23 mode, the built-ins they replace in it
     bool isPluginActive(PluginsItemInterface * const itemInter) const;
+    QObject *pluginObject(PluginsItemInterface * const itemInter) const;
 
 protected:
     QMap<PluginsItemInterface *, QMap<QString, QObject *>> &pluginsMap();
@@ -92,6 +93,7 @@ private:
 
     QMap<PluginsItemInterface *, QMap<QString, QObject *>> m_pluginsMap;
     QHash<PluginsItemInterface *, QString> m_pluginFiles;
+    QHash<PluginsItemInterface *, QObject *> m_pluginObjects;
     QSet<PluginsItemInterface *> m_inactivePlugins;
     QMap<PluginsItemInterface *, QStringList> m_inactiveItems;
 

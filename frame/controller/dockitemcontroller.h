@@ -55,6 +55,7 @@ public:
 
     const QList<QPointer<DockItem> > itemList() const;
     const QList<PluginsItemInterface *> pluginList() const;
+    QObject *pluginObject(PluginsItemInterface *plugin) const;
     bool appIsOnDock(const QString &appDesktop) const;
     bool itemIsInContainer(DockItem * const item) const;
     void setDropping(const bool dropping);
