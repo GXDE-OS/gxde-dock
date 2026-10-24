@@ -42,12 +42,10 @@ const char kOpenCalendarSvg[] = R"svg(<svg width="16" height="16" viewBox="0 0 1
 </g>
 </svg>)svg";
 
-// The popup panel is light only for the V23 light theme on Wayland; otherwise
-// DockPopupWindow keeps its dark classic background.
+// The popup panel follows the V23 color theme, on X11 as on Wayland
 bool lightPopup()
 {
-    return Dock::isV23Light()
-        && QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
+    return Dock::isV23Light();
 }
 
 QColor textColor()

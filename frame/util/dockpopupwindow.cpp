@@ -25,6 +25,7 @@
 #include "wayland/layershell_styler.h"
 
 #include <DApplication> 
+#include <DPlatformWindowHandle>
 #include <QTimer>
 #include <QScreen>
 #include <QApplication>
@@ -49,7 +50,8 @@ constexpr int kMarkPointGap = 2;
 
 // fadingpopups of deepin-kwin 5.27.2 on Deepin V23: a dock popup grows from
 // 30% of its size at the dock side under the pointer while fading in, and
-// fades out at its full size, both on an OutQuart curve
+// fades out at its full size, both on an OutQuart curve. The blur cannot fade
+// with it here, so a closing popup shrinks back instead, taking the blur along
 constexpr int kOpenDuration = 150;
 constexpr int kCloseDuration = 180;
 constexpr qreal kOpenStartSize = 0.3;
@@ -84,6 +86,9 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
       m_model(false),
       m_v23(false),
       m_v23ShadowOffset(2),
+      m_classicShadowBlurRadius(0),
+      m_classicShadowYOffset(0),
+      m_classicBorderWidth(0),
       m_animation(Animation::None),
       m_animator(new QVariantAnimation(this)),
       m_animationOverlay(new DockPopupAnimationOverlay(this)),
@@ -98,6 +103,10 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
     m_acceptDelayTimer->setInterval(100);
 
     m_wmHelper = DWindowManagerHelper::instance();
+
+    m_classicShadowBlurRadius = shadowBlurRadius();
+    m_classicShadowYOffset = shadowYOffset();
+    m_classicBorderWidth = borderWidth();
 
     compositeChanged();
 
@@ -117,10 +126,7 @@ DockPopupWindow::DockPopupWindow(QWidget *parent)
     m_animator->setEasingCurve(QEasingCurve::OutQuart);
     connect(m_animator, &QVariantAnimation::valueChanged, this, [this] {
         m_animationOverlay->update();
-        if (QWindow *window = windowHandle()) {
-            const QRectF panel = animatedPanelRect(m_animator->currentValue().toReal());
-            Wayland::LayerShellStyler::apply(window, radius(), true, panel.toAlignedRect());
-        }
+        applyV23BlurArea(animatedPanelRect(m_animator->currentValue().toReal()).toAlignedRect());
     });
     connect(m_animator, &QVariantAnimation::finished, this, [this] {
         const Animation finished = m_animation;
@@ -160,7 +166,7 @@ void DockPopupWindow::show(const QPoint &pos, const bool model)
 {
     // a popup opens when it was hidden or closing, or shows other content;
     // moving a shown one around is no opening
-    const bool opening = model && m_v23
+    const bool opening = model && m_v23 && v23Translucent()
         && (!isVisible() || m_animation == Animation::Closing || !m_model || getContent() != m_openedContent);
     if (m_animation == Animation::Closing)
         stopAnimation();
@@ -203,7 +209,7 @@ void DockPopupWindow::show(int x, int y)
     m_lastPoint = QPoint(x, y);
 
     if (m_v23) {
-        const int shift = kV23ShadowMargin + kMarkPointGap - kV23DockGap;
+        const int shift = v23ShadowMargin() + kMarkPointGap - kV23DockGap;
         switch (arrowDirection()) {
         case ArrowTop:      y -= shift; break;
         case ArrowBottom:   y += shift; break;
@@ -240,9 +246,11 @@ void DockPopupWindow::show(int x, int y)
         }
     }
     setProperty("_d_dock_popup_position", topLeft);
-    m_anchor = QPoint(x, y) - topLeft;
 
     DArrowRectangle::show(x, y);
+
+    // on X11 the window is really moved, and kept on screen by dtk
+    m_anchor = QPoint(x, y) - (Wayland::LayerShellHelper::isWayland() ? topLeft : pos());
 }
 
 void DockPopupWindow::hide()
@@ -260,7 +268,7 @@ void DockPopupWindow::hide()
         m_maskWindow->hideMask();
     }
 
-    if (m_v23 && m_model && isVisible()) {
+    if (m_v23 && v23Translucent() && m_model && isVisible()) {
         startAnimation(Animation::Closing);
         return;
     }
@@ -270,9 +278,10 @@ void DockPopupWindow::hide()
 
 void DockPopupWindow::hideNow()
 {
+    // hidden first, so that stopping does not put the full blur back
+    DArrowRectangle::hide();
     stopAnimation();
     m_openedContent = nullptr;
-    DArrowRectangle::hide();
 }
 
 void DockPopupWindow::startAnimation(Animation animation)
@@ -286,6 +295,9 @@ void DockPopupWindow::startAnimation(Animation animation)
     m_animationOverlay->setGeometry(rect());
     m_animationOverlay->raise();
     m_animationOverlay->show();
+    // X11 maps the window at once, with the full blur set on show
+    if (!Wayland::LayerShellHelper::isWayland())
+        applyV23BlurArea(animatedPanelRect(0).toAlignedRect());
     m_animator->start();
 }
 
@@ -305,8 +317,10 @@ void DockPopupWindow::stopAnimation()
 QRectF DockPopupWindow::animatedPanelRect(qreal progress) const
 {
     const QRectF panel = v23PanelRect();
-    if (m_animation != Animation::Opening)
+    if (m_animation == Animation::None)
         return panel;
+    if (m_animation == Animation::Closing)
+        progress = 1.0 - progress;
 
     // from 30% of the size, centered on the pointer along the dock and 15%
     // of the size off the dock side: its edge then lies on the dock side
@@ -396,10 +410,19 @@ void DockPopupWindow::paintEvent(QPaintEvent *e)
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     const QRectF panel = v23PanelRect();
+    const bool light = Dock::isV23Light();
+
+    if (!v23Translucent()) {
+        // X11 without a compositor shows no alpha: an opaque, square panel
+        painter.fillRect(panel, light ? QColor(235, 235, 235) : QColor(36, 36, 36));
+        painter.setPen(QPen(light ? QColor(0, 0, 0, 255 * 0.1) : QColor(0, 0, 0, 255 * 0.5), 1));
+        painter.drawRect(panel.adjusted(.5, .5, -.5, -.5));
+        return;
+    }
+
     QPainterPath path;
     path.addRoundedRect(panel, radius(), radius());
 
-    const bool light = Dock::isV23Light();
     if (m_shadowCache.isNull() || m_shadowCacheSize != size()) {
         QImage shadow(size(), QImage::Format_ARGB32_Premultiplied);
         shadow.fill(Qt::transparent);
@@ -426,7 +449,7 @@ void DockPopupWindow::paintEvent(QPaintEvent *e)
     painter.restore();
 
     // dde-shell PanelPopupWindow blend color over the compositor blur
-    painter.fillPath(path, light ? QColor(235, 235, 235, 255 * 0.6) : QColor(0, 0, 0, 85));
+    painter.fillPath(path, light ? QColor(235, 235, 235, 255 * 0.45) : QColor(0, 0, 0, 64));
 
     painter.setPen(QPen(light ? QColor(0, 0, 0, 255 * 0.1) : QColor(0, 0, 0, 255 * 0.5), 1));
     painter.setBrush(Qt::NoBrush);
@@ -453,20 +476,31 @@ void DockPopupWindow::resizeEvent(QResizeEvent *e)
 
 void DockPopupWindow::updateV23Style(QWidget *content)
 {
-    const bool v23 = Dock::isV23Mode() && Wayland::LayerShellHelper::isWayland();
+    const bool v23 = Dock::isV23Mode();
     if (!v23 && !m_v23) {
         return;
     }
 
+    const bool wayland = Wayland::LayerShellHelper::isWayland();
     m_v23 = v23;
     m_shadowCache = QImage();
 
     if (!v23) {
-        if (QWindow *window = windowHandle())
-            window->setMask(QRegion());
+        if (wayland) {
+            if (QWindow *window = windowHandle())
+                window->setMask(QRegion());
 
-        setShadowBlurRadius(0);
-        setShadowYOffset(0);
+            setShadowBlurRadius(0);
+            setShadowYOffset(0);
+        } else {
+            DPlatformWindowHandle::setWindowBlurAreaByWM(this, QVector<DPlatformWindowHandle::WMBlurArea>());
+            setShadowBlurRadius(m_classicShadowBlurRadius);
+            setShadowYOffset(m_classicShadowYOffset);
+            setBorderWidth(m_classicBorderWidth);
+            // brings back the blur widget of dtk, behind the whole window
+            setBackgroundColor(QColor(0, 0, 0, 0));
+            setBackgroundColor(DBlurEffectWidget::DarkColor);
+        }
         setArrowWidth(18);
         setArrowHeight(10);
         setMargin(8);
@@ -476,20 +510,42 @@ void DockPopupWindow::updateV23Style(QWidget *content)
 
     const bool preview = content->inherits("PreviewContainer");
     const bool padded = preview || content->inherits("TipsWidget");
+    const int contentMargin = padded ? 0 : 8;
 
     setArrowWidth(0);
     setArrowHeight(0);
-    setShadowBlurRadius(kV23ShadowMargin);
     setShadowYOffset(0);
-    setMargin(padded ? 0 : 8);
+    if (wayland) {
+        setShadowBlurRadius(kV23ShadowMargin);
+        setMargin(contentMargin);
+    } else {
+        // the dxcb window has no room for a shadow of ours, nor a frame we
+        // want: the margin holds the shadow, which is painted like on Wayland
+        setShadowBlurRadius(0);
+        setBorderWidth(0);
+        setMargin(contentMargin + v23ShadowMargin());
+        // an opaque color drops the blur widget of dtk, that would blur the
+        // shadow too; the panel alone is blurred instead
+        setBackgroundColor(QColor(0, 0, 0));
+    }
     setRadius(preview ? 6 : 8);
     m_v23ShadowOffset = preview ? 4 : 2;
 }
 
+bool DockPopupWindow::v23Translucent() const
+{
+    return Wayland::LayerShellHelper::isWayland() || m_wmHelper->hasComposite();
+}
+
+int DockPopupWindow::v23ShadowMargin() const
+{
+    return v23Translucent() ? kV23ShadowMargin : 0;
+}
+
 QRect DockPopupWindow::v23PanelRect() const
 {
-    return rect().marginsRemoved(QMargins(kV23ShadowMargin, kV23ShadowMargin,
-        kV23ShadowMargin, kV23ShadowMargin));
+    const int margin = v23ShadowMargin();
+    return rect().marginsRemoved(QMargins(margin, margin, margin, margin));
 }
 
 void DockPopupWindow::applyV23Blur()
@@ -499,8 +555,30 @@ void DockPopupWindow::applyV23Blur()
         return;
     }
 
-    window->setMask(QRegion(v23PanelRect()));
-    Wayland::LayerShellStyler::apply(window, radius(), true, v23PanelRect());
+    if (Wayland::LayerShellHelper::isWayland())
+        window->setMask(QRegion(v23PanelRect()));
+    applyV23BlurArea(v23PanelRect());
+}
+
+void DockPopupWindow::applyV23BlurArea(const QRect &panel)
+{
+    if (Wayland::LayerShellHelper::isWayland()) {
+        if (QWindow *window = windowHandle())
+            Wayland::LayerShellStyler::apply(window, radius(), true, panel);
+        return;
+    }
+
+    if (!m_wmHelper->hasComposite() || !windowHandle())
+        return;
+
+    DPlatformWindowHandle::WMBlurArea area;
+    area.x = panel.x();
+    area.y = panel.y();
+    area.width = panel.width();
+    area.height = panel.height();
+    area.xRadius = radius();
+    area.yRaduis = radius();
+    DPlatformWindowHandle::setWindowBlurAreaByWM(this, QVector<DPlatformWindowHandle::WMBlurArea>() << area);
 }
 
 void DockPopupWindow::onGlobMouseRelease(const QPoint &mousePos, const int flag)
@@ -527,6 +605,14 @@ void DockPopupWindow::compositeChanged()
         setBorderColor(QColor(255, 255, 255, 255 * 0.05));
     else
         setBorderColor(QColor("#2C3238"));
+
+    // the V23 panel gains or loses its shadow margin
+    if (m_v23 && getContent()) {
+        stopAnimation();
+        setContent(getContent());
+        if (isVisible())
+            show(m_lastPoint, m_model);
+    }
 }
 
 void DockPopupWindow::ensureRaised()
