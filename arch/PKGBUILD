@@ -2,7 +2,7 @@
 pkgbase=gxde-dock-git
 pkgname=('gxde-dock-git' 'gxde-dock-onboard-plugin-git')
 pkgver=6.0.33
-pkgrel=1
+pkgrel=2
 pkgdesc='GXDE dock'
 arch=('x86_64' 'aarch64')
 url="https://github.com/GXDE-OS/gxde-dock"
