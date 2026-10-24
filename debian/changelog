@@ -1,3 +1,9 @@
+gxde-dock (6.0.32) UNRELEASED; urgency=medium
+
+  * 新增仿Deepin V20模式
+
+ -- CharOfString <root@charofstring.cc>  Fri, 23 Oct 2026 22:57:03 -0500
+
 gxde-dock (6.0.31) UNRELEASED; urgency=medium
 
   [ gfdgd_xi ]
