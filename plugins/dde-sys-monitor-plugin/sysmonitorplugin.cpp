@@ -355,6 +355,8 @@ void SysMonitorPlugin::invokedMenuItem(const QString &itemKey, const QString &me
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
         env.insert("QT_QPA_PLATFORM", "dxcb;xcb");
         env.insert("QT_QPA_PLATFORMTHEME", "deepin");
+        // a DTK6 app: the GXDE dtk2 style of the session crashes it
+        env.remove("QT_STYLE_OVERRIDE");
 
         QProcess process;
         process.setProcessEnvironment(env);
