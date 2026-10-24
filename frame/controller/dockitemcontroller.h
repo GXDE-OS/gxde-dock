@@ -108,6 +108,7 @@ private:
     int v23TrayStart() const;
     int v23InsertIndex(DockItem * const item) const;
     void ensureV23CollapseItem();
+    void removeV23CollapseItem();
     void updateV23SearchItem();
     int appAreaStart() const;
     void sortV23TrayItems();

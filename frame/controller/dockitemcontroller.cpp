@@ -239,6 +239,17 @@ int DockItemController::appAreaStart() const {
     return m_itemList.contains(m_searchItem) ? 2 : 1;
 }
 
+void DockItemController::removeV23CollapseItem() {
+    const int index = m_itemList.indexOf(m_collapseItem);
+    if (index < 0) {
+        return;
+    }
+
+    emit itemRemoved(m_collapseItem);
+    m_itemList.removeAt(index);
+    m_collapseItem->setVisible(false);
+}
+
 void DockItemController::sortV23TrayItems() {
     const int start = v23TrayStart();
 
@@ -822,14 +833,15 @@ void DockItemController::pluginItemInserted(PluginsItem *item)
         return itemDroppedIntoContainer(item);
     }
 
+    updateV23SearchItem();
     if (Dock::isV23Mode()) {
-        updateV23SearchItem();
         ensureV23CollapseItem();
         const int index = v23InsertIndex(item);
         m_itemList.insert(index, item);
         emit itemInserted(index, item);
         return;
     }
+    removeV23CollapseItem();
 
     // find first plugins item position
     int firstPluginPosition = -1;
@@ -861,8 +873,10 @@ void DockItemController::pluginItemInserted(PluginsItem *item)
         insertIndex = m_itemList.size();
         for (int i(firstPluginPosition + 1); i != m_itemList.size() + 1; ++i)
         {
-            PluginsItem *pItem = static_cast<PluginsItem *>(m_itemList[i - 1].data());
-            Q_ASSERT(pItem);
+            PluginsItem *pItem = qobject_cast<PluginsItem *>(m_itemList[i - 1].data());
+            if (!pItem) {
+                continue;
+            }
 
             const int sortKey = pItem->itemSortKey();
             if (sortKey != -1 && itemSortKey > sortKey)
@@ -1006,7 +1020,6 @@ void DockItemController::onPrepareForSleep(bool active)
 void DockItemController::sortPluginItems() {
     updateV23SearchItem();
 
-    const int collapseIndex = m_itemList.indexOf(m_collapseItem);
     if (Dock::isV23Mode()) {
         refreshContainerItems();
         sortV23TrayItems();
@@ -1014,11 +1027,7 @@ void DockItemController::sortPluginItems() {
         return;
     }
 
-    if (collapseIndex >= 0) {
-        emit itemRemoved(m_collapseItem);
-        m_itemList.removeAt(collapseIndex);
-        m_collapseItem->setVisible(false);
-    }
+    removeV23CollapseItem();
     refreshContainerItems();
 
     int firstPluginIndex = -1;

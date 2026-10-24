@@ -9,6 +9,8 @@ SysMonitorPlugin::SysMonitorPlugin(QObject *parent)
 	,m_refreshTimer(new QTimer(this))
 {
 	oldrbytes=oldsbytes=0;
+	oldtotaltime=oldworktime=0;
+	cpuPercent=memPercent=swapPercent=0;
 	// 设置 Timer 超时为 1s，即每 1s 更新一次控件上的数据，并启动这个定时器
     m_refreshTimer->start(1000);
 	
@@ -35,7 +37,10 @@ void SysMonitorPlugin::refreshInfo()
     worktime = user + nice + system;
     totaltime = user + nice + system + idle + iowait + irq + softirq + steal;
     // 得到百分比
-    cpuPercent = qRound((worktime-oldworktime)*100.0/(totaltime-oldtotaltime));
+
+    if (totaltime > oldtotaltime && worktime >= oldworktime) {
+        cpuPercent = qBound(0, qRound((worktime - oldworktime) * 100.0 / (totaltime - oldtotaltime)), 100);
+    }
     oldtotaltime=totaltime;
     oldworktime=worktime;
     if(cpuPercent<=9)info.cpu=QString(" %1\%").arg(cpuPercent);
