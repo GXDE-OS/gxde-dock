@@ -59,9 +59,8 @@ QColor withAlpha(QColor color, qreal alpha)
     return color;
 }
 
-QColor highlightColor()
-{
-    return qApp->palette().color(QPalette::Highlight);
+QColor highlightColor() {
+    return lightPopup() ? QColor(0x00, 0x81, 0xff) : QColor(0x02, 0x4c, 0xca);
 }
 
 QFont pixelFont(const QFont &base, int pixelSize, QFont::Weight weight = QFont::Normal)

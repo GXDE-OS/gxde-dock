@@ -31,9 +31,8 @@ QColor dockTextColor()
     return Dock::isV23Light() ? QColor(0x1f, 0x1f, 0x1f) : QColor(Qt::white);
 }
 
-QColor highlightColor()
-{
-    return qApp->palette().color(QPalette::Highlight);
+QColor highlightColor() {
+    return lightPopup() ? QColor(0x00, 0x81, 0xff) : QColor(0x02, 0x4c, 0xca);
 }
 
 QColor withAlpha(QColor color, qreal alpha)
