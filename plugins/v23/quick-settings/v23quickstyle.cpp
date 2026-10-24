@@ -18,8 +18,7 @@ namespace V23Quick {
 
 bool lightPopup()
 {
-    return Dock::isV23Light()
-        && QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
+    return Dock::isV23Light();
 }
 
 QColor popupTextColor()

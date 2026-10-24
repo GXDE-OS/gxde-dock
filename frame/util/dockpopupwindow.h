@@ -82,12 +82,17 @@ private:
     friend class DockPopupAnimationOverlay;
 
     void updateV23Style(QWidget *content);
+    // false only on X11 without a compositor: the V23 panel is then opaque,
+    // square and without shadow or animation
+    bool v23Translucent() const;
+    int v23ShadowMargin() const;
     QRect v23PanelRect() const;
     void applyV23Blur();
+    void applyV23BlurArea(const QRect &panel);
     void hideNow();
 
-    // V23 mode on Wayland: the fade of the popups that deepin-kwin draws on
-    // Deepin V23, drawn by ourselves as the GXDE compositor has none
+    // V23 mode: the fade of the popups that deepin-kwin draws on Deepin V23,
+    // drawn by ourselves as the GXDE compositors have none
     enum class Animation {
         None,
         Opening,
@@ -103,6 +108,10 @@ private:
     // V23 mode: Deepin 25 panel without arrow, painted by ourselves
     bool m_v23;
     int m_v23ShadowOffset;
+    // X11: the dxcb frame of the classic popup, put back when leaving V23
+    qreal m_classicShadowBlurRadius;
+    qreal m_classicShadowYOffset;
+    int m_classicBorderWidth;
     QImage m_shadowCache;
     QSize m_shadowCacheSize;
     QPoint m_lastPoint;

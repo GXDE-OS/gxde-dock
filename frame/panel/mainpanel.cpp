@@ -51,7 +51,7 @@ static QColor v23PanelColor()
     QColor color = light ? QColor(255, 255, 255) : QColor(20, 20, 20);
     // the user opacity is respected, but never so low that the bar turns into
     // a bare blur strip
-    color.setAlpha(qMax<int>(DockSettings::Instance().Opacity(), light ? 180 : 150));
+    color.setAlpha(qMax<int>(DockSettings::Instance().Opacity(), light ? 128 : 102));
     return color;
 }
 

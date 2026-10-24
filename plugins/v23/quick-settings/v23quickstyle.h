@@ -13,8 +13,7 @@
 // Colors, fonts and icons shared by the V23 quick settings widgets
 namespace V23Quick {
 
-// The popup is light only for the V23 light theme on Wayland; otherwise
-// DockPopupWindow keeps its dark classic background.
+// The popup follows the V23 color theme, on X11 as on Wayland
 bool lightPopup();
 QColor popupTextColor();
 QColor dockTextColor();
