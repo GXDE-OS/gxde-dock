@@ -159,6 +159,26 @@
         <translation>圆角</translation>
     </message>
     <message>
+        <location filename="../frame/util/docksettings.cpp" line="205"/>
+        <source>Deepin V23 Mode</source>
+        <translation>深度 V23 模式</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="206"/>
+        <source>Follow System Theme</source>
+        <translation>跟随系统主题</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="207"/>
+        <source>Force Dark</source>
+        <translation>强制深色</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="208"/>
+        <source>Force Light</source>
+        <translation>强制浅色</translation>
+    </message>
+    <message>
         <location filename="../frame/util/docksettings.cpp" line="187"/>
         <source>Deepin V20 Mode</source>
         <translation>深度 V20 模式</translation>
