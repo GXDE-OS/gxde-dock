@@ -94,6 +94,8 @@ private:
 
 private slots:
     void adjustItemSize();
+    void updateV23Alignment();
+    int layoutIndex(const int index) const;
     void itemInserted(const int index, DockItem *item);
     void itemRemoved(DockItem *item);
     void itemMoved(DockItem *item, const int index);
@@ -110,6 +112,8 @@ private:
     bool m_hasComposite = false;
 
     QBoxLayout *m_itemLayout;
+    QSpacerItem *m_v23CenterSpacer = nullptr;
+    QPointer<DockItem> m_v23SearchItem;
     QTimer *m_itemAdjustTimer;
     QTimer *m_checkMouseLeaveTimer;
     QPointer<QWidget> m_appDragWidget;

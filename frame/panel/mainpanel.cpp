@@ -176,6 +176,7 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
     }
 
     connect(m_itemAdjustTimer, &QTimer::timeout, this, &MainPanel::adjustItemSize, Qt::QueuedConnection);
+    connect(m_itemAdjustTimer, &QTimer::timeout, this, &MainPanel::updateV23Alignment, Qt::QueuedConnection);
     connect(m_itemController, &DockItemController::itemInserted, this, &MainPanel::itemInserted, Qt::DirectConnection);
     connect(m_itemController, &DockItemController::itemRemoved, this, &MainPanel::itemRemoved, Qt::DirectConnection);
     connect(m_itemController, &DockItemController::itemMoved, this, &MainPanel::itemMoved);
@@ -187,6 +188,8 @@ MainPanel::MainPanel(DockItemController *controller, QWidget *parent)
         setEffectEnabled(m_hasComposite);
         update();
     });
+    connect(&DockSettings::Instance(), &DockSettings::v23AlignmentChanged,
+            m_itemAdjustTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
     connect(&DockSettings::Instance(), &DockSettings::v23ThemeChanged, this, [this] {
         setEffectEnabled(m_hasComposite);
         update();
@@ -548,6 +551,10 @@ void MainPanel::manageItem(DockItem *item)
     connect(item, &DockItem::itemDropped, this, &MainPanel::itemDropped, Qt::UniqueConnection);
     connect(item, &DockItem::requestRefreshWindowVisible, this, &MainPanel::requestRefershWindowVisible, Qt::UniqueConnection);
     connect(item, &DockItem::requestWindowAutoHide, this, &MainPanel::requestWindowAutoHide, Qt::UniqueConnection);
+
+    if (qobject_cast<V23SearchItem *>(item)) {
+        m_v23SearchItem = item;
+    }
 }
 
 ///
@@ -722,7 +729,13 @@ void MainPanel::adjustItemSize()
         case DockItem::Container:
         case DockItem::TrayAction:
             {
-                const QSize size = item->sizeHint();
+                QSize size = item->sizeHint();
+                if (qobject_cast<V23SearchItem *>(item)) {
+                    if (m_position == Dock::Top || m_position == Dock::Bottom)
+                        size.setWidth(std::round(itemSize.width() * 0.8));
+                    else
+                        size.setHeight(std::round(itemSize.height() * 0.8));
+                }
                 item->setFixedSize(size);
                 if (m_position == Dock::Top || m_position == Dock::Bottom)
                     item->setFixedHeight(itemSize.height());
@@ -845,6 +858,72 @@ void MainPanel::adjustItemSize()
     Q_ASSERT(extraDecrease == 0);
 }
 
+void MainPanel::updateV23Alignment() {
+    const bool horizontal = m_position == Dock::Top || m_position == Dock::Bottom;
+    const int searchIndex = m_v23SearchItem ? m_itemLayout->indexOf(m_v23SearchItem) : -1;
+
+    if (m_displayMode != Dock::V23 || searchIndex < 0) {
+        if (m_v23CenterSpacer) {
+            m_itemLayout->removeItem(m_v23CenterSpacer);
+            delete m_v23CenterSpacer;
+            m_v23CenterSpacer = nullptr;
+        }
+        return;
+    }
+
+    if (!m_v23CenterSpacer) {
+        m_v23CenterSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_itemLayout->insertSpacerItem(searchIndex + 1, m_v23CenterSpacer);
+    } else if (m_itemLayout->indexOf(m_v23CenterSpacer) != searchIndex + 1) {
+        m_itemLayout->removeItem(m_v23CenterSpacer);
+        m_itemLayout->insertSpacerItem(m_itemLayout->indexOf(m_v23SearchItem) + 1, m_v23CenterSpacer);
+    }
+
+    int margin = 0;
+    if (DockSettings::Instance().v23Centered()) {
+        auto length = [horizontal](QWidget *w) {
+            return horizontal ? w->minimumWidth() : w->minimumHeight();
+        };
+
+        int lengths[3] = { 0, 0, length(m_showDesktopItem) + 1 };
+        int part = 0;
+        for (const QPointer<DockItem> &item : m_itemController->itemList()) {
+            if (!item || m_itemController->itemIsInContainer(item)
+                    || m_itemController->v23ItemHidden(item)) {
+                continue;
+            }
+            if (item->itemType() == DockItem::Stretch) {
+                part = 2;
+                continue;
+            }
+            lengths[part] += length(item);
+            if (item == m_v23SearchItem) {
+                part = 1;
+            }
+        }
+
+        const int total = horizontal ? m_destSize.width() : m_destSize.height();
+        const int gap = 20;
+        margin = qMax(0, qMin((total - lengths[1]) / 2 - lengths[0],
+                              total - lengths[0] - lengths[1] - lengths[2] - gap));
+    }
+
+    const QSize size = horizontal ? QSize(margin, 0) : QSize(0, margin);
+    if (m_v23CenterSpacer->sizeHint() == size) {
+        return;
+    }
+
+    animateItemMoves([this, size] {
+        m_v23CenterSpacer->changeSize(size.width(), size.height(), QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_itemLayout->invalidate();
+    });
+}
+
+int MainPanel::layoutIndex(const int index) const {
+    const int spacer = m_v23CenterSpacer ? m_itemLayout->indexOf(m_v23CenterSpacer) : -1;
+    return spacer >= 0 && index >= spacer ? index + 1 : index;
+}
+
 ///
 /// \brief MainPanel::itemInserted insert dock item into index position.
 /// the new inserted item will be hideen first, and then shown after size
@@ -859,7 +938,7 @@ void MainPanel::itemInserted(const int index, DockItem *item)
     item->setParent(this);
 
     manageItem(item);
-    m_itemLayout->insertWidget(index, item);
+    m_itemLayout->insertWidget(layoutIndex(index), item);
 
     m_itemAdjustTimer->start();
 }
@@ -888,7 +967,7 @@ void MainPanel::itemMoved(DockItem *item, const int index)
         // remove old item
         m_itemLayout->removeWidget(item);
         // insert new position
-        m_itemLayout->insertWidget(index, item);
+        m_itemLayout->insertWidget(layoutIndex(index), item);
     });
 }
 
@@ -985,7 +1064,7 @@ void MainPanel::updateV23TrayVisibility(const bool animate) {
 
     DockItem *collapseItem = nullptr;
     for (const QPointer<DockItem> &item : m_itemController->itemList()) {
-        if (item && item->itemType() == DockItem::TrayAction) {
+        if (qobject_cast<V23CollapseItem *>(item)) {
             collapseItem = item;
         }
     }

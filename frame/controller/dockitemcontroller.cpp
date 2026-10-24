@@ -219,6 +219,22 @@ void DockItemController::ensureV23CollapseItem() {
     emit itemInserted(index, m_collapseItem);
 }
 
+void DockItemController::updateV23SearchItem() {
+    const int index = m_itemList.indexOf(m_searchItem);
+    if (Dock::isV23Mode() && index < 0) {
+        m_itemList.insert(1, m_searchItem);
+        emit itemInserted(1, m_searchItem);
+    } else if (!Dock::isV23Mode() && index >= 0) {
+        emit itemRemoved(m_searchItem);
+        m_itemList.removeAt(index);
+        m_searchItem->setVisible(false);
+    }
+}
+
+int DockItemController::appAreaStart() const {
+    return m_itemList.contains(m_searchItem) ? 2 : 1;
+}
+
 void DockItemController::sortV23TrayItems() {
     const int start = v23TrayStart();
 
@@ -339,6 +355,8 @@ void DockItemController::itemMove(DockItem * const moveItem, DockItem * const re
     const bool v23 = Dock::isV23Mode();
     if (v23 && (moveItem == m_collapseItem || isV23FixedItem(moveItem) || isV23FixedItem(replaceItem)))
         return;
+    if (moveItem == m_searchItem || replaceItem == m_searchItem)
+        return;
 
     // plugins move
     if (moveType == DockItem::Plugins || moveType == DockItem::TrayPlugin)
@@ -370,7 +388,7 @@ void DockItemController::itemMove(DockItem * const moveItem, DockItem * const re
     const bool replaceSplit = replaceApp && replaceApp->isSplitWindow();
     if (moveType == DockItem::App && replaceType == DockItem::App
             && !moveSplit && !replaceSplit)
-        m_appInter->MoveEntry(moveIndex - 1, replaceIndex - 1);
+        m_appInter->MoveEntry(moveIndex - appAreaStart(), replaceIndex - appAreaStart());
 
     refreshFSTItemSpliterVisible();
 }
@@ -400,7 +418,7 @@ void DockItemController::onSplitWindowAppeared(const quint32 winId)
         appItemRemoved(from);
 
     AppItem *item = createAppItem(QDBusObjectPath(entryPath), winId);
-    insertIndex = qBound(1, insertIndex, m_itemList.size());
+    insertIndex = qBound(appAreaStart(), insertIndex, m_itemList.size());
     m_itemList.insert(insertIndex, item);
     emit itemInserted(insertIndex, item);
 }
@@ -431,7 +449,7 @@ void DockItemController::onSplitWindowClosed(const quint32 winId)
     }
 
     AppItem *placeholder = createAppItem(QDBusObjectPath(entryPath));
-    insertIndex = qBound(1, insertIndex, m_itemList.size());
+    insertIndex = qBound(appAreaStart(), insertIndex, m_itemList.size());
     m_itemList.insert(insertIndex, placeholder);
     emit itemInserted(insertIndex, placeholder);
 }
@@ -488,7 +506,7 @@ void DockItemController::placeholderItemAdded(PlaceholderItem *item, DockItem *p
 
 void DockItemController::placeholderItemDocked(const QString &appDesktop, DockItem *position)
 {
-    m_appInter->RequestDock(appDesktop, m_itemList.indexOf(position) - 1).waitForFinished();
+    m_appInter->RequestDock(appDesktop, m_itemList.indexOf(position) - appAreaStart()).waitForFinished();
 }
 
 void DockItemController::placeholderItemRemoved(PlaceholderItem *item)
@@ -525,6 +543,7 @@ QDBusConnection::sessionBus(), this)),
       m_placeholderItem(new StretchItem),
       m_containerItem(new ContainerItem),
       m_collapseItem(new V23CollapseItem),
+      m_searchItem(new V23SearchItem),
       m_v23Collapsed(false),
       m_v23CollapseKey(0)
 {
@@ -534,6 +553,11 @@ QDBusConnection::sessionBus(), this)),
     m_updatePluginsOrderTimer->setInterval(1000);
 
     m_itemList.append(new LauncherItem);
+    if (Dock::isV23Mode()) {
+        m_itemList.append(m_searchItem);
+    } else {
+        m_searchItem->setVisible(false);
+    }
     m_itemList.append(m_placeholderItem);
     m_itemList.append(m_containerItem);
 
@@ -612,11 +636,11 @@ WindowInfoMap DockItemController::entryWindowInfos(const QString &entryPath) con
     return entryInter.windowInfos();
 }
 
-// 计算新条目图标应插入的位置（1 为启动器图标之后）
+// 计算新条目图标应插入的位置（appAreaStart() 为启动器图标之后）
 int DockItemController::appAreaInsertIndex(const int entryIndex) const
 {
     if (entryIndex < 0) {
-        int index = 1;
+        int index = appAreaStart();
         for (const QPointer<DockItem> &item : m_itemList)
             if (!item.isNull() && item->itemType() == DockItem::App)
                 ++index;
@@ -630,7 +654,7 @@ int DockItemController::appAreaInsertIndex(const int entryIndex) const
     for (int i = 0; i < entryIndex && i < entries.size(); ++i)
         entriesBefore.insert(entries.at(i).path());
 
-    int index = 1;
+    int index = appAreaStart();
     for (const QPointer<DockItem> &item : m_itemList) {
         if (item.isNull() || item->itemType() != DockItem::App)
             continue;
@@ -748,7 +772,7 @@ void DockItemController::appItemAdded(const QDBusObjectPath& path,
     }
 
     // New entry: Just append
-    int insertIndex = 1;
+    int insertIndex = appAreaStart();
     
     // -1 for append to app list end
     if (index != -1) {
@@ -795,6 +819,7 @@ void DockItemController::pluginItemInserted(PluginsItem *item)
     }
 
     if (Dock::isV23Mode()) {
+        updateV23SearchItem();
         ensureV23CollapseItem();
         const int index = v23InsertIndex(item);
         m_itemList.insert(index, item);
@@ -878,8 +903,7 @@ void DockItemController::reloadAppItems()
 
 void DockItemController::syncAppItems(const QList<QDBusObjectPath>& entries) {
     QSet<AppItem *> retainedItems;
-    // Note index@0 is launcher
-    int targetIndex = 1;
+    int targetIndex = appAreaStart();
 
     for (const QDBusObjectPath &path : entries) {
         // 同一条目在拆分模式下可能已有多个图标，按整组处理
@@ -921,7 +945,7 @@ void DockItemController::syncAppItems(const QList<QDBusObjectPath>& entries) {
                 if (app && group.contains(app))
                     m_itemList.removeAt(i);
             }
-            int insertAt = qBound(1, targetIndex, m_itemList.size());
+            int insertAt = qBound(appAreaStart(), targetIndex, m_itemList.size());
             for (AppItem *app : group) {
                 m_itemList.insert(insertAt, app);
                 emit itemMoved(app, insertAt);
@@ -976,6 +1000,8 @@ void DockItemController::onPrepareForSleep(bool active)
 }
 
 void DockItemController::sortPluginItems() {
+    updateV23SearchItem();
+
     const int collapseIndex = m_itemList.indexOf(m_collapseItem);
     if (Dock::isV23Mode()) {
         refreshContainerItems();

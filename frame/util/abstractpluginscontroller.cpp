@@ -162,11 +162,13 @@ bool AbstractPluginsController::isPluginActive(PluginsItemInterface * const item
 
     if (!Dock::isV23Mode())
         return true;
+    static const QStringList v23Dropped { "libddegrandsearch_dockplugin.so" };
 
     // Only the very built-in file is replaced, never a plugin the user installed
     const QString builtin = builtinPluginPath(itemInter);
     return builtin.isEmpty()
-        || !qApp->property(PROP_V23_REPLACED_PLUGINS).toStringList().contains(builtin);
+        || !(v23Dropped.contains(builtin)
+             || qApp->property(PROP_V23_REPLACED_PLUGINS).toStringList().contains(builtin));
 }
 
 bool AbstractPluginsController::holdInactiveItem(PluginsItemInterface * const itemInter, const QString &itemKey)

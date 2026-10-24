@@ -21,6 +21,8 @@
 
 #include "snitraywidget.h"
 #include "util/themeappicon.h"
+#include "util/styledmenu.h"
+#include "constants.h"
 #include "wayland/layershellhelper.h"
 
 #include <QPainter>
@@ -34,6 +36,23 @@
 const QStringList ItemCategoryList {"ApplicationStatus" , "Communications" , "SystemServices", "Hardware"};
 const QStringList ItemStatusList {"Passive" , "Active" , "NeedsAttention"};
 const QStringList LeftClickInvalidIdList {"sogou-qimpanel",};
+
+namespace {
+
+class V23MenuImporter : public DBusMenuImporter {
+public:
+    using DBusMenuImporter::DBusMenuImporter;
+
+protected:
+    QMenu *createMenu(QWidget *parent) override {
+        return new StyledMenu(QStringLiteral("ddark2"), parent);
+    }
+
+    QIcon iconForName(const QString &name) override {
+        return QIcon::fromTheme(name);
+    }
+};
+}
 
 SNITrayWidget::SNITrayWidget(const QString &sniServicePath, QWidget *parent)
     : AbstractTrayWidget(parent),
@@ -270,7 +289,11 @@ void SNITrayWidget::initMenu()
         m_dbusMenuImporter = nullptr;
     }
 
-    m_dbusMenuImporter = new DBusMenuImporter(m_dbusService, sniMenuPath, ASYNCHRONOUS, this);
+    if (Dock::isV23Mode()) {
+        m_dbusMenuImporter = new V23MenuImporter(m_dbusService, sniMenuPath, ASYNCHRONOUS, this);
+    } else {
+        m_dbusMenuImporter = new DBusMenuImporter(m_dbusService, sniMenuPath, ASYNCHRONOUS, this);
+    }
 
     qDebug() << "generate the sni menu object";
 

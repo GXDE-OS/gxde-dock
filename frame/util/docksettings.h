@@ -74,6 +74,7 @@ public:
     inline Position position() const { return m_position; }
     inline V23Theme v23Theme() const { return m_v23Theme; }
     inline bool v23LightTheme() const { return m_v23Light; }
+    inline bool v23Centered() const { return m_v23Centered; }
     inline int screenRawHeight() const { return m_screenRawHeight; }
     inline int screenRawWidth() const { return m_screenRawWidth; }
     inline int expandTimeout() const { return m_dockInter->showTimeout(); }
@@ -113,6 +114,7 @@ signals:
     void windowGeometryChanged() const;
     void opacityChanged(const quint8 value) const;
     void v23ThemeChanged() const;
+    void v23AlignmentChanged() const;
 
 public slots:
     void updateGeometry();
@@ -154,6 +156,7 @@ private:
     V23Theme currentV23Theme() const;
     void writeV23Theme(const V23Theme theme);
     void applyV23Theme();
+    void writeV23Centered(const bool centered);
     void writeHideMode(const HideMode mode);
     void writeIconSize(const int size);
     void onGsettingsChanged();
@@ -174,6 +177,7 @@ private:
     DisplayMode m_displayMode;
     V23Theme m_v23Theme;
     bool m_v23Light = false;
+    bool m_v23Centered = false;
     QRect m_primaryRawRect;
     QRect m_frontendRect;
     QSize m_mainWindowSize;
@@ -189,6 +193,9 @@ private:
     QAction m_themeDarkAct;
     QAction m_themeLightAct;
     QAction *m_themeSubMenuAct = nullptr;
+    QAction m_v23AlignLeftAct;
+    QAction m_v23AlignCenterAct;
+    QAction *m_v23AlignSubMenuAct = nullptr;
     QAction m_topPosAct;
     QAction m_bottomPosAct;
     QAction m_leftPosAct;

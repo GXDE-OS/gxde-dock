@@ -35,6 +35,7 @@
 #include "item/placeholderitem.h"
 #include "item/containeritem.h"
 #include "item/v23collapseitem.h"
+#include "item/v23searchitem.h"
 #include "dbus/dockdaemoninterface.h"
 
 using DBusDock = DockDaemonInterface;
@@ -106,6 +107,8 @@ private:
     int v23TrayStart() const;
     int v23InsertIndex(DockItem * const item) const;
     void ensureV23CollapseItem();
+    void updateV23SearchItem();
+    int appAreaStart() const;
     void sortV23TrayItems();
     void saveV23TraySettings() const;
 
@@ -126,6 +129,7 @@ private:
     StretchItem *m_placeholderItem;
     ContainerItem *m_containerItem;
     V23CollapseItem *m_collapseItem;
+    V23SearchItem *m_searchItem;
     bool m_v23Collapsed;
     int m_v23CollapseKey;
 

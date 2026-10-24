@@ -31,6 +31,19 @@
     </message>
 </context>
 <context>
+    <name>V23SearchItem</name>
+    <message>
+        <location filename="../frame/item/v23searchitem.cpp" line="40"/>
+        <source>Grand Search</source>
+        <translation>全局搜索</translation>
+    </message>
+    <message>
+        <location filename="../frame/item/v23searchitem.cpp" line="95"/>
+        <source>Search settings</source>
+        <translation>搜索配置</translation>
+    </message>
+</context>
+<context>
     <name>DBusAdaptors</name>
     <message>
         <location filename="../plugins/keyboard-layout/dbusadaptors.cpp" line="139"/>
@@ -135,6 +148,26 @@
 </context>
 <context>
     <name>DockSettings</name>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <source>Align Left</source>
+        <translation>靠左</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <source>Align Center</source>
+        <translation>居中</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="258"/>
+        <source>Icon Mode</source>
+        <translation>图标模式</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="640"/>
+        <source>Align Top</source>
+        <translation>靠上</translation>
+    </message>
     <message>
         <location filename="../frame/util/docksettings.cpp" line="154"/>
         <source>Fashion Mode</source>

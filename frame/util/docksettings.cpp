@@ -116,6 +116,10 @@ QString v23ThemeFlagPath() {
     return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-theme";
 }
 
+QString v23CenteredFlagPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-centered";
+}
+
 HideMode hideModeFromString(const QString& s) {
     if (s == "keep-hidden") {
         return KeepHidden;
@@ -166,6 +170,8 @@ DockSettings::DockSettings(QWidget *parent)
     , m_themeFollowAct(tr("Follow System Theme"), this)
     , m_themeDarkAct(tr("Force Dark"), this)
     , m_themeLightAct(tr("Force Light"), this)
+    , m_v23AlignLeftAct(tr("Align Left"), this)
+    , m_v23AlignCenterAct(tr("Align Center"), this)
     , m_topPosAct(tr("Top"), this)
     , m_bottomPosAct(tr("Bottom"), this)
     , m_leftPosAct(tr("Left"), this)
@@ -205,6 +211,7 @@ DockSettings::DockSettings(QWidget *parent)
     qApp->setProperty(PROP_DISPLAY_MODE, QVariant::fromValue(m_displayMode));
 
     m_v23Theme = currentV23Theme();
+    m_v23Centered = QFile::exists(v23CenteredFlagPath());
     applyV23Theme();
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DockSettings::applyV23Theme);
@@ -215,6 +222,8 @@ DockSettings::DockSettings(QWidget *parent)
     m_themeFollowAct.setCheckable(true);
     m_themeDarkAct.setCheckable(true);
     m_themeLightAct.setCheckable(true);
+    m_v23AlignLeftAct.setCheckable(true);
+    m_v23AlignCenterAct.setCheckable(true);
     m_topPosAct.setCheckable(true);
     m_bottomPosAct.setCheckable(true);
     m_leftPosAct.setCheckable(true);
@@ -241,6 +250,12 @@ DockSettings::DockSettings(QWidget *parent)
     themeSubMenu->addAction(&m_themeLightAct);
     m_themeSubMenuAct = new QAction(tr("Theme"), this);
     m_themeSubMenuAct->setMenu(themeSubMenu);
+
+    WhiteMenu *alignSubMenu = new WhiteMenu(&m_settingsMenu);
+    alignSubMenu->addAction(&m_v23AlignLeftAct);
+    alignSubMenu->addAction(&m_v23AlignCenterAct);
+    m_v23AlignSubMenuAct = new QAction(tr("Icon Mode"), this);
+    m_v23AlignSubMenuAct->setMenu(alignSubMenu);
 
     WhiteMenu *locationSubMenu = new WhiteMenu(&m_settingsMenu);
     locationSubMenu->addAction(&m_topPosAct);
@@ -270,6 +285,7 @@ DockSettings::DockSettings(QWidget *parent)
 
     m_settingsMenu.addAction(modeSubMenuAct);
     m_settingsMenu.addAction(m_themeSubMenuAct);
+    m_settingsMenu.addAction(m_v23AlignSubMenuAct);
     m_settingsMenu.addAction(locationSubMenuAct);
     m_settingsMenu.addAction(sizeSubMenuAct);
     m_settingsMenu.addAction(statusSubMenuAct);
@@ -620,6 +636,10 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
     m_themeDarkAct.setChecked(m_v23Theme == V23ThemeDark);
     m_themeLightAct.setChecked(m_v23Theme == V23ThemeLight);
     m_themeSubMenuAct->setVisible(m_displayMode == V23);
+    m_v23AlignLeftAct.setText(m_position == Top || m_position == Bottom ? tr("Align Left") : tr("Align Top"));
+    m_v23AlignLeftAct.setChecked(!m_v23Centered);
+    m_v23AlignCenterAct.setChecked(m_v23Centered);
+    m_v23AlignSubMenuAct->setVisible(m_displayMode == V23);
     m_topPosAct.setChecked(m_position == Top);
     m_topPosAct.setEnabled(!m_forbidPositions.contains(Top));
     m_bottomPosAct.setChecked(m_position == Bottom);
@@ -821,6 +841,13 @@ void DockSettings::menuActionClicked(QAction *action)
         return writeV23Theme(V23ThemeDark);
     if (action == &m_themeLightAct)
         return writeV23Theme(V23ThemeLight);
+    if (action == &m_v23AlignLeftAct) {
+        return writeV23Centered(false);
+    }
+
+    if (action == &m_v23AlignCenterAct) {
+        return writeV23Centered(true);
+    }
 
     if (action == &m_topPosAct)
         return writePosition(Top);
@@ -1309,6 +1336,23 @@ void DockSettings::writeV23Theme(const V23Theme theme) {
     }
 
     applyV23Theme();
+}
+
+void DockSettings::writeV23Centered(const bool centered) {
+    if (centered == m_v23Centered) {
+        return;
+    }
+
+    m_v23Centered = centered;
+    if (centered) {
+        QDir().mkpath(QDir::homePath() + "/.config/GXDE/gxde-dock");
+        QFile file(v23CenteredFlagPath());
+        file.open(QIODevice::WriteOnly);
+    } else {
+        QFile::remove(v23CenteredFlagPath());
+    }
+
+    emit v23AlignmentChanged();
 }
 
 void DockSettings::applyV23Theme()
