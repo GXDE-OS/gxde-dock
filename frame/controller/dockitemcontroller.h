@@ -34,6 +34,7 @@
 #include "item/appitem.h"
 #include "item/placeholderitem.h"
 #include "item/containeritem.h"
+#include "item/v23collapseitem.h"
 #include "dbus/dockdaemoninterface.h"
 
 using DBusDock = DockDaemonInterface;
@@ -58,6 +59,7 @@ public:
     void setDropping(const bool dropping);
     void startLoadPlugins() const;
     void reloadAppItems();
+    bool v23ItemHidden(DockItem * const item) const;
 
 signals:
     void itemInserted(const int index, DockItem *item) const;
@@ -66,6 +68,8 @@ signals:
     void itemManaged(DockItem *item) const;
     void itemUpdated(DockItem *item) const;
     void fashionTraySizeChanged(const QSize &traySize) const;
+    // V23 mode: the tray icons to show changed
+    void v23TrayChanged(const bool animate) const;
 
 public slots:
     void refershItemsIcon();
@@ -78,6 +82,7 @@ public slots:
     void placeholderItemDocked(const QString &appDesktop, DockItem *position);
     void placeholderItemRemoved(PlaceholderItem *item);
     void refreshFSTItemSpliterVisible();
+    void toggleV23Collapsed();
 
 private:
     explicit DockItemController(QScreen *screen, QObject *parent = nullptr);
@@ -95,6 +100,14 @@ private:
     int insertAppItemsForEntry(const QDBusObjectPath &path, const int insertIndex);
     AppItem *findSplitItem(const QString &entryPath, const quint32 windowId) const;
     void removeEntryPlaceholder(const QString &entryPath);
+    void refreshContainerItems();
+    bool isV23FixedItem(DockItem * const item) const;
+    qreal v23SortKey(DockItem * const item) const;
+    int v23TrayStart() const;
+    int v23InsertIndex(DockItem * const item) const;
+    void ensureV23CollapseItem();
+    void sortV23TrayItems();
+    void saveV23TraySettings() const;
 
 private slots:
     // 系统休眠唤醒后主动重新同步窗口/条目，修复休眠后状态错乱
@@ -112,6 +125,9 @@ private:
     DockPluginsController *m_pluginsInter;
     StretchItem *m_placeholderItem;
     ContainerItem *m_containerItem;
+    V23CollapseItem *m_collapseItem;
+    bool m_v23Collapsed;
+    int m_v23CollapseKey;
 
     static QHash<QScreen *, DockItemController *> INSTANCES;
 

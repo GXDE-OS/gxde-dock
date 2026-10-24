@@ -49,6 +49,7 @@ public:
         Container,
         Placeholder,
         TrayPlugin,
+        TrayAction,
     };
 
 public:
@@ -106,6 +107,7 @@ protected:
     static QRectF v23IconPlateRect(const QRectF &iconRect);
     static void paintV23Plate(QPainter &painter, const QRectF &plateRect,
                               const qreal radius, const bool pressed);
+    QRectF v23TrayPlateRect() const;
 
 private:
     void updatePopupPosition();

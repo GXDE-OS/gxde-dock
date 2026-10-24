@@ -30,6 +30,8 @@
 #include "dbus/dockentryinterface.h"
 
 #include <QDebug>
+#include <QApplication>
+#include <QDir>
 #include <QGSettings>
 #include <QGuiApplication>
 #include <QScreen>
@@ -37,6 +39,7 @@
 #include <QDBusConnectionInterface>
 #include <QDBusObjectPath>
 #include <QSet>
+#include <QSettings>
 
 QHash<QScreen *, DockItemController *> DockItemController::INSTANCES;
 
@@ -117,6 +120,176 @@ void DockItemController::setDropping(const bool dropping)
     m_containerItem->setDropping(dropping);
 }
 
+static QString v23TraySettingsPath() {
+    return QDir::homePath() + "/.config/GXDE/gxde-dock/v23-tray.conf";
+}
+
+bool DockItemController::v23ItemHidden(DockItem * const item) const {
+    if (!Dock::isV23Mode() || !item) {
+        return false;
+    }
+
+    if (item == m_containerItem) {
+        return true;
+    }
+
+    const int start = v23TrayStart();
+    const int collapse = m_itemList.indexOf(m_collapseItem);
+    if (item == m_collapseItem) {
+        return collapse <= start;
+    }
+
+    if (!m_v23Collapsed || collapse < 0) {
+        return false;
+    }
+
+    const int index = m_itemList.indexOf(item);
+    return index >= start && index < collapse;
+}
+
+void DockItemController::toggleV23Collapsed() {
+    m_v23Collapsed = !m_v23Collapsed;
+    m_collapseItem->setCollapsed(m_v23Collapsed);
+    saveV23TraySettings();
+    emit v23TrayChanged(true);
+}
+
+bool DockItemController::isV23FixedItem(DockItem * const item) const {
+    const PluginsItem *pluginsItem = qobject_cast<PluginsItem *>(item);
+    return pluginsItem && pluginsItem->isV23Fixed();
+}
+
+qreal DockItemController::v23SortKey(DockItem * const item) const {
+    const qreal collapseKey = m_v23CollapseKey > 0 ? m_v23CollapseKey : 1e9;
+    if (item == m_collapseItem) {
+        return collapseKey;
+    }
+
+    const PluginsItem *pluginsItem = qobject_cast<PluginsItem *>(item);
+    if (!pluginsItem) {
+        return -1;
+    }
+
+    const int key = pluginsItem->itemSortKey();
+    return key > 0 ? key : collapseKey - 0.5;
+}
+
+int DockItemController::v23TrayStart() const {
+    return m_itemList.indexOf(m_containerItem) + 1;
+}
+
+int DockItemController::v23InsertIndex(DockItem * const item) const {
+    const int start = v23TrayStart();
+
+    if (isV23FixedItem(item)) {
+        if (static_cast<PluginsItem *>(item)->pluginName() == "datetime")
+            return m_itemList.size();
+        for (int i = start; i < m_itemList.size(); ++i) {
+            if (isV23FixedItem(m_itemList[i]) &&
+                    static_cast<PluginsItem *>(
+                        m_itemList[i].data())->pluginName() == "datetime") {
+                return i;
+            }
+        }
+        return m_itemList.size();
+    }
+
+    const qreal key = v23SortKey(item);
+    for (int i = start; i < m_itemList.size(); ++i) {
+        DockItem *other = m_itemList[i];
+        if (other == item) {
+            continue;
+        }
+
+        if (isV23FixedItem(other) || v23SortKey(other) > key) {
+            return i;
+        }
+    }
+
+    return m_itemList.size();
+}
+
+void DockItemController::ensureV23CollapseItem() {
+    if (m_itemList.contains(m_collapseItem)) {
+        return;
+    }
+
+    const int index = v23InsertIndex(m_collapseItem);
+    m_itemList.insert(index, m_collapseItem);
+    emit itemInserted(index, m_collapseItem);
+}
+
+void DockItemController::sortV23TrayItems() {
+    const int start = v23TrayStart();
+
+    QList<DockItem *> ordered;
+    QList<DockItem *> fixed;
+    for (int i = start; i < m_itemList.size(); ++i) {
+        DockItem *item = m_itemList[i];
+        if (!item || item == m_collapseItem) {
+            continue;
+        }
+
+        (isV23FixedItem(item) ? fixed : ordered) << item;
+    }
+    ordered << m_collapseItem;
+
+    std::stable_sort(ordered.begin(), ordered.end(), [this](DockItem *a, DockItem *b) {
+        return v23SortKey(a) < v23SortKey(b);
+    });
+    std::stable_sort(fixed.begin(), fixed.end(), [](DockItem *a, DockItem *b) {
+        return static_cast<PluginsItem *>(a)->pluginName() != "datetime"
+            && static_cast<PluginsItem *>(b)->pluginName() == "datetime";
+    });
+    ordered << fixed;
+
+    for (int i = 0; i < ordered.size(); ++i) {
+        DockItem *item = ordered.at(i);
+        const int current = m_itemList.indexOf(item);
+        if (current == start + i)
+            continue;
+
+        if (current < 0) {
+            m_itemList.insert(start + i, item);
+            emit itemInserted(start + i, item);
+        } else {
+            m_itemList.move(current, start + i);
+            emit itemMoved(item, start + i);
+        }
+    }
+}
+
+void DockItemController::refreshContainerItems() {
+    const auto mode = qApp->property(PROP_DISPLAY_MODE).value<Dock::DisplayMode>();
+    if (mode == Dock::Fashion || mode == Dock::Classic) {
+        return;
+    }
+
+    for (const auto &items : m_pluginsInter->pluginsMap()) {
+        for (QObject *object : items) {
+            PluginsItem *pluginsItem = qobject_cast<PluginsItem *>(object);
+            if (pluginsItem && m_containerItem->contains(pluginsItem)
+                    && !(pluginsItem->allowContainer() && pluginsItem->isInContainer())) {
+                itemDragOutFromContainer(pluginsItem);
+            }
+        }
+    }
+
+    const auto items = m_itemList;
+    for (const QPointer<DockItem> &item : items) {
+        PluginsItem *pluginsItem = qobject_cast<PluginsItem *>(item.data());
+        if (pluginsItem && pluginsItem->allowContainer() && pluginsItem->isInContainer()) {
+            itemDroppedIntoContainer(pluginsItem);
+        }
+    }
+}
+
+void DockItemController::saveV23TraySettings() const {
+    QSettings settings(v23TraySettingsPath(), QSettings::IniFormat);
+    settings.setValue("collapsed", m_v23Collapsed);
+    settings.setValue("collapseKey", m_v23CollapseKey);
+}
+
 void DockItemController::startLoadPlugins() const
 {
     QGSettings gsetting("com.deepin.dde.dock", "/com/deepin/dde/dock/");
@@ -133,13 +306,17 @@ void DockItemController::refershItemsIcon()
     }
 }
 
-void DockItemController::updatePluginsItemOrderKey()
-{
+void DockItemController::updatePluginsItemOrderKey() {
     Q_ASSERT(sender() == m_updatePluginsOrderTimer);
 
     int index = 0;
-    for (auto item : m_itemList)
-    {
+    for (auto item : m_itemList) {
+        if (item == m_collapseItem) {
+            m_v23CollapseKey = ++index;
+            saveV23TraySettings();
+            continue;
+        }
+
         DockItem::ItemType tyep = item->itemType();
         if (item.isNull() || (tyep != DockItem::Plugins && tyep != DockItem::TrayPlugin))
             continue;
@@ -159,9 +336,14 @@ void DockItemController::itemMove(DockItem * const moveItem, DockItem * const re
         if (replaceType != DockItem::App && replaceType != DockItem::Stretch)
             return;
 
+    const bool v23 = Dock::isV23Mode();
+    if (v23 && (moveItem == m_collapseItem || isV23FixedItem(moveItem) || isV23FixedItem(replaceItem)))
+        return;
+
     // plugins move
     if (moveType == DockItem::Plugins || moveType == DockItem::TrayPlugin)
-        if (replaceType != DockItem::Plugins && replaceType != DockItem::TrayPlugin)
+        if (replaceType != DockItem::Plugins && replaceType != DockItem::TrayPlugin
+                && !(v23 && replaceType == DockItem::TrayAction))
             return;
 
     const int moveIndex = m_itemList.indexOf(moveItem);
@@ -341,7 +523,10 @@ DockItemController::DockItemController(QScreen *screen, QObject *parent)
 QDBusConnection::sessionBus(), this)),
       m_pluginsInter(new DockPluginsController(this)),
       m_placeholderItem(new StretchItem),
-      m_containerItem(new ContainerItem)
+      m_containerItem(new ContainerItem),
+      m_collapseItem(new V23CollapseItem),
+      m_v23Collapsed(false),
+      m_v23CollapseKey(0)
 {
 //    m_placeholderItem->hide();
 
@@ -351,6 +536,19 @@ QDBusConnection::sessionBus(), this)),
     m_itemList.append(new LauncherItem);
     m_itemList.append(m_placeholderItem);
     m_itemList.append(m_containerItem);
+
+    {
+        QSettings settings(v23TraySettingsPath(), QSettings::IniFormat);
+        m_v23Collapsed = settings.value("collapsed", false).toBool();
+        m_v23CollapseKey = settings.value("collapseKey", 0).toInt();
+    }
+    m_collapseItem->setCollapsed(m_v23Collapsed);
+    connect(m_collapseItem, &V23CollapseItem::clicked, this, &DockItemController::toggleV23Collapsed);
+    if (Dock::isV23Mode()) {
+        m_itemList.append(m_collapseItem);
+    } else {
+        m_collapseItem->setVisible(false);
+    }
 
     connect(m_updatePluginsOrderTimer, &QTimer::timeout, this, &DockItemController::updatePluginsItemOrderKey);
 
@@ -596,6 +794,14 @@ void DockItemController::pluginItemInserted(PluginsItem *item)
         return itemDroppedIntoContainer(item);
     }
 
+    if (Dock::isV23Mode()) {
+        ensureV23CollapseItem();
+        const int index = v23InsertIndex(item);
+        m_itemList.insert(index, item);
+        emit itemInserted(index, item);
+        return;
+    }
+
     // find first plugins item position
     int firstPluginPosition = -1;
     for (int i(0); i != m_itemList.size(); ++i)
@@ -769,8 +975,22 @@ void DockItemController::onPrepareForSleep(bool active)
     QTimer::singleShot(2000, this, &DockItemController::reloadAppItems);
 }
 
-void DockItemController::sortPluginItems()
-{
+void DockItemController::sortPluginItems() {
+    const int collapseIndex = m_itemList.indexOf(m_collapseItem);
+    if (Dock::isV23Mode()) {
+        refreshContainerItems();
+        sortV23TrayItems();
+        emit v23TrayChanged(false);
+        return;
+    }
+
+    if (collapseIndex >= 0) {
+        emit itemRemoved(m_collapseItem);
+        m_itemList.removeAt(collapseIndex);
+        m_collapseItem->setVisible(false);
+    }
+    refreshContainerItems();
+
     int firstPluginIndex = -1;
     for (int i(0); i != m_itemList.size(); ++i)
     {
