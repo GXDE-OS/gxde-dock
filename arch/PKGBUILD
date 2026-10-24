@@ -7,7 +7,7 @@ pkgdesc='GXDE dock'
 arch=('x86_64' 'aarch64')
 url="https://github.com/GXDE-OS/gxde-dock"
 license=('GPL-3.0-or-later')
-_depends=('dtk2widget-qt6-git' 'dtk6core-git' 'dframework-dbus-qt6-git' 'gxde-network-utils-qt6-git'
+_depends=('dtk2widget-qt6-git' 'dtk6core-git' 'dtk6gui-git' 'dframework-dbus-qt6-git' 'gxde-network-utils-qt6-git'
           'gsettings-qt6' 'layer-shell-qt' 'qt6-base' 'qt6-svg' 'wayland' 'libx11' 'libxcb'
           'xcb-util-image' 'xcb-util-wm' 'libxtst' 'libgcc' 'libstdc++' 'glibc')
 makedepends=('git' 'cmake' 'ninja' 'qt6-tools' "${_depends[@]}")
