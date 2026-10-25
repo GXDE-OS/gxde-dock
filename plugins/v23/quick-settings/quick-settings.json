@@ -4,6 +4,7 @@
         "system-trays/libnetwork.so",
         "system-trays/libsound.so",
         "system-trays/libpower.so",
+        "system-trays/libbluetooth.so",
         "libnotify.so",
         "libonboard.so"
     ]

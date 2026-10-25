@@ -4,14 +4,76 @@
 <context>
     <name>AbstractPluginsController</name>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="182"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="324"/>
         <source>The incompatible plugin %1 was skipped.</source>
         <translation>已跳过不兼容的插件 %1。</translation>
     </message>
     <message>
-        <location filename="../frame/util/abstractpluginscontroller.cpp" line="264"/>
+        <location filename="../frame/util/abstractpluginscontroller.cpp" line="410"/>
         <source>The plugin %1 failed to load and was skipped.</source>
         <translation>插件 %1 加载失败，已跳过。</translation>
+    </message>
+</context>
+<context>
+    <name>BluetoothApplet</name>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="345"/>
+        <source>Bluetooth</source>
+        <translation type="unfinished">蓝牙</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="371"/>
+        <source>My Devices</source>
+        <translation type="unfinished">我的设备</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="371"/>
+        <source>Other Devices</source>
+        <translation type="unfinished">其他设备</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="383"/>
+        <source>Connecting…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="396"/>
+        <source>Bluetooth settings</source>
+        <translation type="unfinished">蓝牙设置</translation>
+    </message>
+</context>
+<context>
+    <name>BluetoothPlugin</name>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="37"/>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="101"/>
+        <source>Bluetooth</source>
+        <translation type="unfinished">蓝牙</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="92"/>
+        <source>Turned off</source>
+        <translation type="unfinished">蓝牙关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="98"/>
+        <source>%1 connected</source>
+        <translation type="unfinished">%1 已连接</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="130"/>
+        <source>Turn off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="130"/>
+        <source>Turn on</source>
+        <translation type="unfinished">开启</translation>
+    </message>
+    <message>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="136"/>
+        <source>Bluetooth settings</source>
+        <translation type="unfinished">蓝牙设置</translation>
     </message>
 </context>
 <context>
@@ -20,27 +82,6 @@
         <location filename="../frame/item/containeritem.cpp" line="33"/>
         <source>Click to display hidden icon</source>
         <translation>点击显示隐藏图标</translation>
-    </message>
-</context>
-<context>
-    <name>V23CollapseItem</name>
-    <message>
-        <location filename="../frame/item/v23collapseitem.cpp" line="31"/>
-        <source>Collapse tray</source>
-        <translation>折叠托盘</translation>
-    </message>
-</context>
-<context>
-    <name>V23SearchItem</name>
-    <message>
-        <location filename="../frame/item/v23searchitem.cpp" line="40"/>
-        <source>Grand Search</source>
-        <translation>全局搜索</translation>
-    </message>
-    <message>
-        <location filename="../frame/item/v23searchitem.cpp" line="95"/>
-        <source>Search settings</source>
-        <translation>搜索配置</translation>
     </message>
 </context>
 <context>
@@ -59,17 +100,17 @@
         <translation>时间</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="154"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="155"/>
         <source>12 Hour Time</source>
         <translation>12小时制</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="156"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="157"/>
         <source>24 Hour Time</source>
         <translation>24小时制</translation>
     </message>
     <message>
-        <location filename="../plugins/datetime/datetimeplugin.cpp" line="162"/>
+        <location filename="../plugins/datetime/datetimeplugin.cpp" line="163"/>
         <source>Time Settings</source>
         <translation>时间设置</translation>
     </message>
@@ -154,7 +195,7 @@
         <translation>禁用边距</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="313"/>
+        <location filename="../frame/util/docksettings.cpp" line="327"/>
         <source>Corner Radius</source>
         <translation>圆角</translation>
     </message>
@@ -179,137 +220,146 @@
         <translation>强制浅色</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="187"/>
+        <location filename="../frame/util/docksettings.cpp" line="211"/>
         <source>Deepin V20 Mode</source>
         <translation>深度 V20 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="188"/>
+        <location filename="../frame/util/docksettings.cpp" line="212"/>
         <source>Single Capsule</source>
         <translation>单胶囊</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="189"/>
+        <location filename="../frame/util/docksettings.cpp" line="213"/>
         <source>Multiple Capsules</source>
         <translation>多胶囊</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="283"/>
+        <location filename="../frame/util/docksettings.cpp" line="320"/>
         <source>Capsule Style</source>
         <translation>胶囊样式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="174"/>
+        <location filename="../frame/util/docksettings.cpp" line="209"/>
+        <location filename="../frame/util/docksettings.cpp" line="739"/>
         <source>Align Left</source>
         <translation>靠左</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="175"/>
+        <location filename="../frame/util/docksettings.cpp" line="210"/>
         <source>Align Center</source>
         <translation>居中</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="258"/>
+        <location filename="../frame/util/docksettings.cpp" line="312"/>
         <source>Icon Mode</source>
         <translation>图标模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="640"/>
+        <location filename="../frame/util/docksettings.cpp" line="739"/>
         <source>Align Top</source>
         <translation>靠上</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="154"/>
+        <location filename="../frame/util/docksettings.cpp" line="203"/>
         <source>Fashion Mode</source>
         <translation>时尚模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="155"/>
+        <location filename="../frame/util/docksettings.cpp" line="204"/>
         <source>Efficient Mode</source>
         <translation>高效模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="156"/>
+        <location filename="../frame/util/docksettings.cpp" line="218"/>
         <source>Top</source>
         <translation>上</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="157"/>
+        <location filename="../frame/util/docksettings.cpp" line="219"/>
         <source>Bottom</source>
         <translation>下</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="158"/>
+        <location filename="../frame/util/docksettings.cpp" line="220"/>
         <source>Left</source>
         <translation>左</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="159"/>
+        <location filename="../frame/util/docksettings.cpp" line="221"/>
         <source>Right</source>
         <translation>右</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="160"/>
+        <location filename="../frame/util/docksettings.cpp" line="215"/>
+        <location filename="../frame/util/docksettings.cpp" line="222"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="161"/>
+        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="223"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="162"/>
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
+        <location filename="../frame/util/docksettings.cpp" line="224"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="163"/>
+        <location filename="../frame/util/docksettings.cpp" line="225"/>
         <source>Keep Shown</source>
         <translation>一直显示</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="164"/>
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Keep Hidden</source>
         <translation>一直隐藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="165"/>
+        <location filename="../frame/util/docksettings.cpp" line="227"/>
         <source>Smart Hide</source>
         <translation>智能隐藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="211"/>
+        <location filename="../frame/util/docksettings.cpp" line="298"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="220"/>
+        <location filename="../frame/util/docksettings.cpp" line="306"/>
+        <source>Theme</source>
+        <translation type="unfinished">主题</translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="335"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="227"/>
+        <location filename="../frame/util/docksettings.cpp" line="342"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="234"/>
+        <location filename="../frame/util/docksettings.cpp" line="349"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="238"/>
+        <location filename="../frame/util/docksettings.cpp" line="353"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="166"/>
+        <location filename="../frame/util/docksettings.cpp" line="228"/>
         <source>System Monitor</source>
         <translation>系统监视器</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="167"/>
+        <location filename="../frame/util/docksettings.cpp" line="229"/>
         <source>Window Split</source>
         <translation>不合并图标</translation>
     </message>
@@ -317,7 +367,7 @@
 <context>
     <name>LauncherItem</name>
     <message>
-        <location filename="../frame/item/launcheritem.cpp" line="141"/>
+        <location filename="../frame/item/launcheritem.cpp" line="145"/>
         <source>Launcher</source>
         <translation>启动器</translation>
     </message>
@@ -565,6 +615,457 @@
     </message>
 </context>
 <context>
+    <name>V23BluetoothModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="107"/>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="253"/>
+        <source>Bluetooth</source>
+        <translation>蓝牙</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="238"/>
+        <source>Turned off</source>
+        <translation>蓝牙关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="242"/>
+        <source>%1 connected</source>
+        <translation>%1 已连接</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="249"/>
+        <source>Connecting...</source>
+        <translation>正在连接...</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="259"/>
+        <source>Turn off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="259"/>
+        <source>Turn on</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="260"/>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="320"/>
+        <source>Bluetooth settings</source>
+        <translation>蓝牙设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="289"/>
+        <source>Off</source>
+        <translation>已关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="293"/>
+        <source>On</source>
+        <translation>已开启</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="386"/>
+        <source>My Devices</source>
+        <translation>我的设备</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="386"/>
+        <source>Other Devices</source>
+        <translation>其他设备</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23bluetoothmodule.cpp" line="398"/>
+        <source>Disconnect</source>
+        <translation>断开连接</translation>
+    </message>
+</context>
+<context>
+    <name>V23BrightnessModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="378"/>
+        <source>Brightness</source>
+        <translation>亮度</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="467"/>
+        <source>Display settings</source>
+        <translation>显示设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23CalendarWidget</name>
+    <message>
+        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="393"/>
+        <source>Open the calendar</source>
+        <translation>打开日历</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="395"/>
+        <source>Today</source>
+        <translation>今天</translation>
+    </message>
+</context>
+<context>
+    <name>V23CollapseItem</name>
+    <message>
+        <location filename="../frame/item/v23collapseitem.cpp" line="30"/>
+        <source>Collapse tray</source>
+        <translation>折叠托盘</translation>
+    </message>
+</context>
+<context>
+    <name>V23DatetimePlugin</name>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="34"/>
+        <source>Datetime</source>
+        <translation>时间</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="139"/>
+        <source>12 Hour Time</source>
+        <translation>12小时制</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="141"/>
+        <source>24 Hour Time</source>
+        <translation>24小时制</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="147"/>
+        <source>Time Settings</source>
+        <translation>时间设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="153"/>
+        <source>Open the calendar</source>
+        <translation>打开日历</translation>
+    </message>
+</context>
+<context>
+    <name>V23MediaModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23mediamodule.cpp" line="130"/>
+        <source>Media</source>
+        <translation>媒体</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23mediamodule.cpp" line="195"/>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+</context>
+<context>
+    <name>V23NetworkModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="60"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="296"/>
+        <source>Wireless Network</source>
+        <translation>无线网络</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="60"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="296"/>
+        <source>Wired Network</source>
+        <translation>有线网络</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="61"/>
+        <source>Wireless Network %1</source>
+        <translation>无线网络%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="61"/>
+        <source>Wired Network %1</source>
+        <translation>有线网络%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="118"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="321"/>
+        <source>Network</source>
+        <translation>网络</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="299"/>
+        <source>Off</source>
+        <translation>已关闭</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="302"/>
+        <source>Connecting</source>
+        <translation>正在连接</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="306"/>
+        <source>Connected but no Internet access</source>
+        <translation>已连接网络但无法访问互联网</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="311"/>
+        <source>Connected</source>
+        <translation>已连接</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="314"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="489"/>
+        <source>Network cable unplugged</source>
+        <translation>未插入网线</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="317"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="322"/>
+        <source>Not connected</source>
+        <translation>未连接</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="332"/>
+        <source>No Network</source>
+        <translation>无网络访问</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="347"/>
+        <source>Wired connection: %1</source>
+        <translation>有线连接：%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="348"/>
+        <source>Wireless connection: %1</source>
+        <translation>无线连接：%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="360"/>
+        <source>Disable network</source>
+        <translation>关闭网络</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="360"/>
+        <source>Enable network</source>
+        <translation>启用网络</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="361"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="408"/>
+        <source>Network settings</source>
+        <translation>网络设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="505"/>
+        <location filename="../plugins/v23/quick-settings/v23networkmodule.cpp" line="553"/>
+        <source>Disconnect</source>
+        <translation>断开连接</translation>
+    </message>
+</context>
+<context>
+    <name>V23NotificationModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="204"/>
+        <source>Notification Center</source>
+        <translation>通知中心</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="229"/>
+        <source>No messages</source>
+        <translation>暂无新消息</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="230"/>
+        <source>Notifications</source>
+        <translation>条通知</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="240"/>
+        <source>Notification settings</source>
+        <translation>通知设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23OnboardModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="256"/>
+        <source>Onboard</source>
+        <translation>屏幕键盘</translation>
+    </message>
+</context>
+<context>
+    <name>V23PowerModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="96"/>
+        <source>Battery</source>
+        <translation>电池</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="143"/>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="166"/>
+        <source>Capacity %1 ...</source>
+        <translation>电量%1 ...</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="155"/>
+        <source>Capacity %1</source>
+        <translation>电量%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="157"/>
+        <source>Capacity %1, %2 min remaining</source>
+        <translation>电量%1，剩余%2分钟</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="158"/>
+        <source>Capacity %1, %2 hr %3 min remaining</source>
+        <translation>电量%1，剩余%2小时%3分钟</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="162"/>
+        <source>Capacity %1, fully charged</source>
+        <translation>电量%1，已充满</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="170"/>
+        <source>Charging %1, %2 min until full</source>
+        <translation>正在充电%1，还需%2分钟</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="171"/>
+        <source>Charging %1, %2 hr %3 min until full</source>
+        <translation>正在充电%1，还需%2小时%3分钟</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23basicmodules.cpp" line="181"/>
+        <source>Power settings</source>
+        <translation>电源设置</translation>
+    </message>
+</context>
+<context>
+    <name>V23QuickSettingsPlugin</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23quicksettingsplugin.cpp" line="42"/>
+        <source>Quick Settings</source>
+        <translation>快捷设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23quicksettingsplugin.cpp" line="187"/>
+        <source>Quick actions</source>
+        <translation>快捷设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23quicksettingsplugin.cpp" line="242"/>
+        <source>Remove %1 from Dock</source>
+        <translation>从任务栏移除%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23quicksettingsplugin.cpp" line="244"/>
+        <source>Show %1 on Dock</source>
+        <translation>在任务栏显示%1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23quicksettingsplugin.cpp" line="249"/>
+        <source>Remove from Dock</source>
+        <translation>从任务栏移除</translation>
+    </message>
+</context>
+<context>
+    <name>V23SearchItem</name>
+    <message>
+        <location filename="../frame/item/v23searchitem.cpp" line="40"/>
+        <source>Grand Search</source>
+        <translation>全局搜索</translation>
+    </message>
+    <message>
+        <location filename="../frame/item/v23searchitem.cpp" line="94"/>
+        <source>Search settings</source>
+        <translation>搜索配置</translation>
+    </message>
+</context>
+<context>
+    <name>V23SoundModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="54"/>
+        <source>Sound</source>
+        <translation>声音</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="150"/>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="158"/>
+        <source>Mute</source>
+        <translation>静音</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="152"/>
+        <source>Volume %1</source>
+        <translation>当前音量 %1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="158"/>
+        <source>Unmute</source>
+        <translation>取消静音</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="159"/>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="267"/>
+        <source>Sound settings</source>
+        <translation>声音设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="252"/>
+        <source>Volume</source>
+        <translation>音量</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23soundmodule.cpp" line="258"/>
+        <source>Output</source>
+        <translation>输出</translation>
+    </message>
+</context>
+<context>
+    <name>V23ThemeModule</name>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="59"/>
+        <source>Theme</source>
+        <translation>主题</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="76"/>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="86"/>
+        <source>Light</source>
+        <translation>浅色</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="76"/>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="87"/>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="129"/>
+        <source>Personalization settings</source>
+        <translation>个性化设置</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="200"/>
+        <source>Grand Search</source>
+        <translation>全局搜索</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="206"/>
+        <source>Screenshot</source>
+        <translation>截图</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="213"/>
+        <source>Record</source>
+        <translation>录屏</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="227"/>
+        <source>Clipboard</source>
+        <translation>剪贴板</translation>
+    </message>
+    <message>
+        <location filename="../plugins/v23/quick-settings/v23toolmodules.cpp" line="233"/>
+        <source>System Monitor</source>
+        <translation>系统监视器</translation>
+    </message>
+</context>
+<context>
     <name>WiredItem</name>
     <message>
         <location filename="../plugins/network/item/wireditem.cpp" line="47"/>
@@ -669,353 +1170,6 @@
         <source>显示CPU、内存、网速、
 电池和CPU温度</source>
         <translation>显示CPU、内存、网速、电池和CPU温度</translation>
-    </message>
-</context>
-<context>
-    <name>V23CalendarWidget</name>
-    <message>
-        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="326"/>
-        <source>Open the calendar</source>
-        <translation>打开日历</translation>
-    </message>
-    <message>
-        <location filename="../plugins/v23/datetime/v23calendarwidget.cpp" line="328"/>
-        <source>Today</source>
-        <translation>今天</translation>
-    </message>
-</context>
-<context>
-    <name>V23DatetimePlugin</name>
-    <message>
-        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="32"/>
-        <source>Datetime</source>
-        <translation>时间</translation>
-    </message>
-    <message>
-        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="137"/>
-        <source>12 Hour Time</source>
-        <translation>12小时制</translation>
-    </message>
-    <message>
-        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="139"/>
-        <source>24 Hour Time</source>
-        <translation>24小时制</translation>
-    </message>
-    <message>
-        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="145"/>
-        <source>Time Settings</source>
-        <translation>时间设置</translation>
-    </message>
-    <message>
-        <location filename="../plugins/v23/datetime/v23datetimeplugin.cpp" line="151"/>
-        <source>Open the calendar</source>
-        <translation>打开日历</translation>
-    </message>
-</context>
-<context>
-    <name>V23QuickSettingsPlugin</name>
-    <message>
-        <source>Quick Settings</source>
-        <translation>快捷设置</translation>
-    </message>
-    <message>
-        <source>Quick actions</source>
-        <translation>快捷设置</translation>
-    </message>
-    <message>
-        <source>Remove %1 from Dock</source>
-        <translation>从任务栏移除%1</translation>
-    </message>
-    <message>
-        <source>Show %1 on Dock</source>
-        <translation>在任务栏显示%1</translation>
-    </message>
-    <message>
-        <source>Remove from Dock</source>
-        <translation>从任务栏移除</translation>
-    </message>
-</context>
-<context>
-    <name>V23NetworkModule</name>
-    <message>
-        <source>Wireless Network</source>
-        <translation>无线网络</translation>
-    </message>
-    <message>
-        <source>Wired Network</source>
-        <translation>有线网络</translation>
-    </message>
-    <message>
-        <source>Wireless Network %1</source>
-        <translation>无线网络%1</translation>
-    </message>
-    <message>
-        <source>Wired Network %1</source>
-        <translation>有线网络%1</translation>
-    </message>
-    <message>
-        <source>Network</source>
-        <translation>网络</translation>
-    </message>
-    <message>
-        <source>Off</source>
-        <translation>已关闭</translation>
-    </message>
-    <message>
-        <source>Connecting</source>
-        <translation>正在连接</translation>
-    </message>
-    <message>
-        <source>Connected but no Internet access</source>
-        <translation>已连接网络但无法访问互联网</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>已连接</translation>
-    </message>
-    <message>
-        <source>Network cable unplugged</source>
-        <translation>未插入网线</translation>
-    </message>
-    <message>
-        <source>Not connected</source>
-        <translation>未连接</translation>
-    </message>
-    <message>
-        <source>No Network</source>
-        <translation>无网络访问</translation>
-    </message>
-    <message>
-        <source>Wired connection: %1</source>
-        <translation>有线连接：%1</translation>
-    </message>
-    <message>
-        <source>Wireless connection: %1</source>
-        <translation>无线连接：%1</translation>
-    </message>
-    <message>
-        <source>Disable network</source>
-        <translation>关闭网络</translation>
-    </message>
-    <message>
-        <source>Enable network</source>
-        <translation>启用网络</translation>
-    </message>
-    <message>
-        <source>Network settings</source>
-        <translation>网络设置</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>断开连接</translation>
-    </message>
-</context>
-<context>
-    <name>V23BluetoothModule</name>
-    <message>
-        <source>Bluetooth</source>
-        <translation>蓝牙</translation>
-    </message>
-    <message>
-        <source>Turned off</source>
-        <translation>蓝牙关闭</translation>
-    </message>
-    <message>
-        <source>%1 connected</source>
-        <translation>%1 已连接</translation>
-    </message>
-    <message>
-        <source>Connecting...</source>
-        <translation>正在连接...</translation>
-    </message>
-    <message>
-        <source>Turn off</source>
-        <translation>关闭</translation>
-    </message>
-    <message>
-        <source>Turn on</source>
-        <translation>开启</translation>
-    </message>
-    <message>
-        <source>Bluetooth settings</source>
-        <translation>蓝牙设置</translation>
-    </message>
-    <message>
-        <source>Off</source>
-        <translation>已关闭</translation>
-    </message>
-    <message>
-        <source>On</source>
-        <translation>已开启</translation>
-    </message>
-    <message>
-        <source>My Devices</source>
-        <translation>我的设备</translation>
-    </message>
-    <message>
-        <source>Other Devices</source>
-        <translation>其他设备</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>断开连接</translation>
-    </message>
-</context>
-<context>
-    <name>V23SoundModule</name>
-    <message>
-        <source>Sound</source>
-        <translation>声音</translation>
-    </message>
-    <message>
-        <source>Mute</source>
-        <translation>静音</translation>
-    </message>
-    <message>
-        <source>Volume %1</source>
-        <translation>当前音量 %1</translation>
-    </message>
-    <message>
-        <source>Unmute</source>
-        <translation>取消静音</translation>
-    </message>
-    <message>
-        <source>Sound settings</source>
-        <translation>声音设置</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation>音量</translation>
-    </message>
-    <message>
-        <source>Output</source>
-        <translation>输出</translation>
-    </message>
-</context>
-<context>
-    <name>V23BrightnessModule</name>
-    <message>
-        <source>Brightness</source>
-        <translation>亮度</translation>
-    </message>
-    <message>
-        <source>Display settings</source>
-        <translation>显示设置</translation>
-    </message>
-</context>
-<context>
-    <name>V23MediaModule</name>
-    <message>
-        <source>Media</source>
-        <translation>媒体</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation>未知</translation>
-    </message>
-</context>
-<context>
-    <name>V23OnboardModule</name>
-    <message>
-        <source>Onboard</source>
-        <translation>屏幕键盘</translation>
-    </message>
-</context>
-<context>
-    <name>V23PowerModule</name>
-    <message>
-        <source>Battery</source>
-        <translation>电池</translation>
-    </message>
-    <message>
-        <source>Capacity %1 ...</source>
-        <translation>电量%1 ...</translation>
-    </message>
-    <message>
-        <source>Capacity %1</source>
-        <translation>电量%1</translation>
-    </message>
-    <message>
-        <source>Capacity %1, %2 min remaining</source>
-        <translation>电量%1，剩余%2分钟</translation>
-    </message>
-    <message>
-        <source>Capacity %1, %2 hr %3 min remaining</source>
-        <translation>电量%1，剩余%2小时%3分钟</translation>
-    </message>
-    <message>
-        <source>Capacity %1, fully charged</source>
-        <translation>电量%1，已充满</translation>
-    </message>
-    <message>
-        <source>Charging %1, %2 min until full</source>
-        <translation>正在充电%1，还需%2分钟</translation>
-    </message>
-    <message>
-        <source>Charging %1, %2 hr %3 min until full</source>
-        <translation>正在充电%1，还需%2小时%3分钟</translation>
-    </message>
-    <message>
-        <source>Power settings</source>
-        <translation>电源设置</translation>
-    </message>
-</context>
-<context>
-    <name>V23NotificationModule</name>
-    <message>
-        <source>Notification Center</source>
-        <translation>通知中心</translation>
-    </message>
-    <message>
-        <source>No messages</source>
-        <translation>暂无新消息</translation>
-    </message>
-    <message>
-        <source>Notifications</source>
-        <translation>条通知</translation>
-    </message>
-    <message>
-        <source>Notification settings</source>
-        <translation>通知设置</translation>
-    </message>
-</context>
-<context>
-    <name>V23ThemeModule</name>
-    <message>
-        <source>Theme</source>
-        <translation>主题</translation>
-    </message>
-    <message>
-        <source>Light</source>
-        <translation>浅色</translation>
-    </message>
-    <message>
-        <source>Dark</source>
-        <translation>深色</translation>
-    </message>
-    <message>
-        <source>Personalization settings</source>
-        <translation>个性化设置</translation>
-    </message>
-    <message>
-        <source>Grand Search</source>
-        <translation>全局搜索</translation>
-    </message>
-    <message>
-        <source>Screenshot</source>
-        <translation>截图</translation>
-    </message>
-    <message>
-        <source>Record</source>
-        <translation>录屏</translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation>剪贴板</translation>
-    </message>
-    <message>
-        <source>System Monitor</source>
-        <translation>系统监视器</translation>
     </message>
 </context>
 </TS>

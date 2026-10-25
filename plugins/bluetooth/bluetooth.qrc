@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="bluetooth-active-symbolic_16.svg">resources/icons/bluetooth-active-symbolic_16.svg</file>
+        <file alias="bluetooth-disable-symbolic_16.svg">resources/icons/bluetooth-disable-symbolic_16.svg</file>
+        <file alias="bluetooth_camera_16.svg">resources/icons/bluetooth_camera_16.svg</file>
+        <file alias="bluetooth_clang_16.svg">resources/icons/bluetooth_clang_16.svg</file>
+        <file alias="bluetooth_keyboard_16.svg">resources/icons/bluetooth_keyboard_16.svg</file>
+        <file alias="bluetooth_lan_16.svg">resources/icons/bluetooth_lan_16.svg</file>
+        <file alias="bluetooth_laptop_16.svg">resources/icons/bluetooth_laptop_16.svg</file>
+        <file alias="bluetooth_microphone_16.svg">resources/icons/bluetooth_microphone_16.svg</file>
+        <file alias="bluetooth_mouse_16.svg">resources/icons/bluetooth_mouse_16.svg</file>
+        <file alias="bluetooth_other_16.svg">resources/icons/bluetooth_other_16.svg</file>
+        <file alias="bluetooth_pad_16.svg">resources/icons/bluetooth_pad_16.svg</file>
+        <file alias="bluetooth_pc_16.svg">resources/icons/bluetooth_pc_16.svg</file>
+        <file alias="bluetooth_pen_16.svg">resources/icons/bluetooth_pen_16.svg</file>
+        <file alias="bluetooth_phone_16.svg">resources/icons/bluetooth_phone_16.svg</file>
+        <file alias="bluetooth_pheadset_16.svg">resources/icons/bluetooth_pheadset_16.svg</file>
+        <file alias="bluetooth_print_16.svg">resources/icons/bluetooth_print_16.svg</file>
+        <file alias="bluetooth_scaner_16.svg">resources/icons/bluetooth_scaner_16.svg</file>
+        <file alias="bluetooth_touchpad_16.svg">resources/icons/bluetooth_touchpad_16.svg</file>
+        <file alias="bluetooth_tv_16.svg">resources/icons/bluetooth_tv_16.svg</file>
+        <file alias="bluetooth_video_16.svg">resources/icons/bluetooth_video_16.svg</file>
+        <file alias="bluetooth_vidicon_16.svg">resources/icons/bluetooth_vidicon_16.svg</file>
+        <file alias="open-arrow_16.svg">resources/icons/open-arrow_16.svg</file>
+        <file alias="plugin_item_select_16.svg">resources/icons/plugin_item_select_16.svg</file>
+        <file alias="refresh_16.svg">resources/icons/refresh_16.svg</file>
+    </qresource>
+</RCC>
