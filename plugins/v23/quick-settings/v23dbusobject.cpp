@@ -4,6 +4,7 @@
 
 #include "v23dbusobject.h"
 
+#include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
@@ -63,6 +64,19 @@ void V23DBusObject::setProperty(const QString &name, const QVariant &value)
 
 void V23DBusObject::refresh()
 {
+    // Querying the properties of a service that is not running yet would
+    // dbus-activate it. Some of these services belong to GUI applications
+    // (com.deepin.ScreenRecorder is owned by deepin-screen-recorder and
+    // activated with "--screenRecord", which opens the recorder window),
+    // so the dock must never wake them up on its own. Stay invalid and let
+    // the serviceRegistered watcher fetch the properties once the service
+    // is really running.
+    if (!m_bus.interface()->isServiceRegistered(m_service).value()) {
+        m_valid = false;
+        m_properties.clear();
+        return;
+    }
+
     QDBusMessage message = QDBusMessage::createMethodCall(m_service, m_path, PropertiesInterface, QStringLiteral("GetAll"));
     message.setArguments({m_interface});
 
