@@ -36,7 +36,9 @@ public:
     const QString pluginDisplayName() const override;
     void init(PluginProxyInterface *proxyInter) override;
     void pluginStateSwitched() override;
-    bool pluginIsAllowDisable() override { return true; }
+    // 显隐改走与 V23 相同的 dockableItems 机制（菜单“插件”子菜单，模式无关），
+    // 避免依赖时尚/高效下不可靠的标准 pluginIsAllowDisable 路径。
+    bool pluginIsAllowDisable() override { return false; }
     bool pluginIsDisable() override;
 
     QWidget *itemWidget(const QString &itemKey) override;
@@ -48,6 +50,11 @@ public:
     void setSortKey(const QString &itemKey, const int order) override;
     void refreshIcon(const QString &itemKey) override;
     void pluginSettingsChanged() override;
+
+    // 供 dock 设置菜单调用的可停靠项（与 V23 quick-settings 一致），
+    // 让蓝牙插件在时尚/高效模式也能在“插件”子菜单里显示/隐藏。
+    Q_INVOKABLE QVariantList dockableItems();
+    Q_INVOKABLE void setItemDocked(const QString &key, bool docked);
 
 private:
     void refreshPluginItemsVisible();

@@ -51,6 +51,7 @@
     <message>
         <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="37"/>
         <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="101"/>
+        <location filename="../plugins/bluetooth/bluetoothplugin.cpp" line="195"/>
         <source>Bluetooth</source>
         <translation type="unfinished"></translation>
     </message>
@@ -251,7 +252,7 @@
     </message>
     <message>
         <location filename="../frame/util/docksettings.cpp" line="209"/>
-        <location filename="../frame/util/docksettings.cpp" line="739"/>
+        <location filename="../frame/util/docksettings.cpp" line="742"/>
         <source>Align Left</source>
         <translation type="unfinished"></translation>
     </message>
@@ -308,52 +309,57 @@
         <translation>Розумне приховування</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="298"/>
+        <location filename="../frame/util/docksettings.cpp" line="230"/>
+        <source>Global Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../frame/util/docksettings.cpp" line="300"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="306"/>
+        <location filename="../frame/util/docksettings.cpp" line="308"/>
         <source>Theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="312"/>
+        <location filename="../frame/util/docksettings.cpp" line="314"/>
         <source>Icon Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="320"/>
+        <location filename="../frame/util/docksettings.cpp" line="322"/>
         <source>Capsule Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="327"/>
+        <location filename="../frame/util/docksettings.cpp" line="329"/>
         <source>Corner Radius</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="335"/>
+        <location filename="../frame/util/docksettings.cpp" line="337"/>
         <source>Location</source>
         <translation>Місце знаходження</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="342"/>
+        <location filename="../frame/util/docksettings.cpp" line="344"/>
         <source>Size</source>
         <translation>Розмір</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="349"/>
+        <location filename="../frame/util/docksettings.cpp" line="351"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="353"/>
+        <location filename="../frame/util/docksettings.cpp" line="355"/>
         <source>Plugins</source>
         <translation>Плагіни</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="739"/>
+        <location filename="../frame/util/docksettings.cpp" line="742"/>
         <source>Align Top</source>
         <translation type="unfinished"></translation>
     </message>

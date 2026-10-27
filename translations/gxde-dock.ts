@@ -174,6 +174,10 @@
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
+    <message>
+        <source>Global Search</source>
+        <translation>Global Search</translation>
+    </message>
 </context>
 <context>
     <name>LauncherItem</name>

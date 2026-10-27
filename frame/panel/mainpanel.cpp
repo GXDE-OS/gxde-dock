@@ -912,7 +912,8 @@ void MainPanel::updateV23Alignment() {
     const bool horizontal = m_position == Dock::Top || m_position == Dock::Bottom;
     const int searchIndex = m_v23SearchItem ? m_itemLayout->indexOf(m_v23SearchItem) : -1;
 
-    if (m_displayMode != Dock::V23 || searchIndex < 0) {
+    if (m_displayMode != Dock::V23 || searchIndex < 0
+            || m_itemController->v23ItemHidden(m_v23SearchItem)) {
         if (m_v23CenterSpacer) {
             m_itemLayout->removeItem(m_v23CenterSpacer);
             delete m_v23CenterSpacer;

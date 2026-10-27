@@ -58,6 +58,8 @@ public:
     QObject *pluginObject(PluginsItemInterface *plugin) const;
     bool appIsOnDock(const QString &appDesktop) const;
     bool itemIsInContainer(DockItem * const item) const;
+    bool searchHidden() const;
+    void setSearchHidden(bool hidden);
     void setDropping(const bool dropping);
     void startLoadPlugins() const;
     void reloadAppItems();
@@ -134,6 +136,7 @@ private:
     V23SearchItem *m_searchItem;
     bool m_v23Collapsed;
     int m_v23CollapseKey;
+    bool m_searchHidden = false;
 
     static QHash<QScreen *, DockItemController *> INSTANCES;
 

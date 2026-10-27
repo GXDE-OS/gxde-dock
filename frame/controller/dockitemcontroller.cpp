@@ -137,6 +137,10 @@ bool DockItemController::v23ItemHidden(DockItem * const item) const {
         return true;
     }
 
+    if (item == m_searchItem) {
+        return m_searchHidden;
+    }
+
     const int start = v23TrayStart();
     const int collapse = m_itemList.indexOf(m_collapseItem);
     if (item == m_collapseItem) {
@@ -149,6 +153,21 @@ bool DockItemController::v23ItemHidden(DockItem * const item) const {
 
     const int index = m_itemList.indexOf(item);
     return index >= start && index < collapse;
+}
+
+void DockItemController::setSearchHidden(const bool hidden) {
+    if (m_searchHidden == hidden) {
+        return;
+    }
+
+    m_searchHidden = hidden;
+    QSettings settings(v23TraySettingsPath(), QSettings::IniFormat);
+    settings.setValue("searchHidden", hidden);
+    emit v23TrayChanged(true);
+}
+
+bool DockItemController::searchHidden() const {
+    return m_searchHidden;
 }
 
 void DockItemController::toggleV23Collapsed() {
@@ -580,9 +599,11 @@ QDBusConnection::sessionBus(), this)),
         QSettings settings(v23TraySettingsPath(), QSettings::IniFormat);
         m_v23Collapsed = settings.value("collapsed", false).toBool();
         m_v23CollapseKey = settings.value("collapseKey", 0).toInt();
+        m_searchHidden = settings.value("searchHidden", false).toBool();
     }
     m_collapseItem->setCollapsed(m_v23Collapsed);
     connect(m_collapseItem, &V23CollapseItem::clicked, this, &DockItemController::toggleV23Collapsed);
+
     if (Dock::isV23Mode()) {
         m_itemList.append(m_collapseItem);
     } else {

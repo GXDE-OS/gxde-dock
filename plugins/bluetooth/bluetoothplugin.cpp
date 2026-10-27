@@ -186,3 +186,23 @@ void BluetoothPlugin::pluginSettingsChanged()
 {
     refreshPluginItemsVisible();
 }
+
+QVariantList BluetoothPlugin::dockableItems()
+{
+    QVariantList items;
+    QVariantMap item;
+    item["key"] = BLUETOOTH_KEY;
+    item["name"] = tr("Bluetooth");
+    item["docked"] = !pluginIsDisable();
+    items << item;
+    return items;
+}
+
+void BluetoothPlugin::setItemDocked(const QString &key, bool docked)
+{
+    if (key != BLUETOOTH_KEY)
+        return;
+
+    m_proxyInter->saveValue(this, PLUGIN_STATE_KEY, docked);
+    refreshPluginItemsVisible();
+}

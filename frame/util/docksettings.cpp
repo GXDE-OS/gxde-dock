@@ -227,6 +227,7 @@ DockSettings::DockSettings(QWidget *parent)
     , m_smartHideAct(tr("Smart Hide"), this)
     , m_systemMonitor(tr("System Monitor"), this)
     , m_windowSplit(tr("Window Split"), this)
+    , m_searchAct(tr("Global Search"), this)
     , m_displayInter(new DBusDisplay(DBusDisplay::staticServiceName(), this))
     , m_dockInter(new DBusDock(dockDBusService(), dockDBusManagerPath(), QDBusConnection::sessionBus(), this))
     , m_itemController(DockItemController::instance(this))
@@ -289,6 +290,7 @@ DockSettings::DockSettings(QWidget *parent)
     m_keepHiddenAct.setCheckable(true);
     m_smartHideAct.setCheckable(true);
     m_windowSplit.setCheckable(true);
+    m_searchAct.setCheckable(true);
 
     WhiteMenu *modeSubMenu = new WhiteMenu(&m_settingsMenu);
     modeSubMenu->addAction(&m_fashionModeAct);
@@ -363,6 +365,7 @@ DockSettings::DockSettings(QWidget *parent)
     m_settingsMenu.addAction(statusSubMenuAct);
     m_settingsMenu.addAction(hideSubMenuAct);
     m_settingsMenu.addAction(&m_windowSplit);
+    m_settingsMenu.addAction(&m_searchAct);
     // 需要确保安装了系统监视器才可显示
     if (QFile::exists("/usr/bin/deepin-system-monitor") || QFile::exists("/usr/bin/gxde-system-monitor")) {
         m_settingsMenu.addAction(&m_systemMonitor);
@@ -755,6 +758,8 @@ void DockSettings::showDockSettingsMenu(QWidget *sourceWindow,
     m_keepHiddenAct.setChecked(m_hideMode == KeepHidden);
     m_smartHideAct.setChecked(m_hideMode == SmartHide);
     m_windowSplit.setChecked(m_dockInter->windowSplit());
+    m_searchAct.setChecked(!m_itemController->searchHidden());
+    m_searchAct.setVisible(m_displayMode == V23);
 
     // A parentless QMenu is incorrectly created as another layer surface by
     // layer-shell-qt.  Give the Wayland menu the Dock window as its transient
@@ -992,6 +997,14 @@ void DockSettings::menuActionClicked(QAction *action)
 
     if (action == &m_windowSplit) {
         m_dockInter->setWindowSplit(m_windowSplit.isChecked());
+        return;
+    }
+
+    if (action == &m_searchAct) {
+        // 全局搜索的显示状态为全局偏好，需通知所有屏幕的控制器以即时生效
+        const bool hidden = !m_searchAct.isChecked();
+        for (DockItemController *controller : DockItemController::instances())
+            controller->setSearchHidden(hidden);
         return;
     }
 

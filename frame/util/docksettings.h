@@ -232,6 +232,7 @@ private:
     QAction m_smartHideAct;
     QAction m_systemMonitor;
     QAction m_windowSplit;
+    QAction m_searchAct;
 
     DBusDisplay *m_displayInter;
     DBusDock *m_dockInter;

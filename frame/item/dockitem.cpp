@@ -312,6 +312,8 @@ void DockItem::popupMenuWayland(const QString& menuJson) {
         QAction* act = menu.addAction(obj.value("itemText").toString());
         act->setEnabled(obj.value("isActive").toBool(true));
         act->setData(obj.value("itemId").toString());  // 供回调取itemId
+        act->setCheckable(obj.value("isCheckable").toBool(false));
+        act->setChecked(obj.value("checked").toBool(false));
     }
     connect(&menu, &QMenu::triggered, &menu, [&](QAction *action) {
         if (action)
