@@ -239,8 +239,6 @@ QList<V23QuickModule *> createActionModules(QObject *parent)
             QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
             env.insert("QT_QPA_PLATFORM", "dxcb;xcb");
             env.insert("QT_QPA_PLATFORMTHEME", "deepin");
-            // a DTK6 app: the GXDE dtk2 style of the session crashes it
-            env.remove("QT_STYLE_OVERRIDE");
             process.setProcessEnvironment(env);
             process.setProgram("deepin-system-monitor");
             process.startDetached();

@@ -498,9 +498,6 @@ void DockSettings::openSystemMonitor()
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("QT_QPA_PLATFORM", "dxcb;xcb");
     env.insert("QT_QPA_PLATFORMTHEME", "deepin");
-    // a DTK6 app: the GXDE dtk2 style of the session crashes it
-    if (program == "deepin-system-monitor")
-        env.remove("QT_STYLE_OVERRIDE");
 
     QProcess process;
     process.setProcessEnvironment(env);
