@@ -1,3 +1,11 @@
+gxde-dock (6.0.35) UNRELEASED; urgency=medium
+
+  [ shenmo ]
+  * 移除启动外部程序时手动移除 QT_STYLE_OVERRIDE 的处理
+    （dtk2widget 6.3.8 起会自动还原被改写的环境变量）
+
+ -- shenmo <shenmo@spark-app.store>  Wed, 28 Oct 2026 22:11:00 +0800
+
 gxde-dock (6.0.34) UNRELEASED; urgency=medium
 
   [ CharOfString ]
