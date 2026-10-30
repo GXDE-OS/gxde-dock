@@ -38,6 +38,7 @@ protected:
 
 private:
     void rebuild();
+    void adjustHeight();
     void openSettings();
 
 private:

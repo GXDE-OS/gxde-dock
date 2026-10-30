@@ -40,7 +40,6 @@ constexpr int ListItemHeight = 36;
 constexpr int PanelSpacing = 10;
 constexpr int PanelWidth = 330;
 constexpr int MaxContentHeight = 480;
-constexpr int MinContentHeight = 340;
 
 const QColor Text = Qt::white;                 // 深色 dock/弹窗上的文字色
 const QColor Highlight(0x02, 0x4c, 0xca);      // 强调色（V23 深色主题）
@@ -302,8 +301,19 @@ BluetoothApplet::BluetoothApplet(DBusBluetooth *inter, QWidget *parent)
 QSize BluetoothApplet::sizeHint() const
 {
     const int content = m_content ? m_content->sizeHint().height() : 0;
-    const int height = qMax(MinContentHeight, qMin(content, MaxContentHeight));
-    return QSize(PanelWidth, height + 2 * PanelSpacing);
+    return QSize(PanelWidth, qMin(content, MaxContentHeight) + 2 * PanelSpacing);
+}
+
+// QScrollArea 的 sizeHint 被 Qt 限制在一个与内容无关的上限内，布局里的
+// stretch 又会吃掉剩余空间，直接依赖布局会把内容裁掉一半；参照
+// SoundApplet，由内容实际高度决定滚动区与面板的固定高度。
+// rebuild 在适配器/设备数据异步到达时都会执行，这里同步收紧或放宽尺寸，
+// 弹出窗因监听内容 Resize 会随之调整。
+void BluetoothApplet::adjustHeight()
+{
+    const int contentHeight = qMin(m_content->sizeHint().height(), MaxContentHeight);
+    m_scroll->setFixedHeight(contentHeight);
+    setFixedHeight(contentHeight + 2 * PanelSpacing);
 }
 
 void BluetoothApplet::showEvent(QShowEvent *e)
@@ -398,5 +408,13 @@ void BluetoothApplet::rebuild()
     connect(settings, &QAbstractButton::clicked, this, [this] { openSettings(); });
     m_layout->addWidget(settings);
 
-    updateGeometry();
+    // 弹窗已显示后异步重建时，新控件尚未 show()，布局条目按空条目处理、
+    // sizeHint 归零，无法据此计算面板高度；显式 show() 清除隐藏标记
+    // （父级未显示时仅清除标记，无实际窗口操作）。
+    for (int i = 0; i < m_layout->count(); ++i) {
+        if (QWidget *w = m_layout->itemAt(i)->widget())
+            w->show();
+    }
+
+    adjustHeight();
 }
