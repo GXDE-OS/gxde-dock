@@ -1,4 +1,4 @@
-gxde-dock (6.0.36) UNRELEASED; urgency=medium
+gxde-dock (6.0.37) UNRELEASED; urgency=medium
 
   [ shenmo ]
   * 移除启动外部程序时手动移除 QT_STYLE_OVERRIDE 的处理
@@ -6,8 +6,9 @@ gxde-dock (6.0.36) UNRELEASED; urgency=medium
 
   [ gfdgd_xi ]
   * fix: 修复高效/时尚模式下蓝牙插件UI异常的问题
+  * fix: 修复不合并图标下无法点击任务栏图标最小化应用的问题
 
- -- gfdgd_xi <3025613752@qq.com>  Fri, 30 Oct 2026 09:15:05 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 31 Oct 2026 12:46:31 +0800
 
 gxde-dock (6.0.34) UNRELEASED; urgency=medium
 
