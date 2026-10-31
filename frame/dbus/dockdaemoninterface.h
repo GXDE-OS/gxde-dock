@@ -128,6 +128,11 @@ public Q_SLOTS:  // METHODS
             {QVariant::fromValue(jsonStr)});
     }
 
+    inline QDBusPendingReply<> MinimizeWindow(uint win) {
+        return asyncCallWithArgumentList(QStringLiteral("MinimizeWindow"),
+            {QVariant::fromValue(win)});
+    }
+
     inline QDBusPendingReply<> MoveEntry(int index, int newIndex) {
         return asyncCallWithArgumentList(QStringLiteral("MoveEntry"),
             {QVariant::fromValue(index),

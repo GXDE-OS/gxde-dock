@@ -472,9 +472,14 @@ void AppItem::mouseReleaseEvent(QMouseEvent *e)
         qDebug() << "app item clicked, name:" << m_itemEntryInter->name()
             << "id:" << m_itemEntryInter->id() << "my-id:" << m_id << "icon:" << m_itemEntryInter->icon();
 
-        // 不合并图标时，点击只激活该图标对应的窗口
+        // 不合并图标时，点击只作用于该图标对应的窗口：
+        // 窗口已是焦点窗口则最小化（与合并图标时 daemon Activate 的行为一致），
+        // 否则激活该窗口
         if (m_windowId != 0) {
-            emit requestActivateWindow(m_windowId);
+            if (m_active)
+                emit requestMinimizeWindow(m_windowId);
+            else
+                emit requestActivateWindow(m_windowId);
         } else {
             m_itemEntryInter->Activate(e->timestamp());
         }

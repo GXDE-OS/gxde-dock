@@ -643,6 +643,8 @@ AppItem* DockItemController::createAppItem(const QDBusObjectPath& path,
 
     connect(item, &AppItem::requestActivateWindow, m_appInter,
         &DBusDock::ActivateWindow, Qt::QueuedConnection);
+    connect(item, &AppItem::requestMinimizeWindow, m_appInter,
+        &DBusDock::MinimizeWindow, Qt::QueuedConnection);
     connect(item, &AppItem::requestPreviewWindow, m_appInter,
         &DBusDock::PreviewWindow);
     connect(item, &AppItem::requestCancelPreview, m_appInter,
