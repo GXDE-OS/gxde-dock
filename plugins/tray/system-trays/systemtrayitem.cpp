@@ -291,8 +291,11 @@ void SystemTrayItem::mouseReleaseEvent(QMouseEvent *event)
 
     showPopupApplet(trayPopupApplet());
 
-    if (!trayClickCommand().isEmpty()) {
-        QProcess::startDetached(trayClickCommand());
+    const QString command = trayClickCommand();
+    if (!command.isEmpty()) {
+        const QStringList args = QProcess::splitCommand(command);
+        if (!args.isEmpty())
+            QProcess::startDetached(args.first(), args.mid(1));
     }
 
     AbstractTrayWidget::mouseReleaseEvent(event);
