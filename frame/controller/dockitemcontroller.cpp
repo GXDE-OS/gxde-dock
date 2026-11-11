@@ -435,6 +435,11 @@ void DockItemController::onSplitWindowAppeared(const quint32 winId)
 
     const QString entryPath = from->getEntryPath();
 
+    // A short-lived X11 window may disappear before its queued signal is
+    // handled. Do not replace the docked app placeholder with a stale window.
+    if (!entryWindowInfos(entryPath).contains(winId))
+        return;
+
     // 同一窗口的图标可能已被其它图标抢先创建
     if (findSplitItem(entryPath, winId))
         return;
