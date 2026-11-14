@@ -91,7 +91,7 @@ void PowerPlugin::pluginStateSwitched()
 
 bool PowerPlugin::pluginIsDisable()
 {
-    return !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, false).toBool();
+    return !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, true).toBool();
 }
 
 const QString PowerPlugin::itemCommand(const QString &itemKey)

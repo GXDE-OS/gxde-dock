@@ -36,6 +36,8 @@ ShutdownPlugin::ShutdownPlugin(QObject *parent)
     : QObject(parent),
 
       m_pluginLoaded(false),
+      m_isInChroot(false),
+      m_shutdownWidget(nullptr),
       m_tipsLabel(new TipsWidget)
 {
     m_tipsLabel->setVisible(false);
@@ -94,7 +96,8 @@ void ShutdownPlugin::init(PluginProxyInterface *proxyInter)
 
 void ShutdownPlugin::pluginStateSwitched()
 {
-    m_proxyInter->saveValue(this, PLUGIN_STATE_KEY, !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, true).toBool());
+    // 与 pluginIsDisable() 使用相同的缺省值，保证菜单开关能正确切换
+    m_proxyInter->saveValue(this, PLUGIN_STATE_KEY, !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, false).toBool());
 
     refreshPluginItemsVisible();
 }
@@ -104,7 +107,9 @@ bool ShutdownPlugin::pluginIsDisable()
     if (m_isInChroot) {
         return 1;
     }
-    return !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, true).toBool();
+    // 本插件是关机/电源按钮，默认隐藏；电池图标由 power 插件负责。
+    // 用户仍可在任务栏右键菜单的插件列表中开启本插件。
+    return !m_proxyInter->getValue(this, PLUGIN_STATE_KEY, false).toBool();
 }
 
 const QString ShutdownPlugin::itemCommand(const QString &itemKey)
