@@ -1,10 +1,15 @@
-gxde-dock (6.0.39-1) UNRELEASED; urgency=medium
+gxde-dock (6.0.40) UNRELEASED; urgency=medium
 
+  [ CharOfString ]
   * 修复X11下切换模式和位置卡死的问题
   * 为X11新增V20与V23模式阴影
   * 解决X11模式下blur溢出的问题
 
- -- CharOfString <root@charofstring.cc>  Sat, 07 Nov 2026 19:31:07 -0600
+  [ gfdgd_xi ]
+  * fix: 修复无法显示电池图标的问题
+  * 默认禁用shutdown插件
+
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 14 Nov 2026 08:45:27 +0800
 
 gxde-dock (6.0.38-2) UNRELEASED; urgency=medium
 
