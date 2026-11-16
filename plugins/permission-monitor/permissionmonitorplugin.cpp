@@ -41,9 +41,11 @@ PermissionMonitorPlugin::PermissionMonitorPlugin(QObject *parent)
     , m_itemAdded(false)
     , m_deviceMonitor(new DeviceMonitor(this))
 {
-    // 摄像头与麦克风图标并排放在同一 item 内，作为一个整体显示
+    // 摄像头与麦克风图标并排放在同一 item 内，作为一个整体显示；
+    // 四周留出边距，与相邻插件保持宽松间距（其它插件 item 自带留白，
+    // 本容器内容较满，需要自行补足）
     QHBoxLayout *layout = new QHBoxLayout(m_container);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(8, 8, 8, 8);
     layout->setSpacing(8);
     layout->addWidget(m_cameraItem);
     layout->addWidget(m_microphoneItem);
