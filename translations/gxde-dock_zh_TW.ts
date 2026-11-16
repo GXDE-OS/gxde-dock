@@ -21,27 +21,27 @@
 <context>
     <name>BluetoothApplet</name>
     <message>
-        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="345"/>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="355"/>
         <source>Bluetooth</source>
         <translation type="unfinished">藍牙</translation>
     </message>
     <message>
-        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="371"/>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="381"/>
         <source>My Devices</source>
         <translation type="unfinished">我的裝置</translation>
     </message>
     <message>
-        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="371"/>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="381"/>
         <source>Other Devices</source>
         <translation type="unfinished">其他裝置</translation>
     </message>
     <message>
-        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="383"/>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="393"/>
         <source>Connecting…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="396"/>
+        <location filename="../plugins/bluetooth/bluetoothapplet.cpp" line="406"/>
         <source>Bluetooth settings</source>
         <translation type="unfinished">藍牙設定</translation>
     </message>
@@ -195,181 +195,181 @@
 <context>
     <name>DockSettings</name>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="214"/>
+        <location filename="../frame/util/docksettings.cpp" line="215"/>
         <source>Disable Margin</source>
         <translation>停用邊距</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="329"/>
+        <location filename="../frame/util/docksettings.cpp" line="330"/>
         <source>Corner Radius</source>
         <translation>圓角</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="205"/>
+        <location filename="../frame/util/docksettings.cpp" line="206"/>
         <source>Deepin V23 Mode</source>
         <translation>深度 V23 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="206"/>
+        <location filename="../frame/util/docksettings.cpp" line="207"/>
         <source>Follow System Theme</source>
         <translation>跟隨系統主題</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="207"/>
+        <location filename="../frame/util/docksettings.cpp" line="208"/>
         <source>Force Dark</source>
         <translation>強制深色</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="208"/>
+        <location filename="../frame/util/docksettings.cpp" line="209"/>
         <source>Force Light</source>
         <translation>強制淺色</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="211"/>
+        <location filename="../frame/util/docksettings.cpp" line="212"/>
         <source>Deepin V20 Mode</source>
         <translation>深度 V20 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="212"/>
+        <location filename="../frame/util/docksettings.cpp" line="213"/>
         <source>Single Capsule</source>
         <translation>單膠囊</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="213"/>
+        <location filename="../frame/util/docksettings.cpp" line="214"/>
         <source>Multiple Capsules</source>
         <translation>多膠囊</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="322"/>
+        <location filename="../frame/util/docksettings.cpp" line="323"/>
         <source>Capsule Style</source>
         <translation>膠囊樣式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="209"/>
-        <location filename="../frame/util/docksettings.cpp" line="742"/>
+        <location filename="../frame/util/docksettings.cpp" line="210"/>
+        <location filename="../frame/util/docksettings.cpp" line="741"/>
         <source>Align Left</source>
         <translation>靠左</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="210"/>
+        <location filename="../frame/util/docksettings.cpp" line="211"/>
         <source>Align Center</source>
         <translation>置中</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="314"/>
+        <location filename="../frame/util/docksettings.cpp" line="315"/>
         <source>Icon Mode</source>
         <translation>圖示模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="742"/>
+        <location filename="../frame/util/docksettings.cpp" line="741"/>
         <source>Align Top</source>
         <translation>靠上</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="203"/>
+        <location filename="../frame/util/docksettings.cpp" line="204"/>
         <source>Fashion Mode</source>
         <translation>流行 (Deepin) 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="204"/>
+        <location filename="../frame/util/docksettings.cpp" line="205"/>
         <source>Efficient Mode</source>
         <translation>高效 (Windows) 模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="218"/>
+        <location filename="../frame/util/docksettings.cpp" line="219"/>
         <source>Top</source>
         <translation>頂部</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="219"/>
+        <location filename="../frame/util/docksettings.cpp" line="220"/>
         <source>Bottom</source>
         <translation>底部</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="220"/>
+        <location filename="../frame/util/docksettings.cpp" line="221"/>
         <source>Left</source>
         <translation>左側</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="221"/>
+        <location filename="../frame/util/docksettings.cpp" line="222"/>
         <source>Right</source>
         <translation>右側</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="215"/>
-        <location filename="../frame/util/docksettings.cpp" line="222"/>
+        <location filename="../frame/util/docksettings.cpp" line="216"/>
+        <location filename="../frame/util/docksettings.cpp" line="223"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="216"/>
-        <location filename="../frame/util/docksettings.cpp" line="223"/>
+        <location filename="../frame/util/docksettings.cpp" line="217"/>
+        <location filename="../frame/util/docksettings.cpp" line="224"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="217"/>
-        <location filename="../frame/util/docksettings.cpp" line="224"/>
+        <location filename="../frame/util/docksettings.cpp" line="218"/>
+        <location filename="../frame/util/docksettings.cpp" line="225"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="225"/>
+        <location filename="../frame/util/docksettings.cpp" line="226"/>
         <source>Keep Shown</source>
         <translation>永遠顯示</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="226"/>
+        <location filename="../frame/util/docksettings.cpp" line="227"/>
         <source>Keep Hidden</source>
         <translation>永遠隱藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="227"/>
+        <location filename="../frame/util/docksettings.cpp" line="228"/>
         <source>Smart Hide</source>
         <translation>智慧隱藏</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="230"/>
+        <location filename="../frame/util/docksettings.cpp" line="231"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="300"/>
+        <location filename="../frame/util/docksettings.cpp" line="301"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="308"/>
+        <location filename="../frame/util/docksettings.cpp" line="309"/>
         <source>Theme</source>
         <translation type="unfinished">主題</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="337"/>
+        <location filename="../frame/util/docksettings.cpp" line="338"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="344"/>
+        <location filename="../frame/util/docksettings.cpp" line="345"/>
         <source>Size</source>
         <translation>圖示</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="351"/>
+        <location filename="../frame/util/docksettings.cpp" line="352"/>
         <source>Status</source>
         <translation>狀態</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="355"/>
+        <location filename="../frame/util/docksettings.cpp" line="356"/>
         <source>Plugins</source>
         <translation>附加元件</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="228"/>
+        <location filename="../frame/util/docksettings.cpp" line="229"/>
         <source>System Monitor</source>
         <translation>系統監視器</translation>
     </message>
     <message>
-        <location filename="../frame/util/docksettings.cpp" line="229"/>
+        <location filename="../frame/util/docksettings.cpp" line="230"/>
         <source>Window Split</source>
         <translation>不合併圖標</translation>
     </message>
@@ -435,6 +435,34 @@
     </message>
 </context>
 <context>
+    <name>PermissionMonitorPlugin</name>
+    <message>
+        <location filename="../plugins/permission-monitor/permissionmonitorplugin.cpp" line="65"/>
+        <source>Permission Monitor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/permission-monitor/permissionmonitorplugin.cpp" line="139"/>
+        <source>Camera is being used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/permission-monitor/permissionmonitorplugin.cpp" line="140"/>
+        <source>Microphone is being used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/permission-monitor/permissionmonitorplugin.cpp" line="146"/>
+        <source>Camera is being used by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../plugins/permission-monitor/permissionmonitorplugin.cpp" line="147"/>
+        <source>Microphone is being used by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PowerPlugin</name>
     <message>
         <location filename="../plugins/power/powerplugin.cpp" line="50"/>
@@ -495,48 +523,48 @@
 <context>
     <name>ShutdownPlugin</name>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="59"/>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="75"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="61"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="77"/>
         <source>Power</source>
         <translation>電源</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="124"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="129"/>
         <source>Shut down</source>
         <translation>關機</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="130"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="135"/>
         <source>Restart</source>
         <translation>重新啟動</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="137"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="142"/>
         <source>Suspend</source>
         <translation>待機</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="144"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="149"/>
         <source>Hibernate</source>
         <translation>休眠</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="152"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="157"/>
         <source>Lock</source>
         <translation>鎖定</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="158"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="163"/>
         <source>Log out</source>
         <translation>登出</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="166"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="171"/>
         <source>Switch account</source>
         <translation>切換帳戶</translation>
     </message>
     <message>
-        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="174"/>
+        <location filename="../plugins/shutdown/shutdownplugin.cpp" line="179"/>
         <source>Power settings</source>
         <translation>電源管理</translation>
     </message>
