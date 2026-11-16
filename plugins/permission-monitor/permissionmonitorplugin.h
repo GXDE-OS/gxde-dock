@@ -23,9 +23,12 @@
 #include "pluginsiteminterface.h"
 
 class TipsWidget;
+class QWidget;
 
-// 权限监视插件：摄像头或麦克风被其它程序占用时在任务栏显示对应图标，
-// 两者同时被占用时同时显示两个图标，未被占用时不显示任何图标
+// 权限监视插件：摄像头或麦克风被其它程序占用时在任务栏显示对应图标。
+// 两个图标位于同一 item 内并排显示（完全为一个整体，中间不会插入其它
+// 插件），仅占用其中一个设备时只显示对应图标，都被占用时同时显示，
+// 都空闲时整个 item 不显示
 class PermissionMonitorPlugin : public QObject,
         PluginsItemInterface,
         PluginsItemFactory<PermissionMonitorPlugin>
@@ -44,6 +47,9 @@ public:
     QWidget *itemWidget(const QString &itemKey) override;
     QWidget *itemTipsWidget(const QString &itemKey) override;
 
+    // 摄像头/麦克风两个图标并排显示，宽度由自身 sizeHint 决定
+    PluginSizePolicy pluginSizePolicy() const override { return Custom; }
+
     bool pluginIsAllowDisable() override { return true; }
     bool pluginIsDisable() override;
     void pluginStateSwitched() override;
@@ -58,19 +64,18 @@ private slots:
     void onUsageChanged();
 
 private:
-    DeviceMonitor::DeviceType typeForKey(const QString &itemKey) const;
-    QString tipsTextFor(const QString &itemKey) const;
-    // 根据当前占用状态与插件启用状态同步两个图标的显隐
+    QString tipsText() const;
+    QString tipsTextFor(DeviceMonitor::DeviceType type) const;
+    // 根据当前占用状态与插件启用状态同步 item 的显隐
     void updateAllItems();
-    // 按需增删单个图标（空闲时未添加过 item 即不会显示）
-    void updateItemVisible(const QString &itemKey, bool visible);
+    void updateItemVisible(bool visible);
     void refreshTips();
 
+    QWidget *m_container;
     MonitorItem *m_cameraItem;
     MonitorItem *m_microphoneItem;
     TipsWidget *m_tipsWidget;
-    QString m_currentTipsKey;
-    QMap<QString, bool> m_itemAdded;
+    bool m_itemAdded;
     DeviceMonitor *m_deviceMonitor;
 };
 

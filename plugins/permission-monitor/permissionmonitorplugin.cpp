@@ -19,27 +19,18 @@
 
 #include "../widgets/tipswidget.h"
 
+#include <QHBoxLayout>
+
+#include <QWidget>
+
 #define PLUGIN_STATE_KEY    "disabled"
 
 // tooltip 中最多展示的占用进程数量，避免列表过长
 #define MAX_TIPS_PROCESS_COUNT 5
 
-namespace {
-
-QString cameraKey()
-{
-    return QStringLiteral("camera");
-}
-
-QString microphoneKey()
-{
-    return QStringLiteral("microphone");
-}
-
-} // namespace
-
 PermissionMonitorPlugin::PermissionMonitorPlugin(QObject *parent)
     : QObject(parent)
+    , m_container(new QWidget)
     , m_cameraItem(new MonitorItem({QStringLiteral("camera-web"),
                                     QStringLiteral("camera-video"),
                                     QStringLiteral("camera-photo")},
@@ -47,8 +38,16 @@ PermissionMonitorPlugin::PermissionMonitorPlugin(QObject *parent)
     , m_microphoneItem(new MonitorItem({QStringLiteral("audio-input-microphone")},
                                        QStringLiteral(":/icons/resources/microphone.svg")))
     , m_tipsWidget(new TipsWidget)
+    , m_itemAdded(false)
     , m_deviceMonitor(new DeviceMonitor(this))
 {
+    // 摄像头与麦克风图标并排放在同一 item 内，作为一个整体显示
+    QHBoxLayout *layout = new QHBoxLayout(m_container);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(8);
+    layout->addWidget(m_cameraItem);
+    layout->addWidget(m_microphoneItem);
+
     m_cameraItem->setVisible(false);
     m_microphoneItem->setVisible(false);
 
@@ -75,13 +74,16 @@ void PermissionMonitorPlugin::init(PluginProxyInterface *proxyInter)
 
 QWidget *PermissionMonitorPlugin::itemWidget(const QString &itemKey)
 {
-    return typeForKey(itemKey) == DeviceMonitor::Camera ? m_cameraItem : m_microphoneItem;
+    Q_UNUSED(itemKey)
+
+    return m_container;
 }
 
 QWidget *PermissionMonitorPlugin::itemTipsWidget(const QString &itemKey)
 {
-    m_currentTipsKey = itemKey;
-    m_tipsWidget->setText(tipsTextFor(itemKey));
+    Q_UNUSED(itemKey)
+
+    m_tipsWidget->setText(tipsText());
 
     return m_tipsWidget;
 }
@@ -101,16 +103,15 @@ void PermissionMonitorPlugin::pluginStateSwitched()
 int PermissionMonitorPlugin::itemSortKey(const QString &itemKey)
 {
     const QString key = QStringLiteral("pos_%1_%2").arg(itemKey).arg(displayMode());
-    const bool camera = typeForKey(itemKey) == DeviceMonitor::Camera;
-    const int defaultValue = displayMode() == Dock::Fashion ? (camera ? 2 : 3)
-                                                            : (camera ? 5 : 6);
 
-    return m_proxyInter->getValue(this, key, defaultValue).toInt();
+    // 默认放在插件区末段（7），避开其它插件常用的 1~5
+    return m_proxyInter->getValue(this, key, 7).toInt();
 }
 
 void PermissionMonitorPlugin::setSortKey(const QString &itemKey, const int order)
 {
     const QString key = QStringLiteral("pos_%1_%2").arg(itemKey).arg(displayMode());
+
     m_proxyInter->saveValue(this, key, order);
 }
 
@@ -122,17 +123,28 @@ void PermissionMonitorPlugin::displayModeChanged(const Dock::DisplayMode display
 
 void PermissionMonitorPlugin::refreshIcon(const QString &itemKey)
 {
-    static_cast<MonitorItem *>(itemWidget(itemKey))->refreshIcon();
+    Q_UNUSED(itemKey)
+
+    m_cameraItem->refreshIcon();
+    m_microphoneItem->refreshIcon();
 }
 
-DeviceMonitor::DeviceType PermissionMonitorPlugin::typeForKey(const QString &itemKey) const
+QString PermissionMonitorPlugin::tipsText() const
 {
-    return itemKey == cameraKey() ? DeviceMonitor::Camera : DeviceMonitor::Microphone;
+    QStringList texts;
+
+    if (m_deviceMonitor->deviceInUse(DeviceMonitor::Camera)) {
+        texts << tipsTextFor(DeviceMonitor::Camera);
+    }
+    if (m_deviceMonitor->deviceInUse(DeviceMonitor::Microphone)) {
+        texts << tipsTextFor(DeviceMonitor::Microphone);
+    }
+
+    return texts.join(QStringLiteral("; "));
 }
 
-QString PermissionMonitorPlugin::tipsTextFor(const QString &itemKey) const
+QString PermissionMonitorPlugin::tipsTextFor(DeviceMonitor::DeviceType type) const
 {
-    DeviceMonitor::DeviceType type = typeForKey(itemKey);
     const QStringList processes = m_deviceMonitor->usingProcesses(type);
 
     if (processes.isEmpty()) {
@@ -156,29 +168,33 @@ void PermissionMonitorPlugin::onUsageChanged()
 void PermissionMonitorPlugin::updateAllItems()
 {
     const bool disabled = pluginIsDisable();
+    const bool cameraInUse = m_deviceMonitor->deviceInUse(DeviceMonitor::Camera);
+    const bool microphoneInUse = m_deviceMonitor->deviceInUse(DeviceMonitor::Microphone);
 
-    updateItemVisible(cameraKey(), !disabled && m_deviceMonitor->deviceInUse(DeviceMonitor::Camera));
-    updateItemVisible(microphoneKey(), !disabled && m_deviceMonitor->deviceInUse(DeviceMonitor::Microphone));
+    // 任一设备被占用时整个 item 显示，图标由容器内子 widget 按各自状态显隐
+    m_cameraItem->setVisible(!disabled && cameraInUse);
+    m_microphoneItem->setVisible(!disabled && microphoneInUse);
+    updateItemVisible(!disabled && (cameraInUse || microphoneInUse));
 }
 
-void PermissionMonitorPlugin::updateItemVisible(const QString &itemKey, bool visible)
+void PermissionMonitorPlugin::updateItemVisible(bool visible)
 {
-    if (m_itemAdded.value(itemKey, false) == visible) {
+    if (m_itemAdded == visible) {
         return;
     }
 
-    m_itemAdded[itemKey] = visible;
+    m_itemAdded = visible;
 
     if (visible) {
-        m_proxyInter->itemAdded(this, itemKey);
+        m_proxyInter->itemAdded(this, pluginName());
     } else {
-        m_proxyInter->itemRemoved(this, itemKey);
+        m_proxyInter->itemRemoved(this, pluginName());
     }
 }
 
 void PermissionMonitorPlugin::refreshTips()
 {
-    if (m_tipsWidget->isVisible() && !m_currentTipsKey.isEmpty()) {
-        m_tipsWidget->setText(tipsTextFor(m_currentTipsKey));
+    if (m_tipsWidget->isVisible()) {
+        m_tipsWidget->setText(tipsText());
     }
 }

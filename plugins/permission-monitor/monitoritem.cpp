@@ -94,6 +94,9 @@ void MonitorItem::setDockDisplayMode(const Dock::DisplayMode mode)
 {
     m_displayMode = mode;
 
+    // 两种模式的图标尺寸期望不同，通知父布局重新计算
+    updateGeometry();
+
     updateIcon();
 }
 
@@ -145,15 +148,24 @@ void MonitorItem::hideEvent(QHideEvent *e)
 
 QSize MonitorItem::sizeHint() const
 {
-    return QSize(26, 26);
+    // Fashion 模式彩色图标较大，symbolic 模式为 16px 小图标；
+    // 两种模式的尺寸期望不同，供容器布局与 dock 分配空间使用
+    if (m_displayMode == Dock::Efficient || m_displayMode == Dock::V23) {
+        return QSize(16, 16);
+    }
+
+    return QSize(38, 38);
 }
 
 void MonitorItem::updateIcon()
 {
     // Efficient/V23 模式优先使用单色 -symbolic 图标作为基底，
-    // Fashion 模式使用彩色图标；占用指示最终统一染为红/白两色闪烁
+    // Fashion 模式使用彩色图标；占用指示最终统一染为红/白两色闪烁。
+    // Fashion 模式下图标随容器高度缩放（与其它插件图标一致），
+    // 但不超过自身宽度（并排摆放时宽度是较小的一边）
     const bool symbolicMode = (m_displayMode == Dock::Efficient || m_displayMode == Dock::V23);
-    const int size = symbolicMode ? 16 : std::min(width(), height()) * 0.8;
+    const int size = symbolicMode ? 16
+                                  : std::min(width(), int(height() * 0.8));
 
     QPixmap base;
 
