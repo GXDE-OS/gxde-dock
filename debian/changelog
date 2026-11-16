@@ -1,4 +1,4 @@
-gxde-dock (6.0.40) UNRELEASED; urgency=medium
+gxde-dock (6.0.41) UNRELEASED; urgency=medium
 
   [ CharOfString ]
   * 修复X11下切换模式和位置卡死的问题
@@ -8,8 +8,9 @@ gxde-dock (6.0.40) UNRELEASED; urgency=medium
   [ gfdgd_xi ]
   * fix: 修复无法显示电池图标的问题
   * 默认禁用shutdown插件
+  * feat: 支持显示当前是否有设备使用摄像头与麦克风（仅支持读取当前用户应用，跨用户以及root用户情况无法获取）
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 14 Nov 2026 08:45:27 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 16 Nov 2026 19:50:07 +0800
 
 gxde-dock (6.0.38-2) UNRELEASED; urgency=medium
 
