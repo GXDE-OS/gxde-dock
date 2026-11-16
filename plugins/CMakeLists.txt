@@ -13,5 +13,6 @@ add_subdirectory("keyboard-layout")
 add_subdirectory("onboard")
 add_subdirectory("overlay-warning")
 add_subdirectory("notify")
+add_subdirectory("permission-monitor")
 
 add_subdirectory("v23")

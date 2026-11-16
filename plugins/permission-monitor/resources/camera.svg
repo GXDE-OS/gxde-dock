@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <!-- webcam: stand + body + lens -->
+    <path d="M24 33 V39" stroke="#454B54" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M14 42 H34" stroke="#454B54" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="24" cy="21" r="12.5" fill="#454B54"/>
+    <circle cx="24" cy="21" r="6.5" fill="#3C8CD8"/>
+    <circle cx="24" cy="21" r="3" fill="#1E2A35"/>
+    <circle cx="26.2" cy="18.8" r="1.2" fill="#FFFFFF" opacity="0.85"/>
+</svg>

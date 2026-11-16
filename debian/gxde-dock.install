@@ -11,4 +11,5 @@ usr/lib/gxde-dock/plugins/libsys_monitor.so
 usr/lib/gxde-dock/plugins/libnotify.so
 usr/lib/gxde-dock/plugins/system-trays
 usr/lib/gxde-dock/plugins/libsys_monitor.so
+usr/lib/gxde-dock/plugins/libpermission-monitor.so
 etc/gxde-dock
