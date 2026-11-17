@@ -1,13 +1,13 @@
 # Maintainer: CharOfString <root@charofstring.cc>
-pkgbase=gxde-dock-git
-pkgname=('gxde-dock-git' 'gxde-dock-onboard-plugin-git')
+pkgbase=gxde-dock
+pkgname=('gxde-dock' 'gxde-dock-onboard-plugin')
 pkgver=6.0.42
 pkgrel=1
 pkgdesc='GXDE dock'
 arch=('x86_64' 'aarch64')
 url="https://github.com/GXDE-OS/gxde-dock"
 license=('GPL-3.0-or-later')
-_depends=('dtk2widget-qt6-git' 'dtk6core-git' 'dtk6gui-git' 'dframework-dbus-qt6-git' 'gxde-network-utils-qt6-git'
+_depends=('dtk2widget-qt6' 'gxde-dtk6core' 'gxde-dtk6gui' 'dframework-dbus-qt6' 'gxde-network-utils-qt6'
           'gsettings-qt6' 'layer-shell-qt' 'qt6-base' 'qt6-svg' 'wayland' 'libx11' 'libxcb'
           'xcb-util-image' 'xcb-util-wm' 'libxtst' 'libgcc' 'libstdc++' 'glibc')
 makedepends=('git' 'cmake' 'ninja' 'qt6-tools' "${_depends[@]}")
@@ -27,22 +27,24 @@ build() {
   DESTDIR="$srcdir/root" ninja -C build install
 }
 
-package_gxde-dock-git() {
-  depends=("${_depends[@]}" 'deepin-menu-git' 'qt6-wayland' 'gxde-sni-server-git')
-  optdepends=('gxde-dock-onboard-plugin-git: on-screen keyboard plugin')
-  provides=('gxde-dock' 'deepin-dock')
-  conflicts=('gxde-dock' 'deepin-dock' 'gxde-wlcom<2.2.0')
+package_gxde-dock() {
+  depends=("${_depends[@]}" 'gxde-deepin-menu' 'qt6-wayland' 'gxde-sni-server')
+  optdepends=('gxde-dock-onboard-plugin: on-screen keyboard plugin')
+  provides=('deepin-dock' "gxde-dock-git=$pkgver")
+  conflicts=('deepin-dock' 'gxde-wlcom<2.2.0' 'gxde-dock-git')
+  replaces=('gxde-dock-git')
 
   cp -r "$srcdir/root/." "$pkgdir/"
   rm "$pkgdir/usr/lib/gxde-dock/plugins/libonboard.so"
 }
 
-package_gxde-dock-onboard-plugin-git() {
+package_gxde-dock-onboard-plugin() {
   pkgdesc='GXDE dock on-screen keyboard plugin'
-  depends=("gxde-dock-git=$pkgver-$pkgrel" 'onboard' 'dtk2widget-qt6-git' 'dtk6core-git' 'qt6-base'
+  depends=("gxde-dock=$pkgver-$pkgrel" 'onboard' 'dtk2widget-qt6' 'gxde-dtk6core' 'qt6-base'
            'libgcc' 'libstdc++' 'glibc')
-  provides=('gxde-dock-onboard-plugin')
-  conflicts=('gxde-dock-onboard-plugin')
+  provides=("gxde-dock-onboard-plugin-git=$pkgver")
+  conflicts=('gxde-dock-onboard-plugin-git')
+  replaces=('gxde-dock-onboard-plugin-git')
 
   install -Dm755 "$srcdir/root/usr/lib/gxde-dock/plugins/libonboard.so" \
     "$pkgdir/usr/lib/gxde-dock/plugins/libonboard.so"
