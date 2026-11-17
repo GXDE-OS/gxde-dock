@@ -17,10 +17,18 @@
 
 #include "devicemonitor.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
+
+#define DEVICE_MONITOR_SERVICE      "com.gxde.daemon.devicemonitor"
+#define DEVICE_MONITOR_PATH         "/com/gxde/daemon/devicemonitor"
+#define DEVICE_MONITOR_INTERFACE    "com.gxde.daemon.devicemonitor"
 
 namespace {
 
@@ -52,8 +60,11 @@ DeviceMonitor::DeviceMonitor(QObject *parent)
 void DeviceMonitor::start(int intervalMs)
 {
     m_refreshTimer->setInterval(intervalMs);
-    m_refreshTimer->start();
+
+    // 先做一次本地扫描提供初始状态（无需等待 D-Bus 服务），随后尝试切换到
+    // D-Bus 数据源（可覆盖所有用户的进程占用）
     refreshUsage();
+    requestDBusUsage();
 }
 
 bool DeviceMonitor::deviceInUse(DeviceType type) const
@@ -118,12 +129,89 @@ void DeviceMonitor::refreshUsage()
     usages[Camera].processes.removeDuplicates();
     usages[Microphone].processes.removeDuplicates();
 
-    const bool changed = usages[Camera] != m_usages[Camera]
-            || usages[Microphone] != m_usages[Microphone];
-    m_usages[Camera] = usages[Camera];
-    m_usages[Microphone] = usages[Microphone];
+    applyUsage(usages[Camera], usages[Microphone]);
+}
+
+void DeviceMonitor::applyUsage(const DeviceUsage &camera, const DeviceUsage &microphone)
+{
+    const bool changed = camera != m_usages[Camera]
+            || microphone != m_usages[Microphone];
+    m_usages[Camera] = camera;
+    m_usages[Microphone] = microphone;
 
     if (changed) {
         emit usageChanged();
+    }
+}
+
+void DeviceMonitor::requestDBusUsage()
+{
+    // 信号 match 只注册一次，避免服务重启时叠加重复连接
+    if (!m_signalsConnected) {
+        m_signalsConnected = true;
+
+        // 订阅系统服务的状态变化信号（服务尚未启动时 match 也会注册成功，
+        // 服务启动后信号自动到达）
+        QDBusConnection bus = QDBusConnection::systemBus();
+        bus.connect(QStringLiteral(DEVICE_MONITOR_SERVICE), QStringLiteral(DEVICE_MONITOR_PATH),
+                    QStringLiteral(DEVICE_MONITOR_INTERFACE), QStringLiteral("UsageChanged"),
+                    this, SLOT(onDBusUsageChanged(bool,bool,QStringList,QStringList)));
+        // 服务启动/重启后重新获取一次完整状态（含切换数据源）
+        bus.connect(QString(), QString(), QStringLiteral("org.freedesktop.DBus"),
+                    QStringLiteral("NameOwnerChanged"),
+                    this, SLOT(onDBusServiceOwnerChanged(QString,QString,QString)));
+    }
+
+    QDBusMessage message = QDBusMessage::createMethodCall(
+                QStringLiteral(DEVICE_MONITOR_SERVICE), QStringLiteral(DEVICE_MONITOR_PATH),
+                QStringLiteral(DEVICE_MONITOR_INTERFACE), QStringLiteral("GetUsage"));
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(
+                QDBusConnection::systemBus().asyncCall(message), this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, &DeviceMonitor::onDBusCallFinished);
+}
+
+void DeviceMonitor::onDBusCallFinished()
+{
+    QDBusPendingCallWatcher *watcher = static_cast<QDBusPendingCallWatcher *>(sender());
+    watcher->deleteLater();
+
+    QDBusPendingReply<bool, bool, QStringList, QStringList> reply = *watcher;
+    if (!reply.isValid()) {
+        // 系统服务不可用（未安装或启动失败）：保持/恢复本地轮询，
+        // 仅能检测当前用户的设备占用
+        if (!m_refreshTimer->isActive()) {
+            m_refreshTimer->start();
+        }
+        return;
+    }
+
+    // D-Bus 服务可用：停止本地轮询，状态由信号驱动
+    m_refreshTimer->stop();
+    onDBusUsageChanged(reply.argumentAt(0).toBool(),
+                       reply.argumentAt(1).toBool(),
+                       reply.argumentAt(2).toStringList(),
+                       reply.argumentAt(3).toStringList());
+}
+
+void DeviceMonitor::onDBusUsageChanged(bool cameraInUse, bool microphoneInUse,
+                                       const QStringList &cameraProcs, const QStringList &microphoneProcs)
+{
+    DeviceUsage usages[2];
+    usages[Camera].inUse = cameraInUse;
+    usages[Camera].processes = cameraProcs;
+    usages[Microphone].inUse = microphoneInUse;
+    usages[Microphone].processes = microphoneProcs;
+
+    applyUsage(usages[Camera], usages[Microphone]);
+}
+
+void DeviceMonitor::onDBusServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)
+{
+    Q_UNUSED(oldOwner)
+
+    // 服务启动/重启时重新获取状态（GetUsage 成功会停止本地轮询，
+    // 失败则维持当前模式不受影响）
+    if (name == QLatin1String(DEVICE_MONITOR_SERVICE) && !newOwner.isEmpty()) {
+        requestDBusUsage();
     }
 }
