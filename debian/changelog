@@ -1,3 +1,10 @@
+gxde-dock (6.0.43) UNRELEASED; urgency=medium
+
+  [ shenmo ]
+  * fix: 修复 Wayland 下再次点击任务栏启动器图标无法关闭启动器的问题
+
+ -- shenmo <shenmo@spark-app.store>  Sat, 21 Nov 2026 18:19:30 +0800
+
 gxde-dock (6.0.42) UNRELEASED; urgency=medium
 
   [ CharOfString ]
