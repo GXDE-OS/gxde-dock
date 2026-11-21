@@ -104,7 +104,17 @@ void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
     if (e->button() != Qt::LeftButton)
         return;
 
-    if (!m_launcherInter->IsVisible()) {
+    if (m_launcherInter->IsVisible()) {
+        // 再次点击启动器按钮时主动收起。
+        // Wayland 下 dock 是 KeyboardInteractivityNone 的 layer-shell surface，
+        // 点击 dock 不会让启动器失去键盘焦点（收不到 WindowDeactivate），
+        // 所以必须由 dock 显式调用 Hide。X11 下 region monitor 正常时这里
+        // IsVisible() 已是 false，会继续走下面的 ShowOnScreen 分支。
+        m_launcherInter->Hide();
+        return;
+    }
+
+    {
         QScreen *screen = nullptr;
         if (QWidget *topLevel = window()) {
             if (QWindow *handle = topLevel->windowHandle())
