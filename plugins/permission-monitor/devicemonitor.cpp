@@ -47,19 +47,38 @@ const QRegularExpression &microphonePattern()
     return pattern;
 }
 
+// 音频服务进程：它们持有设备往往只是因为其它应用的录音流经过，
+// 已识别出具体录音应用时不应展示为占用者
+const QStringList &audioServerProcessNames()
+{
+    static const QStringList names = {
+        QStringLiteral("pipewire"),
+        QStringLiteral("pipewire-pulse"),
+        QStringLiteral("pulseaudio"),
+    };
+    return names;
+}
+
 } // namespace
 
 DeviceMonitor::DeviceMonitor(QObject *parent)
     : QObject(parent)
     , m_refreshTimer(new QTimer(this))
+    , m_micStreamMonitor(new MicStreamMonitor(this))
 {
     m_refreshTimer->setInterval(1000);
     connect(m_refreshTimer, &QTimer::timeout, this, &DeviceMonitor::refreshUsage);
+    connect(m_micStreamMonitor, &MicStreamMonitor::recordingAppsChanged,
+            this, &DeviceMonitor::onMicAppsChanged);
 }
 
 void DeviceMonitor::start(int intervalMs)
 {
     m_refreshTimer->setInterval(intervalMs);
+
+    // 录音流检测同样在此启动（构造时不启动：dock 加载时的根实例不会
+    // 被调用 init，若构造即产生状态事件将访问未初始化的 m_proxyInter）
+    m_micStreamMonitor->start();
 
     // 先做一次本地扫描提供初始状态（无需等待 D-Bus 服务），随后尝试切换到
     // D-Bus 数据源（可覆盖所有用户的进程占用）
@@ -128,6 +147,31 @@ void DeviceMonitor::refreshUsage()
 
     usages[Camera].processes.removeDuplicates();
     usages[Microphone].processes.removeDuplicates();
+
+    m_deviceUsages[Camera] = usages[Camera];
+    m_deviceUsages[Microphone] = usages[Microphone];
+    combineUsage();
+}
+
+void DeviceMonitor::combineUsage()
+{
+    DeviceUsage usages[2] = { m_deviceUsages[Camera], m_deviceUsages[Microphone] };
+
+    // PulseAudio/PipeWire 录音流检测：识别真正使用麦克风的应用。
+    // 设备级检测在音频服务架构下只能看到持有设备的音频服务进程，
+    // 已识别出具体录音应用时，应用名合并展示并过滤掉音频服务进程名
+    const QStringList micApps = m_micStreamMonitor->recordingApps();
+    if (!micApps.isEmpty()) {
+        usages[Microphone].inUse = true;
+        for (const QString &server : audioServerProcessNames()) {
+            usages[Microphone].processes.removeAll(server);
+        }
+        for (const QString &app : micApps) {
+            if (!usages[Microphone].processes.contains(app)) {
+                usages[Microphone].processes.prepend(app);
+            }
+        }
+    }
 
     applyUsage(usages[Camera], usages[Microphone]);
 }
@@ -202,7 +246,14 @@ void DeviceMonitor::onDBusUsageChanged(bool cameraInUse, bool microphoneInUse,
     usages[Microphone].inUse = microphoneInUse;
     usages[Microphone].processes = microphoneProcs;
 
-    applyUsage(usages[Camera], usages[Microphone]);
+    m_deviceUsages[Camera] = usages[Camera];
+    m_deviceUsages[Microphone] = usages[Microphone];
+    combineUsage();
+}
+
+void DeviceMonitor::onMicAppsChanged()
+{
+    combineUsage();
 }
 
 void DeviceMonitor::onDBusServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)

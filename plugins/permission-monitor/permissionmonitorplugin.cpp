@@ -92,6 +92,12 @@ QWidget *PermissionMonitorPlugin::itemTipsWidget(const QString &itemKey)
 
 bool PermissionMonitorPlugin::pluginIsDisable()
 {
+    // dock 加载 .so 时会创建一个从不调用 init() 的根实例（仅作为工厂接口
+    // 使用），该实例的 m_proxyInter 为空，不能与 dock 交互
+    if (!m_proxyInter) {
+        return false;
+    }
+
     return m_proxyInter->getValue(this, PLUGIN_STATE_KEY, false).toBool();
 }
 
@@ -169,6 +175,11 @@ void PermissionMonitorPlugin::onUsageChanged()
 
 void PermissionMonitorPlugin::updateAllItems()
 {
+    // 根实例（未调用 init）不与 dock 交互，事件只更新其内部状态
+    if (!m_proxyInter) {
+        return;
+    }
+
     const bool disabled = pluginIsDisable();
     const bool cameraInUse = m_deviceMonitor->deviceInUse(DeviceMonitor::Camera);
     const bool microphoneInUse = m_deviceMonitor->deviceInUse(DeviceMonitor::Microphone);

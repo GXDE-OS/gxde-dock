@@ -18,6 +18,8 @@
 #ifndef DEVICEMONITOR_H
 #define DEVICEMONITOR_H
 
+#include "micstreammonitor.h"
+
 #include <QObject>
 #include <QStringList>
 #include <QTimer>
@@ -26,10 +28,11 @@ class QDBusPendingCallWatcher;
 
 // 监视摄像头/麦克风等设备的占用状态。
 //
-// 优先通过系统 D-Bus 服务 com.gxde.daemon.devicemonitor（root 权限，可检测
-// 所有用户与系统服务进程的占用）获取状态并订阅变化信号；该服务不可用（未
-// 安装或启动失败）时自动降级为本地扫描 /proc/<pid>/fd，仅能覆盖当前用户
-// 可见进程（无需 root）。
+// 数据源组合：
+// 1. 系统 D-Bus 服务 com.gxde.daemon.devicemonitor（root 权限，可检测所有
+//    用户与系统服务进程对设备的占用），不可用时降级为本地扫描 /proc；
+// 2. 本会话 PulseAudio/PipeWire 录音流检测（MicStreamMonitor），识别真正
+//    使用麦克风的应用（设备级检测只能看到持有设备的音频服务进程）。
 class DeviceMonitor : public QObject
 {
     Q_OBJECT
@@ -60,6 +63,7 @@ private slots:
                             const QStringList &cameraProcs, const QStringList &microphoneProcs);
     void onDBusCallFinished();
     void onDBusServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner);
+    void onMicAppsChanged();
 
 private:
     struct DeviceUsage {
@@ -71,12 +75,17 @@ private:
         bool operator!=(const DeviceUsage &other) const { return !(*this == other); }
     };
 
+    // 结合设备级占用（m_deviceUsages）与录音流应用列表计算最终状态
+    void combineUsage();
     void applyUsage(const DeviceUsage &camera, const DeviceUsage &microphone);
     void requestDBusUsage();
     static QString processName(int pid);
 
     QTimer *m_refreshTimer;
+    // 设备级占用状态（来自 D-Bus 服务或本地扫描），最终状态经 combineUsage 计算
+    DeviceUsage m_deviceUsages[2];
     DeviceUsage m_usages[2];
+    MicStreamMonitor *m_micStreamMonitor;
     bool m_signalsConnected = false;
 };
 
