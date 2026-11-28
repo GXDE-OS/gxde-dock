@@ -408,7 +408,10 @@ void MainWindow::internalMove(const QPoint &p)
         return;
     }
 
-    const bool isHide = m_settings->hideState() == HideState::Hide && !testAttribute(Qt::WA_UnderMouse);
+    // 与 updateGeometry 保持一致：KeepHidden 下 hideState 不可用，按 hideMode 判定
+    const bool isHide = (m_settings->hideMode() == HideMode::KeepHidden
+                         || m_settings->hideState() == HideState::Hide)
+                        && !testAttribute(Qt::WA_UnderMouse);
     const bool pos_adjust = m_settings->hideMode() != HideMode::KeepShowing &&
                              isHide &&
                              m_posChangeAni->state() == QVariantAnimation::Stopped;
@@ -597,7 +600,12 @@ void MainWindow::updateGeometry()
     m_mainPanel->setFixedSize(size);
 
     bool animation = true;
-    bool isHide = m_settings->hideState() == Hide && !testAttribute(Qt::WA_UnderMouse);
+    // KeepHidden 模式下 daemon 不维护 HideState（仅 SmartHide 会更新），
+    // hideState 会一直停留在 Unknown，不能作为隐藏判据；此时按 hideMode 判定。
+    // 否则面板隐藏动画结束后 updateGeometry 会把面板重新拉回可见位置，
+    // 导致「一直隐藏」模式下任务栏始终显示。
+    bool isHide = (m_settings->hideMode() == KeepHidden || m_settings->hideState() == Hide)
+                  && !testAttribute(Qt::WA_UnderMouse);
 
     if (isHide) {
         m_sizeChangeAni->stop();
@@ -653,7 +661,9 @@ void MainWindow::setStrutPartial()
     clearStrutPartial();
 
     // reset env
-    resetPanelEnvironment(true);
+    // KeepHidden 下面板应保持隐藏（悬停时除外），不能被强制拉回可见位置
+    resetPanelEnvironment(m_settings->hideMode() != Dock::KeepHidden
+                          || testAttribute(Qt::WA_UnderMouse));
 
     if (m_settings->hideMode() != Dock::KeepShowing)
         return;
@@ -849,8 +859,13 @@ void MainWindow::updatePanelVisible()
         return;
     if (m_settings->hideMode() == KeepShowing)
         return expand();
-    if (m_settings->hideMode() == KeepHidden)
+    if (m_settings->hideMode() == KeepHidden) {
+        // 右键菜单/拖拽等场景 autoHide 被临时关闭；鼠标仍悬停在任务栏上时
+        // （leaveEvent 之后会重新触发收起），两种情况下都保持现状不收起。
+        if (!m_settings->autoHide() || testAttribute(Qt::WA_UnderMouse))
+            return;
         return narrow(m_settings->position());
+    }
 
     const Dock::HideState state = m_settings->hideState();
 
